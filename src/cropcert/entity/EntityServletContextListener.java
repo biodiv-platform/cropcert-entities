@@ -87,7 +87,7 @@ public class EntityServletContextListener extends GuiceServletContextListener {
 		File folder = new File(uri.getPath());
 
 		Files.find(Paths.get(folder.getAbsolutePath()), 999, (p, bfa) -> bfa.isRegularFile()).forEach(file -> {
-			String name = file.toFile().getAbsolutePath().replaceAll(folder.getAbsolutePath() + '/', "").replace('/',
+			String name = file.toFile().getAbsolutePath().replaceAll(folder.getAbsolutePath() + File.separatorChar, "").replace(File.separatorChar,
 					'.');
 			if (name.indexOf('.') != -1) {
 				name = packageName + '.' + name.substring(0, name.lastIndexOf('.'));
