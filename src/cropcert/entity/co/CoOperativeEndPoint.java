@@ -1,6 +1,7 @@
 package cropcert.entity.co;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -8,6 +9,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -38,6 +40,20 @@ public class CoOperativeEndPoint{
 		if(coOperative==null)
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.status(Status.CREATED).entity(coOperative).build();
+	}
+	
+	@Path("all")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<CoOperative> findAll() {
+		return coOperativeService.findAll();
+	}
+	
+	@Path("few")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<CoOperative> findAll(@QueryParam("limit") int limit, @QueryParam("offset") int offset) {
+		return coOperativeService.findAll(limit, offset);
 	}
 	
 	@POST
