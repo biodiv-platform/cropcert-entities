@@ -50,6 +50,7 @@ public class EntityServletContextListener extends GuiceServletContextListener {
 				bind(SessionFactory.class).toInstance(sessionFactory);
 				bind(ObjectMapper.class).in(Scopes.SINGLETON);
 				bind(Ping.class).in(Scopes.SINGLETON);
+				bind(Logout.class).in(Scopes.SINGLETON);
 				
 				serve("/*").with(GuiceContainer.class);
 			}
