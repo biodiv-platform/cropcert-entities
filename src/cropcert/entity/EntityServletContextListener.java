@@ -24,6 +24,7 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
 import cropcert.entity.cc.CollectionCenterModule;
 import cropcert.entity.co.CoOperativeModule;
+import cropcert.entity.farm.FarmModule;
 
 public class EntityServletContextListener extends GuiceServletContextListener {
 
@@ -54,7 +55,7 @@ public class EntityServletContextListener extends GuiceServletContextListener {
 				
 				serve("/*").with(GuiceContainer.class);
 			}
-		}, new CollectionCenterModule(), new CoOperativeModule());
+		}, new CollectionCenterModule(), new CoOperativeModule(), new FarmModule());
 		
 		return injector; 
 	}
