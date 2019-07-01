@@ -54,7 +54,7 @@ public class CollectionCenterEndPoint{
 			return collectionCenterService.findAll(limit, offset);
 	}
 
-	@Path("coOperativeId")
+	@Path("coOperativeId/{coOperativeId}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<CollectionCenter> findAll(@PathParam("coOperativeId") Long coOperativeId) {
