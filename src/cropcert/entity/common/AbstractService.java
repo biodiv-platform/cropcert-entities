@@ -72,6 +72,11 @@ public abstract class  AbstractService<T> {
 		}
 	}
 	
+	public T findByPropertyWithCondtion(String property, String value, String condition) {
+		return dao.findByPropertyWithCondition(property, value, condition);
+	}
 	
-	
+	public List<T> getByPropertyWithCondtion(String property, Object value, String condition, int limit, int offset) {
+		return dao.getByPropertyWithCondtion(property, value, condition, limit, offset);
+	}
 }

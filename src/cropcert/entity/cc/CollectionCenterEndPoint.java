@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -44,15 +45,23 @@ public class CollectionCenterEndPoint{
 	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<CollectionCenter> findAll() {
-		return collectionCenterService.findAll();
+	public List<CollectionCenter> findAll(
+			@DefaultValue("-1") @QueryParam("limit") Integer limit,
+			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
+		if(limit==-1 || offset ==-1)
+			return collectionCenterService.findAll();
+		else
+			return collectionCenterService.findAll(limit, offset);
 	}
-	
-	@Path("few")
+
+	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<CollectionCenter> findAll(@QueryParam("limit") int limit, @QueryParam("offset") int offset) {
-		return collectionCenterService.findAll(limit, offset);
+	public List<CollectionCenter> findAll(
+			@DefaultValue("-1") @QueryParam("coOperativeId") Long coOperativeId,
+			@DefaultValue("-1") @QueryParam("limit") Integer limit,
+			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
+		return collectionCenterService.getByPropertyWithCondtion("coOperativeId", coOperativeId, "=", limit, offset);
 	}
 	
 	@POST
