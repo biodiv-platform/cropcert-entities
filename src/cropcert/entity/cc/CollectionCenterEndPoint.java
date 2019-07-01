@@ -54,14 +54,11 @@ public class CollectionCenterEndPoint{
 			return collectionCenterService.findAll(limit, offset);
 	}
 
-	@Path("all")
+	@Path("coOperativeId")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<CollectionCenter> findAll(
-			@DefaultValue("-1") @QueryParam("coOperativeId") Long coOperativeId,
-			@DefaultValue("-1") @QueryParam("limit") Integer limit,
-			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
-		return collectionCenterService.getByPropertyWithCondtion("coOperativeId", coOperativeId, "=", limit, offset);
+	public List<CollectionCenter> findAll(@PathParam("coOperativeId") Long coOperativeId) {
+		return collectionCenterService.getByPropertyWithCondtion("coOperativeId", coOperativeId, "=", -1, -1);
 	}
 	
 	@POST
