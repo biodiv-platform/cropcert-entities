@@ -53,12 +53,8 @@ public class CoOperativeEndPoint{
 	@Path("coCode")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<CoOperative> getByCcCodes(
-			@DefaultValue("-1") @QueryParam("coCode") String coCodeString,
-			@DefaultValue("-1") @QueryParam("limit") Integer limit,
-			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
-		Integer coCode = Integer.parseInt(coCodeString);
-		return coOperativeService.getByPropertyWithCondtion("coCode", coCode, "=", limit, offset);
+	public CoOperative getByCoCode(@DefaultValue("-1") @QueryParam("coCode") String coCode) {
+		return coOperativeService.findByPropertyWithCondtion("coCode", coCode, "=");
 	}
 	
 	@Path("few")
