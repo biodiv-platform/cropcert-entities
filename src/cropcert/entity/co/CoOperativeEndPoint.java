@@ -53,7 +53,8 @@ public class CoOperativeEndPoint{
 	@Path("coCode")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public CoOperative getByCoCode(@DefaultValue("-1") @QueryParam("coCode") String coCode) {
+	public CoOperative getByCoCode(@DefaultValue("-1") @QueryParam("coCode") String coCodeString) {
+		Integer coCode = Integer.parseInt(coCodeString);
 		return coOperativeService.findByPropertyWithCondtion("coCode", coCode, "=");
 	}
 	
