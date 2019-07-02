@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -47,6 +48,16 @@ public class CoOperativeEndPoint{
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<CoOperative> findAll() {
 		return coOperativeService.findAll();
+	}
+	
+	@Path("coCode")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<CoOperative> getByCcCodes(
+			@DefaultValue("-1") @QueryParam("coCodes") String coCode,
+			@DefaultValue("-1") @QueryParam("limit") Integer limit,
+			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
+		return coOperativeService.getByPropertyWithCondtion("coCode", coCode, "=", limit, offset);
 	}
 	
 	@Path("few")
