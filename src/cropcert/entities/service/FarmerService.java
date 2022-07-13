@@ -32,6 +32,7 @@ import cropcert.entities.dao.FarmerDao;
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.Cooperative;
+import cropcert.entities.model.FactoryPerson;
 import cropcert.entities.model.Farmer;
 import cropcert.entities.model.Union;
 import cropcert.entities.model.request.FarmerFileMetaData;
@@ -68,11 +69,11 @@ public class FarmerService extends AbstractService<Farmer> {
 	public Farmer save(String jsonString)
 			throws JsonParseException, JsonMappingException, IOException, JSONException, ValidationException {
 		Farmer farmer = objectMapper.readValue(jsonString, Farmer.class);
-		JSONObject jsonObject = new JSONObject(jsonString);
-		String password = jsonObject.getString("password");
-		password = passwordEncoder.encodePassword(password, null);
-		farmer.setPassword(password);
-		farmer.setPermissions(defaultPermissions);
+//		JSONObject jsonObject = new JSONObject(jsonString);
+//		String password = jsonObject.getString("password");
+//		password = passwordEncoder.encodePassword(password, null);
+//		farmer.setPassword(password);
+//		farmer.setPermissions(defaultPermissions);
 
 		String membershipId = farmer.getMembershipId();
 		Long ccCode = farmer.getCcCode();
@@ -110,12 +111,16 @@ public class FarmerService extends AbstractService<Farmer> {
 		return save(farmer);
 	}
 	
+	public Farmer findByUserId(Long userId) {
+		return findByPropertyWithCondition("user_id", userId, "=");
+	}
+	
 	@Override
 	public Farmer save(Farmer farmer) {
-		String password = farmer.getPassword();
-		password = passwordEncoder.encodePassword(password, null);
-		farmer.setPassword(password);
-		farmer.setPermissions(defaultPermissions);
+//		String password = farmer.getPassword();
+//		password = passwordEncoder.encodePassword(password, null);
+//		farmer.setPassword(password);
+//		farmer.setPermissions(defaultPermissions);
 		return super.save(farmer);
 	}
 	
@@ -169,15 +174,15 @@ public class FarmerService extends AbstractService<Farmer> {
 			
 			while (it.hasNext()) {
 				String[] data = it.next();
-				try {
-				
-					Farmer farmer = fileMetaData.readOneRow(data, false);
-					farmer = save(farmer);
-					result.put("Success", farmer);
-				} catch(Exception e) {
-					reader.close();
-					throw new IOException("Error creating the farmer : " + data);
-				}
+//				try {
+//				
+//					Farmer farmer = fileMetaData.readOneRow(data, false);
+//					farmer = save(farmer);
+//					result.put("Success", farmer);
+//				} catch(Exception e) {
+//					reader.close();
+//					throw new IOException("Error creating the farmer : " + data);
+//				}
 			}
 			reader.close();
 			return result;
@@ -197,16 +202,16 @@ public class FarmerService extends AbstractService<Farmer> {
 			return validationResult;
 		}
 
-		int index = 1;
-		while (it.hasNext()) {
-			String[] data = it.next();
-			try {
-				fileMetaData.readOneRow(data, true);
-			} catch (IOException e) {
-				validationResult.put("Farmer index :  " + index , e.getMessage());
-			}
-			index ++;
-		}
+//		int index = 1;
+//		while (it.hasNext()) {
+//			String[] data = it.next();
+//			try {
+//				fileMetaData.readOneRow(data, true);
+//			} catch (IOException e) {
+//				validationResult.put("Farmer index :  " + index , e.getMessage());
+//			}
+//			index ++;
+//		}
 		
 		return validationResult;
 	}

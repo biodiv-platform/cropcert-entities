@@ -160,122 +160,122 @@ public class FarmerFileMetaData {
 		return true;
 	}
 
-	public Farmer readOneRow(String[] data, boolean validation) throws IOException {
-		if (data[nameColumnIndex] == null && "".equals(data[nameColumnIndex].trim())) {
-			throw new IOException("Name missing");
-		}
-		if ((data[ccNameColumnIndex] == null && "".equals(data[ccNameColumnIndex].trim()))
-				|| (data[ccCodeColumnIndex] == null && "".equals(data[ccCodeColumnIndex].trim()))) {
-			throw new IOException("CC Name and/or code missing");
-		}
-		if ((data[farmerIdColumnIndex] == null && "".equals(data[farmerIdColumnIndex].trim()))
-				|| (data[farmerCodeColumnIndex] == null && "".equals(data[farmerCodeColumnIndex].trim()))) {
-			throw new IOException("Farmer id missing");
-		}
-		if (data[genderColumnIndex] == null && "".equals(data[genderColumnIndex].trim())) {
-			throw new IOException("Gender missing");
-		}
-
-		CollectionCenter cc;
-		try {
-			cc = collectionCenterService.findByName(data[ccNameColumnIndex], data[ccCodeColumnIndex]);
-		} catch (Exception e) {
-			throw new IOException("Invalid collection center : " + data[ccNameColumnIndex]);
-		}
-		if (cc == null)
-			throw new IOException("Invalid collection center : " + data[ccNameColumnIndex]);
-		/*
-		 * try { if (collectionCenterMap.containsKey(ccName)) { cc =
-		 * collectionCenterMap.get(ccName); } else { cc =
-		 * collectionCenterService.findByName(data[ccNameColumnIndex]);//
-		 * findByPropertyWithCondition("name", data[ccNameColumnIndex].trim(), "=");
-		 * collectionCenterMap.put(ccName, cc); } } catch (Exception e) { throw new
-		 * IOException("Invalid collection center : " + data[ccNameColumnIndex]); }
-		 */
-
-		if (validation) {
-			return null;
-		}
-
-		Farmer farmer = new Farmer();
-		farmer.setPassword(RandomStringUtils.randomAlphanumeric(8));
-
-		String[] names = StringUtils.split(data[nameColumnIndex]);
-		if (names.length > 0)
-			farmer.setFirstName(names[0]);
-		else
-			farmer.setFirstName("");
-		if (names.length > 1)
-			farmer.setLastName(names[1]);
-		else
-			farmer.setLastName("");
-
-		if (birthDateColumnIndex != null && data[birthDateColumnIndex] != null) {
-			Timestamp birthDate = null;
-			try {
-				birthDate = new Timestamp(Date.valueOf(data[9]).getTime());
-			} catch (Exception e) {
-			} finally {
-				farmer.setDateOfBirth(birthDate);
-			}
-		}
-		farmer.setGender(data[genderColumnIndex]);
-
-		if (cellNumberColumnIndex != null && !"".equals(data[cellNumberColumnIndex]))
-			farmer.setCellNumber(data[cellNumberColumnIndex]);
-
-		if (emailColumnIndex != null && !"".equals(data[emailColumnIndex]))
-			farmer.setEmail(data[emailColumnIndex]);
-
-		if (villageColumnIndex != null && !"".equals(data[villageColumnIndex]))
-			farmer.setVillage(data[villageColumnIndex]);
-
-		if (subCountryColumnIndex != null && !"".equals(data[subCountryColumnIndex]))
-			farmer.setSubCountry(data[subCountryColumnIndex]);
-
-		// Need to modify the number of plots to Float in futre if possible
-		if (numCoffeePlotsColumnIndex != null && !"".equals(data[numCoffeePlotsColumnIndex].trim()))
-			farmer.setNumCoffeePlots((int) Float.parseFloat(data[numCoffeePlotsColumnIndex].trim()));
-		if (numCoffeeTreesColumnIndex != null && !"".equals(data[numCoffeeTreesColumnIndex].trim()))
-			farmer.setNumCoffeeTrees((int) Float.parseFloat(data[numCoffeeTreesColumnIndex].trim()));
-		if (farmAreaColumnIndex != null && !"".equals(data[farmAreaColumnIndex].trim()))
-			farmer.setFarmArea(Float.parseFloat(data[farmAreaColumnIndex].trim()));
-		if (coffeeAreaColumnIndex != null && !"".equals(data[coffeeAreaColumnIndex].trim()))
-			farmer.setCoffeeArea(Float.parseFloat(data[coffeeAreaColumnIndex].trim()));
-
-		String farmerCode = data[farmerIdColumnIndex] + "_" + data[farmerCodeColumnIndex];
-		farmer.setFarmerCode(farmerCode);
-		farmer.setCcCode(cc.getCode());
-		farmer.setCcName(cc.getName());
-
-		Cooperative cooperative;
-		if (coCodeToCooperativeMap.containsKey(cc.getCoCode())) {
-			cooperative = coCodeToCooperativeMap.get(cc.getCoCode());
-		} else {
-			cooperative = cooperativeService.findByPropertyWithCondition("code", cc.getCoCode(), "=");
-			coCodeToCooperativeMap.put(cc.getCoCode(), cooperative);
-		}
-		farmer.setCoName(cooperative.getName());
-
-		Union union;
-		if (unionCodeToUnionCenterMap.containsKey(cooperative.getUnionCode())) {
-			union = unionCodeToUnionCenterMap.get(cooperative.getUnionCode());
-		} else {
-			union = unionService.findByPropertyWithCondition("code", cooperative.getUnionCode(), "=");
-			unionCodeToUnionCenterMap.put(cooperative.getUnionCode(), union);
-		}
-		farmer.setUnionName(union.getName());
-
-		farmer.setFieldCoOrdinator(1L);
-
-		String userName = farmer.getFirstName().toLowerCase() + "_" + farmer.getLastName().toLowerCase() + "_"
-				+ cooperative.getName().toLowerCase() + "_" + farmer.getFarmerCode() + "_" + farmer.getFarmerCode() + "_" + farmer.getCcCode()
-				+ "@cropcert.org";
-		String membershipId = userName;
-		farmer.setMembershipId(membershipId);
-		farmer.setUserName(userName);
-		return farmer;
-	}
+//	public Farmer readOneRow(String[] data, boolean validation) throws IOException {
+//		if (data[nameColumnIndex] == null && "".equals(data[nameColumnIndex].trim())) {
+//			throw new IOException("Name missing");
+//		}
+//		if ((data[ccNameColumnIndex] == null && "".equals(data[ccNameColumnIndex].trim()))
+//				|| (data[ccCodeColumnIndex] == null && "".equals(data[ccCodeColumnIndex].trim()))) {
+//			throw new IOException("CC Name and/or code missing");
+//		}
+//		if ((data[farmerIdColumnIndex] == null && "".equals(data[farmerIdColumnIndex].trim()))
+//				|| (data[farmerCodeColumnIndex] == null && "".equals(data[farmerCodeColumnIndex].trim()))) {
+//			throw new IOException("Farmer id missing");
+//		}
+//		if (data[genderColumnIndex] == null && "".equals(data[genderColumnIndex].trim())) {
+//			throw new IOException("Gender missing");
+//		}
+//
+//		CollectionCenter cc;
+//		try {
+//			cc = collectionCenterService.findByName(data[ccNameColumnIndex], data[ccCodeColumnIndex]);
+//		} catch (Exception e) {
+//			throw new IOException("Invalid collection center : " + data[ccNameColumnIndex]);
+//		}
+//		if (cc == null)
+//			throw new IOException("Invalid collection center : " + data[ccNameColumnIndex]);
+//		/*
+//		 * try { if (collectionCenterMap.containsKey(ccName)) { cc =
+//		 * collectionCenterMap.get(ccName); } else { cc =
+//		 * collectionCenterService.findByName(data[ccNameColumnIndex]);//
+//		 * findByPropertyWithCondition("name", data[ccNameColumnIndex].trim(), "=");
+//		 * collectionCenterMap.put(ccName, cc); } } catch (Exception e) { throw new
+//		 * IOException("Invalid collection center : " + data[ccNameColumnIndex]); }
+//		 */
+//
+//		if (validation) {
+//			return null;
+//		}
+//
+//		Farmer farmer = new Farmer();
+//		farmer.setPassword(RandomStringUtils.randomAlphanumeric(8));
+//
+//		String[] names = StringUtils.split(data[nameColumnIndex]);
+//		if (names.length > 0)
+//			farmer.setFirstName(names[0]);
+//		else
+//			farmer.setFirstName("");
+//		if (names.length > 1)
+//			farmer.setLastName(names[1]);
+//		else
+//			farmer.setLastName("");
+//
+//		if (birthDateColumnIndex != null && data[birthDateColumnIndex] != null) {
+//			Timestamp birthDate = null;
+//			try {
+//				birthDate = new Timestamp(Date.valueOf(data[9]).getTime());
+//			} catch (Exception e) {
+//			} finally {
+//				farmer.setDateOfBirth(birthDate);
+//			}
+//		}
+//		farmer.setGender(data[genderColumnIndex]);
+//
+//		if (cellNumberColumnIndex != null && !"".equals(data[cellNumberColumnIndex]))
+//			farmer.setCellNumber(data[cellNumberColumnIndex]);
+//
+//		if (emailColumnIndex != null && !"".equals(data[emailColumnIndex]))
+//			farmer.setEmail(data[emailColumnIndex]);
+//
+//		if (villageColumnIndex != null && !"".equals(data[villageColumnIndex]))
+//			farmer.setVillage(data[villageColumnIndex]);
+//
+//		if (subCountryColumnIndex != null && !"".equals(data[subCountryColumnIndex]))
+//			farmer.setSubCountry(data[subCountryColumnIndex]);
+//
+//		// Need to modify the number of plots to Float in futre if possible
+//		if (numCoffeePlotsColumnIndex != null && !"".equals(data[numCoffeePlotsColumnIndex].trim()))
+//			farmer.setNumCoffeePlots((int) Float.parseFloat(data[numCoffeePlotsColumnIndex].trim()));
+//		if (numCoffeeTreesColumnIndex != null && !"".equals(data[numCoffeeTreesColumnIndex].trim()))
+//			farmer.setNumCoffeeTrees((int) Float.parseFloat(data[numCoffeeTreesColumnIndex].trim()));
+//		if (farmAreaColumnIndex != null && !"".equals(data[farmAreaColumnIndex].trim()))
+//			farmer.setFarmArea(Float.parseFloat(data[farmAreaColumnIndex].trim()));
+//		if (coffeeAreaColumnIndex != null && !"".equals(data[coffeeAreaColumnIndex].trim()))
+//			farmer.setCoffeeArea(Float.parseFloat(data[coffeeAreaColumnIndex].trim()));
+//
+//		String farmerCode = data[farmerIdColumnIndex] + "_" + data[farmerCodeColumnIndex];
+//		farmer.setFarmerCode(farmerCode);
+//		farmer.setCcCode(cc.getCode());
+//		farmer.setCcName(cc.getName());
+//
+//		Cooperative cooperative;
+//		if (coCodeToCooperativeMap.containsKey(cc.getCoCode())) {
+//			cooperative = coCodeToCooperativeMap.get(cc.getCoCode());
+//		} else {
+//			cooperative = cooperativeService.findByPropertyWithCondition("code", cc.getCoCode(), "=");
+//			coCodeToCooperativeMap.put(cc.getCoCode(), cooperative);
+//		}
+//		farmer.setCoName(cooperative.getName());
+//
+//		Union union;
+//		if (unionCodeToUnionCenterMap.containsKey(cooperative.getUnionCode())) {
+//			union = unionCodeToUnionCenterMap.get(cooperative.getUnionCode());
+//		} else {
+//			union = unionService.findByPropertyWithCondition("code", cooperative.getUnionCode(), "=");
+//			unionCodeToUnionCenterMap.put(cooperative.getUnionCode(), union);
+//		}
+//		farmer.setUnionName(union.getName());
+//
+//		farmer.setFieldCoOrdinator(1L);
+//
+//		String userName = farmer.getFirstName().toLowerCase() + "_" + farmer.getLastName().toLowerCase() + "_"
+//				+ cooperative.getName().toLowerCase() + "_" + farmer.getFarmerCode() + "_" + farmer.getFarmerCode() + "_" + farmer.getCcCode()
+//				+ "@cropcert.org";
+//		String membershipId = userName;
+//		farmer.setMembershipId(membershipId);
+//		farmer.setUserName(userName);
+//		return farmer;
+//	}
 
 	public String getFileType() {
 		return fileType;

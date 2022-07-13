@@ -31,23 +31,23 @@ public class AuthenticateApi {
 	@Inject
 	private AuthenticateService authenticateService;
 
-	@POST
-	@Path("login")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@ApiOperation(value = "Authenticate the user by userName and password", response = Map.class)
-	public Response authenticate(@FormParam("userName") String userName, @FormParam("password") String password) {
-		try {
-			CommonProfile profile = authenticateService.authenticate(userName, password);
-			Map<String, Object> result = authenticateService.buildTokenResponse(profile,
-					Long.parseLong(profile.getId()), true);
-			return Response.ok().entity(result).build();
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-			return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
-		}
-	}
+//	@POST
+//	@Path("login")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//	@ApiOperation(value = "Authenticate the user by userName and password", response = Map.class)
+//	public Response authenticate(@FormParam("userName") String userName, @FormParam("password") String password) {
+//		try {
+//			CommonProfile profile = authenticateService.authenticate(userName, password);
+//			Map<String, Object> result = authenticateService.buildTokenResponse(profile,
+//					Long.parseLong(profile.getId()), true);
+//			return Response.ok().entity(result).build();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			logger.error(e.getMessage());
+//			return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+//		}
+//	}
 
 	@POST
 	@Path("renew")

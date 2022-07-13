@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 import cropcert.entities.dao.CollectionCenterPersonDao;
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.model.CollectionCenterPerson;
+import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.util.MessageDigestPasswordEncoder;
 
 public class CollectionCenterPersonService extends AbstractService<CollectionCenterPerson>{
@@ -38,12 +39,17 @@ public class CollectionCenterPersonService extends AbstractService<CollectionCen
 
 	public CollectionCenterPerson save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		CollectionCenterPerson ccPerson = objectMapper.readValue(jsonString, CollectionCenterPerson.class);
-		JSONObject jsonObject = new JSONObject(jsonString);
-		String password = jsonObject.getString("password");
-		password = passwordEncoder.encodePassword(password, null);
-		ccPerson.setPassword(password);
-		ccPerson.setPermissions(defaultPermissions);
+//		JSONObject jsonObject = new JSONObject(jsonString);
+//		String password = jsonObject.getString("password");
+//		password = passwordEncoder.encodePassword(password, null);
+//		ccPerson.setPassword(password);
+//		ccPerson.setPermissions(defaultPermissions);
 		return save(ccPerson);
 	}
+	
+	public CollectionCenterPerson findByUserId(Long userId) {
+		return findByPropertyWithCondition("user_id", userId, "=");
+	}
+
 
 }

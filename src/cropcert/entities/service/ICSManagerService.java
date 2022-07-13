@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 
 import cropcert.entities.dao.ICSManagerDao;
 import cropcert.entities.filter.Permissions;
+import cropcert.entities.model.Farmer;
 import cropcert.entities.model.ICSManager;
 import cropcert.entities.util.MessageDigestPasswordEncoder;
 
@@ -37,12 +38,17 @@ public class ICSManagerService extends AbstractService<ICSManager>{
 
 	public ICSManager save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		ICSManager icsManager = objectMapper.readValue(jsonString, ICSManager.class);
-		JSONObject jsonObject = new JSONObject(jsonString);
-		String password = jsonObject.getString("password");
-		password = passwordEncoder.encodePassword(password, null);
-		icsManager.setPassword(password);
-		icsManager.setPermissions(defaultPermissions);
+//		JSONObject jsonObject = new JSONObject(jsonString);
+//		String password = jsonObject.getString("password");
+//		password = passwordEncoder.encodePassword(password, null);
+//		icsManager.setPassword(password);
+//		icsManager.setPermissions(defaultPermissions);
 		return save(icsManager);
 	}
 
+	
+	public ICSManager findByUserId(Long userId) {
+		return findByPropertyWithCondition("user_id", userId, "=");
+	}
+	
 }

@@ -10,36 +10,54 @@ import javax.xml.bind.annotation.XmlRootElement;
 import io.swagger.annotations.ApiModel;
 
 @Entity
-@Table(name="ics_manager")
-@XmlRootElement
-@PrimaryKeyJoinColumn(name="id")
-@DiscriminatorValue(value= "ics_manager")
+@Table(name = "ics_manager")
 @ApiModel("ICSManager")
-public class ICSManager extends User{
+public class ICSManager {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8991931638221138539L;
 
-	@Column(name = "membership_id", nullable=false)
 	private String membershipId;
-	@Column (name = "union_code")
-	private int unionCode;
-	
+	private Long unionCode;
+	private Long userId;
+
+	public ICSManager() {
+		super();
+	}
+
+	public ICSManager(String membershipId, Long unionCode, Long userId) {
+		super();
+		this.membershipId = membershipId;
+		this.unionCode = unionCode;
+		this.userId = userId;
+	}
+
+	@Column(name = "membership_id", nullable = false)
 	public String getMembershipId() {
 		return membershipId;
 	}
+
 	public void setMembershipId(String membershipId) {
 		this.membershipId = membershipId;
 	}
-	public int getUnionCode() {
+
+	@Column(name = "union_code")
+	public Long getUnionCode() {
 		return unionCode;
 	}
-	public void setUnionCode(int unionCode) {
+
+	public void setUnionCode(Long unionCode) {
 		this.unionCode = unionCode;
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+
+	@Column(name = "user_id", nullable = false)
+	public Long getUserId() {
+		return userId;
 	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
 }

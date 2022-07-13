@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 
 import cropcert.entities.dao.CooperativePersonDao;
 import cropcert.entities.filter.Permissions;
+import cropcert.entities.model.Cooperative;
 import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.util.MessageDigestPasswordEncoder;
 
@@ -39,12 +40,17 @@ public class CooperativePersonService extends AbstractService<CooperativePerson>
 
 	public CooperativePerson save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		CooperativePerson coPerson = objectMapper.readValue(jsonString, CooperativePerson.class);
-		JSONObject jsonObject = new JSONObject(jsonString);
-		String password = jsonObject.getString("password");
-		password = passwordEncoder.encodePassword(password, null);
-		coPerson.setPassword(password);
-		coPerson.setPermissions(defaultPermissions);
+//		JSONObject jsonObject = new JSONObject(jsonString);
+//		String password = jsonObject.getString("password");
+//		password = passwordEncoder.encodePassword(password, null);
+//		coPerson.setPassword(password);
+//		coPerson.setPermissions(defaultPermissions);
 		return save(coPerson);
 	}
+	
+	public CooperativePerson findByUserId(Long userId) {
+		return findByPropertyWithCondition("user_id", userId, "=");
+	}
+
 
 }

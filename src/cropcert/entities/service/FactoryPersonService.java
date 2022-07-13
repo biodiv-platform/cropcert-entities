@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 
 import cropcert.entities.dao.FactoryPersonDao;
 import cropcert.entities.filter.Permissions;
+import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.model.FactoryPerson;
 import cropcert.entities.util.MessageDigestPasswordEncoder;
 
@@ -37,12 +38,17 @@ public class FactoryPersonService extends AbstractService<FactoryPerson>{
 
 	public FactoryPerson save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		FactoryPerson factoryPerson = objectMapper.readValue(jsonString, FactoryPerson.class);
-		JSONObject jsonObject = new JSONObject(jsonString);
-		String password = jsonObject.getString("password");
-		password = passwordEncoder.encodePassword(password, null);
-		factoryPerson.setPassword(password);
-		factoryPerson.setPermissions(defaultPermissions);
+//		JSONObject jsonObject = new JSONObject(jsonString);
+//		String password = jsonObject.getString("password");
+//		password = passwordEncoder.encodePassword(password, null);
+//		factoryPerson.setPassword(password);
+//		factoryPerson.setPermissions(defaultPermissions);
 		return save(factoryPerson);
 	}
+	
+	public FactoryPerson findByUserId(Long userId) {
+		return findByPropertyWithCondition("user_id", userId, "=");
+	}
+
 
 }

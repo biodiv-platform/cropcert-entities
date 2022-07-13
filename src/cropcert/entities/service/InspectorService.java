@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 
 import cropcert.entities.dao.InspectorDao;
 import cropcert.entities.filter.Permissions;
+import cropcert.entities.model.ICSManager;
 import cropcert.entities.model.Inspector;
 import cropcert.entities.util.MessageDigestPasswordEncoder;
 
@@ -37,12 +38,16 @@ public class InspectorService extends AbstractService<Inspector>{
 
 	public Inspector save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		Inspector inspector = objectMapper.readValue(jsonString, Inspector.class);
-		JSONObject jsonObject = new JSONObject(jsonString);
-		String password = jsonObject.getString("password");
-		password = passwordEncoder.encodePassword(password, null);
-		inspector.setPassword(password);
-		inspector.setPermissions(defaultPermissions);
+//		JSONObject jsonObject = new JSONObject(jsonString);
+//		String password = jsonObject.getString("password");
+//		password = passwordEncoder.encodePassword(password, null);
+//		inspector.setPassword(password);
+//		inspector.setPermissions(defaultPermissions);
 		return save(inspector);
+	}
+	
+	public Inspector findByUserId(Long userId) {
+		return findByPropertyWithCondition("user_id", userId, "=");
 	}
 
 }

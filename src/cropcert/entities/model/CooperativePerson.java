@@ -10,35 +10,49 @@ import javax.xml.bind.annotation.XmlRootElement;
 import io.swagger.annotations.ApiModel;
 
 @Entity
-@Table(name="cooperative_person")
-@XmlRootElement
-@PrimaryKeyJoinColumn(name="id")
-@DiscriminatorValue(value= "co")
+@Table(name = "cooperative_person")
 @ApiModel("CooperativePerson")
-public class CooperativePerson extends User{
+public class CooperativePerson {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5072383312664930067L;
-	
-	@Column(name = "membership_id", nullable=false)
 	private String membershipId;
-	@Column (name = "co_code")
-	private int coCode;
-	
+	private Long coCode;
+	private Long userId;
 
+	public CooperativePerson(String membershipId, Long coCode, Long userId) {
+		super();
+		this.membershipId = membershipId;
+		this.coCode = coCode;
+		this.userId = userId;
+	}
+
+	public CooperativePerson() {
+		super();
+	}
+
+	@Column(name = "membership_id", nullable = false)
 	public String getMembershipId() {
 		return membershipId;
 	}
+
 	public void setMembershipId(String membershipId) {
 		this.membershipId = membershipId;
 	}
-	
-	public int getCoCode() {
+
+	@Column(name = "co_code")
+	public Long getCoCode() {
 		return coCode;
 	}
-	public void setCoCode(int factoryCode) {
+
+	public void setCoCode(Long factoryCode) {
 		this.coCode = factoryCode;
+	}
+
+	@Column(name = "user_id", nullable = false)
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 }

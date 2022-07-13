@@ -11,16 +11,12 @@ import io.swagger.annotations.ApiModel;
 
 @Entity
 @Table(name = "farmer")
-@XmlRootElement
-@PrimaryKeyJoinColumn(name = "id")
-@DiscriminatorValue(value = "farmer")
 @ApiModel("Farmer")
-public class Farmer extends User {
+public class Farmer {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5072383312664930067L;
 
 	@Column(name = "membership_id", nullable = false)
 	private String membershipId;
@@ -32,7 +28,6 @@ public class Farmer extends User {
 	private Float farmArea;
 	@Column(name = "coffee_area")
 	private Float coffeeArea;
-
 	@Column(name = "farmer_code")
 	private String farmerCode;
 	@Column(name = "cc_code", nullable = false)
@@ -45,13 +40,15 @@ public class Farmer extends User {
 	private String unionName;
 	@Column(name = "field_coordinator")
 	private Long fieldCoOrdinator;
+	@Column(name = "user_id", nullable = false)
+	private Long userId;
 
 	public Farmer() {
 		super();
 	}
 
 	public Farmer(String membershipId, Integer numCoffeePlots, Integer numCoffeeTrees, Float farmArea, Float coffeeArea,
-			String farmerCode, Long ccCode, String ccName, String coName, String unionName, Long fieldCoOrdinator) {
+			String farmerCode, Long ccCode, String ccName, String coName, String unionName, Long fieldCoOrdinator, Long userId) {
 		super();
 		this.membershipId = membershipId;
 		this.numCoffeePlots = numCoffeePlots;
@@ -64,6 +61,7 @@ public class Farmer extends User {
 		this.coName = coName;
 		this.unionName = unionName;
 		this.fieldCoOrdinator = fieldCoOrdinator;
+		this.userId=userId;
 	}
 
 	public String getMembershipId() {
@@ -154,7 +152,14 @@ public class Farmer extends User {
 		this.fieldCoOrdinator = fieldCoOrdinator;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public Long getUserId() {
+		return userId;
 	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+	
+	
+
 }

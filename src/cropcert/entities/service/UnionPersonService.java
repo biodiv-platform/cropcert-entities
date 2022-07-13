@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 
 import cropcert.entities.dao.UnionPersonDao;
 import cropcert.entities.filter.Permissions;
+import cropcert.entities.model.Inspector;
 import cropcert.entities.model.UnionPerson;
 import cropcert.entities.util.MessageDigestPasswordEncoder;
 
@@ -41,12 +42,16 @@ public class UnionPersonService extends AbstractService<UnionPerson>{
 
 	public UnionPerson save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
 		UnionPerson ccPerson = objectMapper.readValue(jsonString, UnionPerson.class);
-		JSONObject jsonObject = new JSONObject(jsonString);
-		String password = jsonObject.getString("password");
-		password = passwordEncoder.encodePassword(password, null);
-		ccPerson.setPassword(password);
-		ccPerson.setPermissions(defaultPermissions);
+//		JSONObject jsonObject = new JSONObject(jsonString);
+//		String password = jsonObject.getString("password");
+//		password = passwordEncoder.encodePassword(password, null);
+//		ccPerson.setPassword(password);
+//		ccPerson.setPermissions(defaultPermissions);
 		return save(ccPerson);
+	}
+	
+	public UnionPerson findByUserId(Long userId) {
+		return findByPropertyWithCondition("user_id", userId, "=");
 	}
 
 }
