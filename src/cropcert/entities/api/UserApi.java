@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -31,25 +34,72 @@ import org.pac4j.core.profile.CommonProfile;
 
 import com.google.common.io.Files;
 import com.google.inject.Inject;
+import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.Role;
+import com.strandls.user.pojo.UserDTO;
+import com.strandls.user.pojo.UserRoles;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
+import cropcert.entities.Headers;
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.CollectionCenterPerson;
-import cropcert.entities.model.User;
+import cropcert.entities.model.CooperativePerson;
+import cropcert.entities.model.Farmer;
+import cropcert.entities.model.ICSManager;
+import cropcert.entities.model.Inspector;
+import cropcert.entities.model.UnionPerson;
+import cropcert.entities.model.UserEntityDTO;
+import cropcert.entities.service.CollectionCenterPersonService;
+import cropcert.entities.service.CooperativePersonService;
+import cropcert.entities.service.FarmerService;
+import cropcert.entities.service.ICSManagerService;
+import cropcert.entities.service.InspectorService;
+import cropcert.entities.service.UnionPersonService;
 import cropcert.entities.service.UserService;
-import cropcert.entities.util.AuthUtility;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import net.minidev.json.JSONArray;
+
+import com.strandls.authentication_utility.util.AuthUtil;
+import com.strandls.user.controller.AuthenticationServiceApi;
 
 @Path("user")
 @Api("User")
 public class UserApi {
 
 	private UserService userService;
+
+	@Inject
+	private UserServiceApi userServiceApi;
+
+	@Inject
+	private AuthenticationServiceApi authenticationServiceApi;
+
+	@Inject
+	private Headers headers;
+
+	@Inject
+	private FarmerService farmerService;
+
+	@Inject
+	private CooperativePersonService cooperativePersonService;
+
+	@Inject
+	private InspectorService inspectorService;
+
+	@Inject
+	private CollectionCenterPersonService collectionCenterPersonService;
+
+	@Inject
+	private ICSManagerService icsManagerService;
+
+	@Inject
+	private UnionPersonService unionPersonService;
 
 	@Inject
 	public UserApi(UserService userService) {
@@ -97,24 +147,81 @@ public class UserApi {
 //		return Response.ok().entity(user).build();
 //	}
 
-//	@POST
-//	@Produces(MediaType.APPLICATION_JSON)
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@ApiOperation(value = "Save the user", response = User.class)
-//	@ApiImplicitParams({
-//			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
-//	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
-//	public Response save(@Context HttpServletRequest request, String jsonString) {
-//		User user;
-//		try {
-//			user = userService.save(jsonString);
-//			return Response.status(Status.CREATED).entity(user).build();
-//		} catch (IOException | JSONException e) {
-//			e.printStackTrace();
-//		}
-//		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
-//	}
-	
+	@POST
+	@Path("signup")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Create new user", notes = "Returns the created user", response = Map.class)
+	public Response signUp(@Context HttpServletRequest request,
+			@ApiParam(name = "userDTO") UserEntityDTO userEntityDTO) {
+
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+		if (!roles.contains("ROLE_ADMIN")) {
+			return Response.status(Status.BAD_REQUEST).entity("Unable to create user").build();
+
+		}
+
+		try {
+			UserDTO userDTO = userEntityDTO.getUser();
+			UnionPerson unionPerson = userEntityDTO.getUnionPerson();
+			Inspector inspector = userEntityDTO.getInspector();
+			ICSManager icsManager = userEntityDTO.getIscManager();
+			Farmer farmer = userEntityDTO.getFarmer();
+			CooperativePerson coPerson = userEntityDTO.getCoPerson();
+			CollectionCenterPerson ccPerson = userEntityDTO.getCcPerson();
+			UserRoles userRole = userEntityDTO.getUserRole();
+
+			if (userDTO == null && userRole != null && userRole.getRoles().isEmpty()) {
+				return Response.status(Status.BAD_REQUEST).entity("User details cannot be empty").build();
+			}
+
+//			user create
+			
+			authenticationServiceApi = headers.addAuthHeaders(authenticationServiceApi,
+					request.getHeader(HttpHeaders.AUTHORIZATION));
+			userServiceApi = headers.addUserHeaders(userServiceApi, request.getHeader(HttpHeaders.AUTHORIZATION));
+
+			Map<String, Object> response = authenticationServiceApi.signUp(userDTO);
+			UserDTO user = (UserDTO) response.get("user");
+
+			if (user == null) {
+				return Response.status(Status.BAD_REQUEST).entity("User details cannot be empty").build();
+			}
+
+			userServiceApi.updateUserRoles(userRole);
+
+//			user role update
+			if (unionPerson != null) {
+				unionPerson.setUserId(user.getId());
+				unionPersonService.save(unionPerson);
+			} else if (inspector != null) {
+				inspector.setUserId(user.getId());
+				inspectorService.save(inspector);
+			} else if (icsManager != null) {
+				icsManager.setUserId(user.getId());
+				icsManagerService.save(icsManager);
+			} else if (coPerson != null) {
+				coPerson.setUserId(user.getId());
+				cooperativePersonService.save(coPerson);
+			} else if (ccPerson != null) {
+				ccPerson.setUserId(user.getId());
+				collectionCenterPersonService.save(ccPerson);
+			} else if (farmer != null) {
+				farmer.setUserId(user.getId());
+				farmerService.save(farmer);
+			} else {
+				return Response.status(Status.BAD_REQUEST).entity("Unable to find Role details").build();
+			}
+
+			return Response.status(Status.CREATED).entity(user).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
+
+	}
+
 //	@POST
 //	@Path("password")
 //	@Produces(MediaType.APPLICATION_JSON)
