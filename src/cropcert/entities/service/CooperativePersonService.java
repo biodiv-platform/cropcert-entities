@@ -49,7 +49,7 @@ public class CooperativePersonService extends AbstractService<CooperativePerson>
 	}
 	
 	public CooperativePerson findByUserId(Long userId) {
-		return findByPropertyWithCondition("user_id", userId, "=");
+		return findByPropertyWithCondition("userId", userId, "=");
 	}
 
 

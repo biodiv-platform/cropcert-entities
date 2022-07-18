@@ -48,7 +48,7 @@ public class CollectionCenterPersonService extends AbstractService<CollectionCen
 	}
 	
 	public CollectionCenterPerson findByUserId(Long userId) {
-		return findByPropertyWithCondition("user_id", userId, "=");
+		return findByPropertyWithCondition("userId", userId, "=");
 	}
 
 

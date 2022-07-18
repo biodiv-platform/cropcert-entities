@@ -1,17 +1,17 @@
 package cropcert.entities.model;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+
 
 import io.swagger.annotations.ApiModel;
 
 @Entity
 @Table(name = "collection_center_person")
+@IdClass(EntitiesCompositeKey.class)
 @ApiModel("CollectionCenterPerson")
 public class CollectionCenterPerson {
 

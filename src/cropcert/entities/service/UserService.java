@@ -106,7 +106,7 @@ public class UserService {
 		Map<String, Object> myData = new HashMap<String, Object>();
 
 		try {
-			User user = userServiceApi.getUser("1");
+			User user = userServiceApi.getUser("12");
 
 			if (user == null)
 				return null;

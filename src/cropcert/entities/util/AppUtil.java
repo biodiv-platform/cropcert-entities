@@ -15,7 +15,9 @@ public class AppUtil {
 	};
 
 	public enum MODULE {
-		ROLES
+		ROLES,
+		INSPECTOR, ICS_MANAGER, FARMER, COLLECTION_CENTER_PERSON, COOPERATIVE_PERSON, FACTORY_PERSON, UNION_PERSON,
+		ADMIN;
 	}
 
 	public static MODULE getModule(String moduleName) {

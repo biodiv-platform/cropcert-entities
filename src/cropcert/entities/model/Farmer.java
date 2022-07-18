@@ -3,6 +3,8 @@ package cropcert.entities.model;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiModel;
 
 @Entity
 @Table(name = "farmer")
+@IdClass(EntitiesCompositeKey.class)
 @ApiModel("Farmer")
 public class Farmer {
 
@@ -18,6 +21,7 @@ public class Farmer {
 	 * 
 	 */
 
+	@Id
 	@Column(name = "membership_id", nullable = false)
 	private String membershipId;
 	@Column(name = "num_coffee_plots")
@@ -40,6 +44,7 @@ public class Farmer {
 	private String unionName;
 	@Column(name = "field_coordinator")
 	private Long fieldCoOrdinator;
+	@Id
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
