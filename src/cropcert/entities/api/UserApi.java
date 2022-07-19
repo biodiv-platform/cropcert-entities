@@ -1,49 +1,29 @@
 package cropcert.entities.api;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.StreamingOutput;
 
-import org.json.JSONException;
 import org.pac4j.core.profile.CommonProfile;
 
-import com.google.common.io.Files;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.strandls.user.controller.UserServiceApi;
-import com.strandls.user.pojo.Role;
 import com.strandls.user.pojo.UserDTO;
 import com.strandls.user.pojo.UserRoles;
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
 
 import cropcert.entities.Headers;
-import cropcert.entities.filter.Permissions;
-import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.CollectionCenterPerson;
 import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.model.Farmer;
@@ -65,6 +45,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.minidev.json.JSONArray;
 
+import com.strandls.authentication_utility.filter.ValidateUser;
 import com.strandls.authentication_utility.util.AuthUtil;
 import com.strandls.user.controller.AuthenticationServiceApi;
 
@@ -100,6 +81,9 @@ public class UserApi {
 
 	@Inject
 	private UnionPersonService unionPersonService;
+	
+	@Inject 
+	private ObjectMapper om;
 
 	@Inject
 	public UserApi(UserService userService) {
@@ -119,6 +103,9 @@ public class UserApi {
 	@GET
 	@Path("me")
 	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@ApiOperation(value = "Get the current user", response = Map.class)
@@ -151,6 +138,9 @@ public class UserApi {
 	@Path("signup")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
 	@ApiOperation(value = "Create new user", notes = "Returns the created user", response = Map.class)
 	public Response signUp(@Context HttpServletRequest request,
 			@ApiParam(name = "userDTO") UserEntityDTO userEntityDTO) {
@@ -177,18 +167,20 @@ public class UserApi {
 			}
 
 //			user create
-			
+
 			authenticationServiceApi = headers.addAuthHeaders(authenticationServiceApi,
 					request.getHeader(HttpHeaders.AUTHORIZATION));
 			userServiceApi = headers.addUserHeaders(userServiceApi, request.getHeader(HttpHeaders.AUTHORIZATION));
 
 			Map<String, Object> response = authenticationServiceApi.signUp(userDTO);
-			UserDTO user = (UserDTO) response.get("user");
+			
+			UserDTO user = om.convertValue(response.get("user"), UserDTO.class);
 
 			if (user == null) {
 				return Response.status(Status.BAD_REQUEST).entity("User details cannot be empty").build();
 			}
 
+			userRole.setId(user.getId());
 			userServiceApi.updateUserRoles(userRole);
 
 //			user role update
