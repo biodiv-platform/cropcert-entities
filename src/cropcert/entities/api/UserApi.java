@@ -202,8 +202,6 @@ public class UserApi {
 			} else if (farmer != null) {
 				farmer.setUserId(user.getId());
 				farmerService.save(farmer);
-			} else {
-				return Response.status(Status.BAD_REQUEST).entity("Unable to find Role details").build();
 			}
 
 			return Response.status(Status.CREATED).entity(user).build();
