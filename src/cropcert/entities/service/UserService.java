@@ -12,10 +12,10 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-
-
+import org.pac4j.core.profile.CommonProfile;
 
 import com.google.inject.Inject;
+import com.strandls.authentication_utility.util.AuthUtil;
 import com.strandls.user.ApiException;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.Role;
@@ -100,13 +100,12 @@ public class UserService {
 //	}
 
 	public Map<String, Object> getMyData(HttpServletRequest request) {
-		// CommonProfile profile = AuthUtility.getCurrentUser(request);
-		// User user = findById(Long.parseLong(profile.getId()));
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 
 		Map<String, Object> myData = new HashMap<String, Object>();
 
 		try {
-			User user = userServiceApi.getUser("12");
+			User user = userServiceApi.getUser(profile.getId());
 
 			if (user == null)
 				return null;
