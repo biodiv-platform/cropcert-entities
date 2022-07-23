@@ -1,6 +1,7 @@
 package cropcert.entities.service;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 
 import cropcert.entities.dao.CropcertEntityDao;
 import cropcert.entities.model.CropcertEntity;

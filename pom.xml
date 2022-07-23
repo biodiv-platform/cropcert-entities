@@ -4,7 +4,7 @@
 	<artifactId>entities</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>cropcert-entities</name>
+	<name>entities</name>
 	<properties>
 		<!-- Build plugins -->
 		<java.version>1.8</java.version>
@@ -19,8 +19,7 @@
 
 		<!-- Code -->
 		<javax.servlet-api.version>4.0.1</javax.servlet-api.version>
-		<com.sun.jersey.version>1.19.4</com.sun.jersey.version>
-		<com.google.inject.version>4.2.2</com.google.inject.version>
+		<com.google.inject.version>4.2.3</com.google.inject.version>
 
 		<org.pac4j.version>3.7.0</org.pac4j.version>
 		<jax-rs-pac4j.version>2.3.0</jax-rs-pac4j.version>
@@ -39,12 +38,12 @@
 		<repository>
 			<id>central</id>
 			<name>jfrog-releases</name>
-			<url>https://pamba.strandls.com/artifactory/libs-release-local</url>
+			<url>https://pamba.strandls.com/libs-release</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>jfrog-snapshots</name>
-			<url>https://pamba.strandls.com/artifactory/libs-snapshot-local</url>
+			<url>https://pamba.strandls.com/libs-snapshot</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -55,43 +54,63 @@
 			</snapshots>
 			<id>central</id>
 			<name>libs-release</name>
-			<url>https://pamba.strandls.com/artifactory/libs-release</url>
+			<url>https://pamba.strandls.com/libs-release</url>
 		</repository>
 		<repository>
 			<snapshots />
 			<id>snapshots</id>
 			<name>libs-snapshot</name>
-			<url>https://pamba.strandls.com/artifactory/libs-snapshot</url>
+			<url>https://pamba.strandls.com/libs-snapshot</url>
 		</repository>
 	</repositories>
 
 	<dependencies>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax.servlet-api.version}</version>
-			<scope>provided</scope>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.13</version>
+		</dependency>
+        <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.13</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.17.1</version>
+		</dependency>
+
+        <dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-server</artifactId>
-			<version>${com.sun.jersey.version}</version>
+			<version>2.31</version>
 		</dependency>
+
 		<dependency>
-			<groupId>com.sun.jersey.contribs</groupId>
-			<artifactId>jersey-guice</artifactId>
-			<version>${com.sun.jersey.version}</version>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet-core</artifactId>
+			<version>2.31</version>
 		</dependency>
+
 		<dependency>
-			<groupId>com.sun.jersey.contribs</groupId>
-			<artifactId>jersey-multipart</artifactId>
-			<version>${com.sun.jersey.version}</version>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>2.31</version>
 		</dependency>
+
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>${com.sun.jersey.version}</version>
+			<groupId>org.glassfish.hk2</groupId>
+			<artifactId>guice-bridge</artifactId>
+			<version>2.6.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
@@ -102,6 +121,20 @@
 			<artifactId>guice-servlet</artifactId>
 			<version>${com.google.inject.version}</version>
 		</dependency>
+
+        <dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>8.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>2.31</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
@@ -147,20 +180,17 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>${com.fasterxml.jackson}</version>
 		</dependency>
+
 		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-annotations</artifactId>
-			<version>${swagger.version}</version>
+		    <groupId>io.swagger</groupId>
+		    <artifactId>swagger-annotations</artifactId>
+		    <version>1.6.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>io.swagger</groupId>
-			<artifactId>swagger-jaxrs</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-jersey-jaxrs</artifactId>
-			<version>${swagger.version}</version>
+			<artifactId>swagger-jersey2-jaxrs</artifactId>
+			<version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.strandls.biodiv</groupId>
@@ -270,7 +300,7 @@
 							<locations>
 								cropcert
 							</locations>
-							<schemes>http,https</schemes>
+							<schemes>http</schemes>
 							<host>localhost:8080</host>
 							<basePath>/${warName}/api</basePath>
 							<info>

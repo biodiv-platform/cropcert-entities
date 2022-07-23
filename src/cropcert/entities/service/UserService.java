@@ -14,13 +14,13 @@ import javax.ws.rs.core.Response;
 
 import org.pac4j.core.profile.CommonProfile;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 import com.strandls.authentication_utility.util.AuthUtil;
 import com.strandls.user.ApiException;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.Role;
 import com.strandls.user.pojo.User;
-import com.sun.jersey.core.header.FormDataContentDisposition;
 
 import cropcert.entities.api.CollectionCenterApi;
 import cropcert.entities.api.CooperativeApi;
@@ -33,6 +33,7 @@ import cropcert.entities.model.Inspector;
 import cropcert.entities.model.UnionPerson;
 import cropcert.entities.util.AppUtil;
 import cropcert.entities.util.AppUtil.MODULE;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
 public class UserService {
 

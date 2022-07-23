@@ -18,7 +18,8 @@ import javax.ws.rs.core.Response.Status;
 import org.pac4j.core.profile.CommonProfile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.UserDTO;
 import com.strandls.user.pojo.UserRoles;

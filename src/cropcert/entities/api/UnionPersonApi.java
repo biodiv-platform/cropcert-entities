@@ -17,7 +17,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.json.JSONException;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;

@@ -11,7 +11,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 
 import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.Cooperative;

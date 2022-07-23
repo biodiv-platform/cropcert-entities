@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.User;
-import com.sun.jersey.api.NotFoundException;
+import javax.ws.rs.NotFoundException;
 
 import cropcert.entities.service.UserService;
 

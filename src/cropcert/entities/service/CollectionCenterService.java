@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 
 import cropcert.entities.dao.CollectionCenterDao;
 import cropcert.entities.model.CollectionCenter;

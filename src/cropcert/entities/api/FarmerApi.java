@@ -23,8 +23,9 @@ import javax.xml.bind.ValidationException;
 
 import org.json.JSONException;
 
-import com.google.inject.Inject;
-import com.sun.jersey.multipart.FormDataMultiPart;
+import javax.inject.Inject;
+
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
