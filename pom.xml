@@ -32,6 +32,12 @@
 		<swagger-ui.version>3.23.5</swagger-ui.version>
 		<warName>entities-api</warName>
 		<!-- end Code -->
+		
+			<!-- Sonar Cloud -->
+		<sonar.projectKey>strandls_cropcert-entities</sonar.projectKey>
+		<sonar.organization>strandls</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		
 	</properties>
 
 	<distributionManagement>

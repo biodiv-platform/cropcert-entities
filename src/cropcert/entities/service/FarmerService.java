@@ -12,40 +12,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.ValidationException;
 
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.inject.Inject;
-
 import com.opencsv.CSVReader;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import cropcert.entities.dao.FarmerDao;
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.Cooperative;
-import cropcert.entities.model.FactoryPerson;
 import cropcert.entities.model.Farmer;
 import cropcert.entities.model.Union;
 import cropcert.entities.model.request.FarmerFileMetaData;
-import cropcert.entities.util.MessageDigestPasswordEncoder;
 
 public class FarmerService extends AbstractService<Farmer> {
 
 	@Inject
 	ObjectMapper objectMapper;
-
-	@Inject
-	private MessageDigestPasswordEncoder passwordEncoder;
 
 	@Inject
 	private CollectionCenterService collectionCenterService;
@@ -70,11 +63,6 @@ public class FarmerService extends AbstractService<Farmer> {
 	public Farmer save(String jsonString)
 			throws JsonParseException, JsonMappingException, IOException, JSONException, ValidationException {
 		Farmer farmer = objectMapper.readValue(jsonString, Farmer.class);
-//		JSONObject jsonObject = new JSONObject(jsonString);
-//		String password = jsonObject.getString("password");
-//		password = passwordEncoder.encodePassword(password, null);
-//		farmer.setPassword(password);
-//		farmer.setPermissions(defaultPermissions);
 
 		String membershipId = farmer.getMembershipId();
 		Long ccCode = farmer.getCcCode();
@@ -111,20 +99,17 @@ public class FarmerService extends AbstractService<Farmer> {
 
 		return save(farmer);
 	}
-	
+
 	public Farmer findByUserId(Long userId) {
 		return findByPropertyWithCondition("user_id", userId, "=");
 	}
-	
+
 	@Override
 	public Farmer save(Farmer farmer) {
-//		String password = farmer.getPassword();
-//		password = passwordEncoder.encodePassword(password, null);
-//		farmer.setPassword(password);
-//		farmer.setPermissions(defaultPermissions);
+
 		return super.save(farmer);
 	}
-	
+
 	public List<Farmer> getFarmerForMultipleCollectionCenter(String ccCodes, String firstName, Integer limit,
 			Integer offset) {
 		List<Long> ccCodesLong = new ArrayList<Long>();
@@ -138,7 +123,8 @@ public class FarmerService extends AbstractService<Farmer> {
 		return ((FarmerDao) dao).getFarmerForMultipleCollectionCenter(ccCodesLong, firstName, limit, offset);
 	}
 
-	public Map<String, Object> bulkFarmerSave(HttpServletRequest request, FormDataMultiPart multiPart) throws IOException {
+	public Map<String, Object> bulkFarmerSave(HttpServletRequest request, FormDataMultiPart multiPart)
+			throws IOException {
 
 		FormDataBodyPart formdata = multiPart.getField("metadata");
 		if (formdata == null) {
@@ -147,24 +133,23 @@ public class FarmerService extends AbstractService<Farmer> {
 		}
 		InputStream metaDataInputStream = formdata.getValueAs(InputStream.class);
 		InputStreamReader inputStreamReader = new InputStreamReader(metaDataInputStream, StandardCharsets.UTF_8);
-		
+
 		FarmerFileMetaData fileMetaData = objectMapper.readValue(inputStreamReader, FarmerFileMetaData.class);
 		fileMetaData.setCollectionCenterService(collectionCenterService);
 		fileMetaData.setCooperativeService(cooperativeService);
 		fileMetaData.setUnionService(unionService);
 
-		
-		if(fileMetaData.getFileType().equalsIgnoreCase("csv")) {
-			
+		if (fileMetaData.getFileType().equalsIgnoreCase("csv")) {
+
 			formdata = multiPart.getField("csv");
 			InputStream csvDataInputStream = formdata.getValueAs(InputStream.class);
 			inputStreamReader = new InputStreamReader(csvDataInputStream, StandardCharsets.UTF_8);
 			CSVReader reader = new CSVReader(inputStreamReader);
-			
+
 			Map<String, Object> result = ValidateSheet(reader, fileMetaData);
 			if (result.size() > 0)
 				return result;
-			
+
 			csvDataInputStream = formdata.getValueAs(InputStream.class);
 			inputStreamReader = new InputStreamReader(csvDataInputStream, StandardCharsets.UTF_8);
 			reader = new CSVReader(inputStreamReader);
@@ -172,19 +157,7 @@ public class FarmerService extends AbstractService<Farmer> {
 
 			@SuppressWarnings("unused")
 			String[] headers = it.next();
-			
-			while (it.hasNext()) {
-				String[] data = it.next();
-//				try {
-//				
-//					Farmer farmer = fileMetaData.readOneRow(data, false);
-//					farmer = save(farmer);
-//					result.put("Success", farmer);
-//				} catch(Exception e) {
-//					reader.close();
-//					throw new IOException("Error creating the farmer : " + data);
-//				}
-			}
+
 			reader.close();
 			return result;
 		}
@@ -192,13 +165,13 @@ public class FarmerService extends AbstractService<Farmer> {
 	}
 
 	private Map<String, Object> ValidateSheet(CSVReader reader, FarmerFileMetaData fileMetaData) {
-		
+
 		Map<String, Object> validationResult = new HashMap<String, Object>();
-		
+
 		Iterator<String[]> it = reader.iterator();
 
 		String[] headers = it.next();
-		if(!fileMetaData.validateIndices(headers)) {
+		if (!fileMetaData.validateIndices(headers)) {
 			validationResult.put("Failed", "Compulsory column indices in the file are required for metadata");
 			return validationResult;
 		}
@@ -213,7 +186,7 @@ public class FarmerService extends AbstractService<Farmer> {
 //			}
 //			index ++;
 //		}
-		
+
 		return validationResult;
 	}
 }

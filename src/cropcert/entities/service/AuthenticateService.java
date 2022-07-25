@@ -7,15 +7,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.pac4j.core.context.Pac4jConstants;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.definition.CommonProfileDefinition;
 import org.pac4j.core.profile.jwt.JwtClaims;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
-
-import javax.inject.Inject;
 
 import com.strandls.user.ApiException;
 import com.strandls.user.controller.UserServiceApi;
@@ -23,22 +22,11 @@ import com.strandls.user.pojo.User;
 
 import cropcert.entities.MyApplication;
 import cropcert.entities.util.AuthUtility;
-import cropcert.entities.util.SimpleUsernamePasswordAuthenticator;
 
 public class AuthenticateService {
 
 	@Inject
 	private UserServiceApi userServiceApi;
-
-//	@Inject
-//	private SimpleUsernamePasswordAuthenticator usernamePasswordAuthenticator;
-//
-//	public CommonProfile authenticate(String username, String password) throws Exception {
-//		// Authenticate the user using the credentials provided
-//		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-//		usernamePasswordAuthenticator.validate(credentials, null);
-//		return credentials.getUserProfile();
-//	}
 
 	public Map<String, Object> buildTokenResponse(CommonProfile profile, Long userId, boolean getNewRefreshToken) {
 		User user;
@@ -47,7 +35,6 @@ public class AuthenticateService {
 			return buildTokenResponse(profile, user, getNewRefreshToken);
 
 		} catch (ApiException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

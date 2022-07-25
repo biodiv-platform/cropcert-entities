@@ -19,7 +19,6 @@ import com.strandls.user.controller.UserServiceApi;
 
 import cropcert.entities.api.APIModule;
 import cropcert.entities.dao.DaoModule;
-import cropcert.entities.filter.FilterModule;
 import cropcert.entities.util.AuthUtility;
 import cropcert.entities.util.Utility;
 
@@ -49,7 +48,7 @@ public class UserServletContextListener extends GuiceServletContextListener {
 				bind(ObjectMapper.class).in(Scopes.SINGLETON);
 				bind(AuthUtility.class).in(Scopes.SINGLETON);
 				bind(UserServiceApi.class).in(Scopes.SINGLETON);
-                bind(ServletContainer.class).in(Scopes.SINGLETON);
+				bind(ServletContainer.class).in(Scopes.SINGLETON);
 
 				Map<String, String> props = new HashMap<String, String>();
 				props.put("javax.ws.rs.Application", MyApplication.class.getName());

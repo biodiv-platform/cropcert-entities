@@ -1,13 +1,10 @@
 package cropcert.entities.model;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.annotations.ApiModel;
 
@@ -60,7 +57,5 @@ public class FactoryPerson {
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
-	
-	
 
 }

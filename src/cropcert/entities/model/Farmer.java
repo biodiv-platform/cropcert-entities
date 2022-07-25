@@ -1,13 +1,10 @@
 package cropcert.entities.model;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.annotations.ApiModel;
 
@@ -53,7 +50,8 @@ public class Farmer {
 	}
 
 	public Farmer(String membershipId, Integer numCoffeePlots, Integer numCoffeeTrees, Float farmArea, Float coffeeArea,
-			String farmerCode, Long ccCode, String ccName, String coName, String unionName, Long fieldCoOrdinator, Long userId) {
+			String farmerCode, Long ccCode, String ccName, String coName, String unionName, Long fieldCoOrdinator,
+			Long userId) {
 		super();
 		this.membershipId = membershipId;
 		this.numCoffeePlots = numCoffeePlots;
@@ -66,7 +64,7 @@ public class Farmer {
 		this.coName = coName;
 		this.unionName = unionName;
 		this.fieldCoOrdinator = fieldCoOrdinator;
-		this.userId=userId;
+		this.userId = userId;
 	}
 
 	public String getMembershipId() {
@@ -164,7 +162,5 @@ public class Farmer {
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
-	
-	
 
 }

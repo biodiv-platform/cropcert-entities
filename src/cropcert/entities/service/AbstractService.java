@@ -6,7 +6,7 @@ import java.util.List;
 import cropcert.entities.dao.AbstractDao;
 
 
-public abstract class  AbstractService<T> {
+public abstract class AbstractService<T> {
 
 	public Class<T> entityClass;
 	protected  AbstractDao<T, Long> dao;

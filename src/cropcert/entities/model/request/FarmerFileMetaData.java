@@ -1,22 +1,15 @@
 package cropcert.entities.model.request;
 
-import java.io.IOException;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.inject.Inject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.Cooperative;
-import cropcert.entities.model.Farmer;
 import cropcert.entities.model.Union;
 import cropcert.entities.service.CollectionCenterService;
 import cropcert.entities.service.CooperativeService;
@@ -301,11 +294,11 @@ public class FarmerFileMetaData {
 	public void setCcCodeColumnName(String ccCodeColumnName) {
 		this.ccCodeColumnName = ccCodeColumnName;
 	}
-	
+
 	public String getFarmerCodeColumnName() {
 		return farmerCodeColumnName;
 	}
-	
+
 	public void setFarmerCodeColumnName(String farmerCodeColumnName) {
 		this.farmerCodeColumnName = farmerCodeColumnName;
 	}
