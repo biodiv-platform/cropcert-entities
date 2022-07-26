@@ -4,7 +4,7 @@
   "invokerPackage": "cropcert.entities",
   "groupId": "cropcert",
   "artifactId": "entities-client",
-  "artifactVersion": "1.0.0-SNAPSHOT",
+  "artifactVersion": "1.0.0",
   "fullJavaUtil": true,
   "dateLibrary": "legacy",
   "library": "jersey2",
