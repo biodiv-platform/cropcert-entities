@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cropcert</groupId>
 	<artifactId>entities</artifactId>
@@ -32,24 +34,23 @@
 		<swagger-ui.version>3.23.5</swagger-ui.version>
 		<warName>entities-api</warName>
 		<!-- end Code -->
-		
-			<!-- Sonar Cloud -->
+
+		<!-- Sonar Cloud -->
 		<sonar.projectKey>strandls_cropcert-entities</sonar.projectKey>
 		<sonar.organization>strandls</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		
-	</properties>
 
+	</properties>
 	<distributionManagement>
 		<repository>
 			<id>central</id>
 			<name>jfrog-releases</name>
-			<url>https://pamba.strandls.com/libs-release</url>
+			<url>https://devartifactory.indiabiodiversity.org/libs-release</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>jfrog-snapshots</name>
-			<url>https://pamba.strandls.com/libs-snapshot</url>
+			<url>https://devartifactory.indiabiodiversity.org/libs-snapshot</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -60,13 +61,13 @@
 			</snapshots>
 			<id>central</id>
 			<name>libs-release</name>
-			<url>https://pamba.strandls.com/libs-release</url>
+			<url>https://devartifactory.indiabiodiversity.org/libs-release</url>
 		</repository>
 		<repository>
 			<snapshots />
 			<id>snapshots</id>
 			<name>libs-snapshot</name>
-			<url>https://pamba.strandls.com/libs-snapshot</url>
+			<url>https://devartifactory.indiabiodiversity.org/libs-snapshot</url>
 		</repository>
 	</repositories>
 
@@ -76,7 +77,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.13</version>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.13</version>
@@ -87,7 +88,7 @@
 			<version>2.17.1</version>
 		</dependency>
 
-        <dependency>
+		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.1.1</version>
@@ -128,7 +129,7 @@
 			<version>${com.google.inject.version}</version>
 		</dependency>
 
-        <dependency>
+		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-web-api</artifactId>
 			<version>8.0.1</version>
@@ -188,9 +189,9 @@
 		</dependency>
 
 		<dependency>
-		    <groupId>io.swagger</groupId>
-		    <artifactId>swagger-annotations</artifactId>
-		    <version>1.6.1</version>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>1.6.1</version>
 		</dependency>
 
 		<dependency>
@@ -203,7 +204,7 @@
 			<artifactId>authentication-utility</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.strandls.biodiv</groupId>
 			<artifactId>user-client</artifactId>
@@ -211,9 +212,9 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
 		<dependency>
-		    <groupId>com.opencsv</groupId>
-		    <artifactId>opencsv</artifactId>
-		    <version>5.3</version>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.3</version>
 		</dependency>
 	</dependencies>
 
