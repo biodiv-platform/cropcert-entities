@@ -83,7 +83,7 @@ public class FarmerApi {
 			@DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
 		List<Farmer> farmers = farmerService.getByPropertyWithCondtion("ccCode", ccCode, "=", limit, offset,
-				"firstName");
+				"userId");
 		return Response.ok().entity(farmers).build();
 	}
 
