@@ -34,8 +34,7 @@
 		<warName>entities-api</warName>
 
 		<!-- Sonar Cloud -->
-		<sonar.projectKey>strandls_cropcert-entities</sonar.projectKey>
-		<sonar.organization>strandls</sonar.organization>
+		<sonar.organization>biodiv-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
@@ -43,12 +42,12 @@
 		<repository>
 			<id>central</id>
 			<name>jfrog-releases</name>
-			<url>https://pamba.strandls.com/libs-release</url>
+			<url>https://devartifactory.indiabiodiversity.org/libs-release</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>jfrog-snapshots</name>
-			<url>https://pamba.strandls.com/libs-snapshot</url>
+			<url>https://devartifactory.indiabiodiversity.org/libs-snapshot</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -59,13 +58,13 @@
 			</snapshots>
 			<id>central</id>
 			<name>libs-release</name>
-			<url>https://pamba.strandls.com/libs-release</url>
+			<url>https://devartifactory.indiabiodiversity.org/libs-release</url>
 		</repository>
 		<repository>
 			<snapshots />
 			<id>snapshots</id>
 			<name>libs-snapshot</name>
-			<url>https://pamba.strandls.com/libs-snapshot</url>
+			<url>https://devartifactory.indiabiodiversity.org/libs-snapshot</url>
 		</repository>
 	</repositories>
 
