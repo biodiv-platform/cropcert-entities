@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVReader;
+import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.User;
 
 import cropcert.entities.dao.FarmerDao;
 import cropcert.entities.filter.Permissions;
@@ -33,6 +36,7 @@ import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.Cooperative;
 import cropcert.entities.model.Farmer;
 import cropcert.entities.model.Union;
+import cropcert.entities.model.UserFarmerDetail;
 import cropcert.entities.model.request.FarmerFileMetaData;
 
 public class FarmerService extends AbstractService<Farmer> {
@@ -48,6 +52,9 @@ public class FarmerService extends AbstractService<Farmer> {
 
 	@Inject
 	private UnionService unionService;
+
+	@Inject
+	private UserServiceApi userServiceApi;
 
 	private static Set<String> defaultPermissions;
 	static {
@@ -100,8 +107,20 @@ public class FarmerService extends AbstractService<Farmer> {
 		return save(farmer);
 	}
 
-	public Farmer findByUserId(Long userId) {
-		return findByPropertyWithCondition("user_id", userId, "=");
+	public List<UserFarmerDetail> findByUserId(Long userId) {
+		Farmer farmer = findByPropertyWithCondition("user_id", userId, "=");
+		List<Farmer> farmerList = new ArrayList<>();
+		farmerList.add(farmer);
+		return getUserFarmerList(farmerList);
+
+	}
+
+	public List<UserFarmerDetail> findByFamerId(Long id) {
+		Farmer farmer = ((FarmerDao) dao).findById(id);
+		List<Farmer> farmerList = new ArrayList<>();
+		farmerList.add(farmer);
+		return getUserFarmerList(farmerList);
+
 	}
 
 	@Override
@@ -110,7 +129,7 @@ public class FarmerService extends AbstractService<Farmer> {
 		return super.save(farmer);
 	}
 
-	public List<Farmer> getFarmerForMultipleCollectionCenter(String ccCodes, String firstName, Integer limit,
+	public List<UserFarmerDetail> getFarmerForMultipleCollectionCenter(String ccCodes, String firstName, Integer limit,
 			Integer offset) {
 		List<Long> ccCodesLong = new ArrayList<Long>();
 
@@ -120,7 +139,44 @@ public class FarmerService extends AbstractService<Farmer> {
 			ccCodesLong.add(ccCode);
 		}
 
-		return ((FarmerDao) dao).getFarmerForMultipleCollectionCenter(ccCodesLong, firstName, limit, offset);
+		List<Farmer> farmerList = ((FarmerDao) dao).getFarmerForMultipleCollectionCenter(ccCodesLong, firstName, limit,
+				offset);
+
+		return getUserFarmerList(farmerList);
+	}
+
+	private List<UserFarmerDetail> getUserFarmerList(List<Farmer> farmerList) {
+		List<UserFarmerDetail> result = new ArrayList<>();
+
+		try {
+			String userIds = farmerList.stream().map(item -> item.getUserId().toString())
+					.collect(Collectors.joining(", "));
+			List<User> users = userServiceApi.getUserBulk(userIds);
+			int index = 0;
+			for (Farmer farmer : farmerList) {
+				result.add(new UserFarmerDetail(farmer.getMembershipId(), farmer.getNumCoffeePlots(),
+						farmer.getNumCoffeeTrees(), farmer.getFarmArea(), farmer.getCoffeeArea(),
+						farmer.getFarmerCode(), farmer.getCcCode(), farmer.getCcName(), farmer.getCoName(),
+						farmer.getUnionName(), farmer.getFieldCoOrdinator(), farmer.getUserId(),
+						users.get(index).getName()));
+
+				index++;
+			}
+
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	public List<UserFarmerDetail> getFarmerForCollectionCenter(Long ccCode, Integer limit, Integer offset) {
+		List<Farmer> farmerList = ((FarmerDao) dao).getByPropertyWithCondtion("ccCode", ccCode, "=", limit, offset,
+				"userId");
+
+		return getUserFarmerList(farmerList);
+
 	}
 
 	public Map<String, Object> bulkFarmerSave(HttpServletRequest request, FormDataMultiPart multiPart)

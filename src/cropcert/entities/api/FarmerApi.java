@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -21,15 +22,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.ValidationException;
 
-import org.json.JSONException;
-
-import javax.inject.Inject;
-
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.json.JSONException;
 
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.Farmer;
+import cropcert.entities.model.UserFarmerDetail;
 import cropcert.entities.model.request.FarmerFileMetaData;
 import cropcert.entities.service.FarmerService;
 import io.swagger.annotations.Api;
@@ -52,9 +51,9 @@ public class FarmerApi {
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get farmer by id", response = Farmer.class)
+	@ApiOperation(value = "Get farmer by id", response = UserFarmerDetail.class)
 	public Response find(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		Farmer farmer = farmerService.findById(id);
+		List<UserFarmerDetail> farmer = farmerService.findByFamerId(id);
 		if (farmer == null)
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.status(Status.CREATED).entity(farmer).build();
@@ -77,13 +76,12 @@ public class FarmerApi {
 	@Path("collection")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get list of farmer by collection center", response = Farmer.class, responseContainer = "List")
+	@ApiOperation(value = "Get list of farmer by collection center", response = UserFarmerDetail.class, responseContainer = "List")
 	public Response getFarmerForCollectionCenter(@Context HttpServletRequest request,
 			@DefaultValue("-1") @QueryParam("ccCode") Long ccCode,
 			@DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
-		List<Farmer> farmers = farmerService.getByPropertyWithCondtion("ccCode", ccCode, "=", limit, offset,
-				"userId");
+		List<UserFarmerDetail> farmers = farmerService.getFarmerForCollectionCenter(ccCode, limit, offset);
 		return Response.ok().entity(farmers).build();
 	}
 
@@ -98,12 +96,13 @@ public class FarmerApi {
 	@Path("ccCodes")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get list of farmer by collection center", response = Farmer.class, responseContainer = "List")
+	@ApiOperation(value = "Get list of farmer by collection center", response = UserFarmerDetail.class, responseContainer = "List")
 	public Response getFarmerForMultipleCollectionCenter(@Context HttpServletRequest request,
 			@DefaultValue("-1") @QueryParam("ccCodes") String ccCodes, @QueryParam("firstName") String firstName,
 			@DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
-		List<Farmer> farmers = farmerService.getFarmerForMultipleCollectionCenter(ccCodes, firstName, limit, offset);
+		List<UserFarmerDetail> farmers = farmerService.getFarmerForMultipleCollectionCenter(ccCodes, firstName, limit,
+				offset);
 		return Response.ok().entity(farmers).build();
 	}
 
