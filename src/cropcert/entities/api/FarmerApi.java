@@ -62,14 +62,11 @@ public class FarmerApi {
 	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get all the farmers", response = Farmer.class, responseContainer = "List")
+	@ApiOperation(value = "Get all the farmers", response = UserFarmerDetail.class, responseContainer = "List")
 	public Response findAll(@Context HttpServletRequest request, @DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
-		List<Farmer> farmers;
-		if (limit == -1 || offset == -1)
-			farmers = farmerService.findAll();
-		else
-			farmers = farmerService.findAll(limit, offset);
+
+		List<UserFarmerDetail> farmers = farmerService.findByUserFarmer(limit, offset);
 		return Response.ok().entity(farmers).build();
 	}
 

@@ -107,6 +107,18 @@ public class FarmerService extends AbstractService<Farmer> {
 		return save(farmer);
 	}
 
+	public List<UserFarmerDetail> findByUserFarmer(Integer limit,Integer offset) {
+		
+		List<Farmer> farmers = new ArrayList<>();
+		if (limit == -1 || offset == -1)
+			farmers =findAll();
+		else
+			farmers = findAll(limit, offset);
+		return getUserFarmerList(farmers);
+
+	}
+
+	
 	public List<UserFarmerDetail> findByUserId(Long userId) {
 		Farmer farmer = findByPropertyWithCondition("user_id", userId, "=");
 		List<Farmer> farmerList = new ArrayList<>();
