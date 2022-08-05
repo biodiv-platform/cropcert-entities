@@ -107,18 +107,17 @@ public class FarmerService extends AbstractService<Farmer> {
 		return save(farmer);
 	}
 
-	public List<UserFarmerDetail> findByUserFarmer(Integer limit,Integer offset) {
-		
+	public List<UserFarmerDetail> findByUserFarmer(Integer limit, Integer offset) {
+
 		List<Farmer> farmers = new ArrayList<>();
 		if (limit == -1 || offset == -1)
-			farmers =findAll();
+			farmers = findAll();
 		else
 			farmers = findAll(limit, offset);
 		return getUserFarmerList(farmers);
 
 	}
 
-	
 	public List<UserFarmerDetail> findByUserId(Long userId) {
 		Farmer farmer = findByPropertyWithCondition("user_id", userId, "=");
 		List<Farmer> farmerList = new ArrayList<>();
@@ -161,16 +160,14 @@ public class FarmerService extends AbstractService<Farmer> {
 		List<UserFarmerDetail> result = new ArrayList<>();
 
 		try {
-			List<Long> userIds = farmerList.stream().map(item -> item.getUserId())
-					.collect(Collectors.toList());
+			List<Long> userIds = farmerList.stream().map(item -> item.getUserId()).collect(Collectors.toList());
 			List<User> users = userServiceApi.getUserBulk(userIds);
 			int index = 0;
 			for (Farmer farmer : farmerList) {
-				result.add(new UserFarmerDetail(farmer.getMembershipId(), farmer.getNumCoffeePlots(),
-						farmer.getNumCoffeeTrees(), farmer.getFarmArea(), farmer.getCoffeeArea(),
-						farmer.getFarmerCode(), farmer.getCcCode(), farmer.getCcName(), farmer.getCoName(),
-						farmer.getUnionName(), farmer.getFieldCoOrdinator(), farmer.getUserId(),
-						users.get(index).getName()));
+				result.add(new UserFarmerDetail(users.get(index).getName(), farmer.getMembershipId(),
+						farmer.getNumCoffeePlots(), farmer.getNumCoffeeTrees(), farmer.getFarmArea(),
+						farmer.getCoffeeArea(), farmer.getFarmerCode(), farmer.getCcCode(), farmer.getCcName(),
+						farmer.getCoName(), farmer.getUnionName(), farmer.getFieldCoOrdinator(), farmer.getUserId()));
 
 				index++;
 			}
@@ -184,8 +181,7 @@ public class FarmerService extends AbstractService<Farmer> {
 	}
 
 	public List<UserFarmerDetail> getFarmerForCollectionCenter(Long ccCode, Integer limit, Integer offset) {
-		List<Farmer> farmerList = ((FarmerDao) dao).getByPropertyWithCondtion("ccCode", ccCode, "=", limit, offset,
-				"userId");
+		List<Farmer> farmerList = getByPropertyWithCondtion("ccCode", ccCode, "=", limit, offset, "userId");
 
 		return getUserFarmerList(farmerList);
 
