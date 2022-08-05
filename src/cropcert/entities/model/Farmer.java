@@ -68,7 +68,6 @@ public class Farmer {
 	}
 
 	public String getMembershipId() {
-		System.out.println("The demo is not wkring");
 		return membershipId;
 	}
 

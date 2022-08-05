@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModel;
 public class UserFarmerDetail {
 
 	private String name;
+	private String username;
+	private String email;
 	private String membershipId;
 	private Integer numCoffeePlots;
 	private Integer numCoffeeTrees;
@@ -24,11 +26,13 @@ public class UserFarmerDetail {
 		super();
 	}
 
-	public UserFarmerDetail(String name, String membershipId, Integer numCoffeePlots, Integer numCoffeeTrees,
-			Float farmArea, Float coffeeArea, String farmerCode, Long ccCode, String ccName, String coName,
-			String unionName, Long fieldCoOrdinator, Long userId) {
+	public UserFarmerDetail(String name, String username, String email, String membershipId, Integer numCoffeePlots,
+			Integer numCoffeeTrees, Float farmArea, Float coffeeArea, String farmerCode, Long ccCode, String ccName,
+			String coName, String unionName, Long fieldCoOrdinator, Long userId) {
 		super();
 		this.name = name;
+		this.username = username;
+		this.email = email;
 		this.membershipId = membershipId;
 		this.numCoffeePlots = numCoffeePlots;
 		this.numCoffeeTrees = numCoffeeTrees;
@@ -145,6 +149,22 @@ public class UserFarmerDetail {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

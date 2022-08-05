@@ -164,10 +164,11 @@ public class FarmerService extends AbstractService<Farmer> {
 			List<User> users = userServiceApi.getUserBulk(userIds);
 			int index = 0;
 			for (Farmer farmer : farmerList) {
-				result.add(new UserFarmerDetail(users.get(index).getName(), farmer.getMembershipId(),
-						farmer.getNumCoffeePlots(), farmer.getNumCoffeeTrees(), farmer.getFarmArea(),
-						farmer.getCoffeeArea(), farmer.getFarmerCode(), farmer.getCcCode(), farmer.getCcName(),
-						farmer.getCoName(), farmer.getUnionName(), farmer.getFieldCoOrdinator(), farmer.getUserId()));
+				result.add(new UserFarmerDetail(users.get(index).getName(), users.get(index).getUserName(),
+						users.get(index).getEmail(), farmer.getMembershipId(), farmer.getNumCoffeePlots(),
+						farmer.getNumCoffeeTrees(), farmer.getFarmArea(), farmer.getCoffeeArea(),
+						farmer.getFarmerCode(), farmer.getCcCode(), farmer.getCcName(), farmer.getCoName(),
+						farmer.getUnionName(), farmer.getFieldCoOrdinator(), farmer.getUserId()));
 
 				index++;
 			}
