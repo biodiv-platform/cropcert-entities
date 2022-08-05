@@ -149,8 +149,8 @@ public class FarmerService extends AbstractService<Farmer> {
 		List<UserFarmerDetail> result = new ArrayList<>();
 
 		try {
-			String userIds = farmerList.stream().map(item -> item.getUserId().toString())
-					.collect(Collectors.joining(", "));
+			List<Long> userIds = farmerList.stream().map(item -> item.getUserId())
+					.collect(Collectors.toList());
 			List<User> users = userServiceApi.getUserBulk(userIds);
 			int index = 0;
 			for (Farmer farmer : farmerList) {
