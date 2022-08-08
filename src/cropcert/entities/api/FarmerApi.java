@@ -53,12 +53,12 @@ public class FarmerApi {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get farmer by id", response = UserFarmerDetail.class)
 	public Response find(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		List<UserFarmerDetail> farmer = farmerService.findByFamerId(id);
+		List<UserFarmerDetail> farmer = farmerService.findByUserId(id);
 		if (farmer == null)
 			return Response.status(Status.NO_CONTENT).build();
-		return Response.status(Status.CREATED).entity(farmer).build();
+		return Response.ok().entity(farmer.get(0)).build();
 	}
-
+	
 	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

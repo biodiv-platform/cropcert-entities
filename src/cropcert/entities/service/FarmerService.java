@@ -119,7 +119,7 @@ public class FarmerService extends AbstractService<Farmer> {
 	}
 
 	public List<UserFarmerDetail> findByUserId(Long userId) {
-		Farmer farmer = findByPropertyWithCondition("user_id", userId, "=");
+		Farmer farmer = findByPropertyWithCondition("userId", userId, "=");
 		List<Farmer> farmerList = new ArrayList<>();
 		farmerList.add(farmer);
 		return getUserFarmerList(farmerList);
