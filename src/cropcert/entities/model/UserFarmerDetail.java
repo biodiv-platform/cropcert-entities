@@ -9,6 +9,8 @@ public class UserFarmerDetail {
 	private String name;
 	private String username;
 	private String email;
+	private String sexType;
+	private String mobileNumber;
 	private String membershipId;
 	private Integer numCoffeePlots;
 	private Integer numCoffeeTrees;
@@ -28,7 +30,7 @@ public class UserFarmerDetail {
 
 	public UserFarmerDetail(String name, String username, String email, String membershipId, Integer numCoffeePlots,
 			Integer numCoffeeTrees, Float farmArea, Float coffeeArea, String farmerCode, Long ccCode, String ccName,
-			String coName, String unionName, Long fieldCoOrdinator, Long userId) {
+			String coName, String unionName, Long fieldCoOrdinator, Long userId, String sexType, String mobileNumber) {
 		super();
 		this.name = name;
 		this.username = username;
@@ -45,6 +47,8 @@ public class UserFarmerDetail {
 		this.unionName = unionName;
 		this.fieldCoOrdinator = fieldCoOrdinator;
 		this.userId = userId;
+		this.sexType = sexType;
+		this.mobileNumber = mobileNumber;
 	}
 
 	public String getName() {
@@ -165,6 +169,22 @@ public class UserFarmerDetail {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getSexType() {
+		return sexType;
+	}
+
+	public void setSexType(String sexType) {
+		this.sexType = sexType;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 
 }

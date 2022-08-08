@@ -168,7 +168,8 @@ public class FarmerService extends AbstractService<Farmer> {
 						users.get(index).getEmail(), farmer.getMembershipId(), farmer.getNumCoffeePlots(),
 						farmer.getNumCoffeeTrees(), farmer.getFarmArea(), farmer.getCoffeeArea(),
 						farmer.getFarmerCode(), farmer.getCcCode(), farmer.getCcName(), farmer.getCoName(),
-						farmer.getUnionName(), farmer.getFieldCoOrdinator(), farmer.getUserId()));
+						farmer.getUnionName(), farmer.getFieldCoOrdinator(), farmer.getUserId(),
+						users.get(index).getSexType(), users.get(index).getMobileNumber()));
 
 				index++;
 			}
