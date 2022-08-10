@@ -22,6 +22,8 @@ import javax.xml.bind.ValidationException;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -40,6 +42,7 @@ import cropcert.entities.model.UserFarmerDetail;
 import cropcert.entities.model.request.FarmerFileMetaData;
 
 public class FarmerService extends AbstractService<Farmer> {
+	private static final Logger logger = LoggerFactory.getLogger(FarmerService.class);
 
 	@Inject
 	ObjectMapper objectMapper;
@@ -176,7 +179,7 @@ public class FarmerService extends AbstractService<Farmer> {
 
 			return result;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return result;

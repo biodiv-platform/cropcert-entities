@@ -15,6 +15,8 @@ import org.pac4j.core.profile.definition.CommonProfileDefinition;
 import org.pac4j.core.profile.jwt.JwtClaims;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.strandls.user.ApiException;
 import com.strandls.user.controller.UserServiceApi;
@@ -24,6 +26,7 @@ import cropcert.entities.MyApplication;
 import cropcert.entities.util.AuthUtility;
 
 public class AuthenticateService {
+	private static final Logger logger = LoggerFactory.getLogger(AuthenticateService.class);
 
 	@Inject
 	private UserServiceApi userServiceApi;
@@ -35,7 +38,7 @@ public class AuthenticateService {
 			return buildTokenResponse(profile, user, getNewRefreshToken);
 
 		} catch (ApiException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 

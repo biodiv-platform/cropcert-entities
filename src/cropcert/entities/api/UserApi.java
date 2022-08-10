@@ -163,7 +163,7 @@ public class UserApi {
 			CollectionCenterPerson ccPerson = userEntityDTO.getCcPerson();
 			UserRoles userRole = userEntityDTO.getUserRole();
 
-			if (userDTO == null && userRole != null && userRole.getRoles().isEmpty()) {
+			if (userDTO == null || userRole == null ||userRole.getRoles()== null||userRole.getRoles().isEmpty()) {
 				return Response.status(Status.BAD_REQUEST).entity("User details cannot be empty").build();
 			}
 

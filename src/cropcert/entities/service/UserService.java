@@ -9,12 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.pac4j.core.profile.CommonProfile;
-
-import javax.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.strandls.authentication_utility.util.AuthUtil;
 import com.strandls.user.ApiException;
@@ -33,9 +35,10 @@ import cropcert.entities.model.Inspector;
 import cropcert.entities.model.UnionPerson;
 import cropcert.entities.util.AppUtil;
 import cropcert.entities.util.AppUtil.MODULE;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
 public class UserService {
+	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 
 	public final static String rootPath = System.getProperty("user.home") + File.separatorChar + "cropcert-image";
 
@@ -168,7 +171,7 @@ public class UserService {
 				}
 			}
 		} catch (ApiException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		return myData;
