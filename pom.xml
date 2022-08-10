@@ -36,8 +36,7 @@
 		<!-- end Code -->
 
 		<!-- Sonar Cloud -->
-		<sonar.projectKey>strandls_cropcert-entities</sonar.projectKey>
-		<sonar.organization>strandls</sonar.organization>
+		<sonar.organization>biodiv-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
 	</properties>
