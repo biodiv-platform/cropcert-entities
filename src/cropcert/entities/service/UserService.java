@@ -6,28 +6,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.pac4j.core.profile.CommonProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.strandls.authentication_utility.util.AuthUtil;
+import com.strandls.user.ApiException;
+import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.Role;
+import com.strandls.user.pojo.User;
 
 import cropcert.entities.api.CollectionCenterApi;
 import cropcert.entities.api.CooperativeApi;
-import cropcert.entities.dao.UserDao;
-import cropcert.entities.filter.Permissions;
 import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.CollectionCenterPerson;
 import cropcert.entities.model.Cooperative;
@@ -35,19 +33,14 @@ import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.model.ICSManager;
 import cropcert.entities.model.Inspector;
 import cropcert.entities.model.UnionPerson;
-import cropcert.entities.model.User;
-import cropcert.entities.util.AuthUtility;
-import cropcert.entities.util.MessageDigestPasswordEncoder;
+import cropcert.entities.util.AppUtil;
+import cropcert.entities.util.AppUtil.MODULE;
 
-public class UserService extends AbstractService<User> {
+public class UserService {
+	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 
 	public final static String rootPath = System.getProperty("user.home") + File.separatorChar + "cropcert-image";
-
-	@Inject
-	private ObjectMapper objectMappper;
-
-	@Inject
-	private MessageDigestPasswordEncoder passwordEncoder;
 
 	@Inject
 	private CooperativeApi cooperativeApi;
@@ -55,113 +48,146 @@ public class UserService extends AbstractService<User> {
 	@Inject
 	private CollectionCenterApi collectionCenterApi;
 
-	private static Set<String> defaultPermissions;
-	static {
-		defaultPermissions = new HashSet<String>();
-		defaultPermissions.add(Permissions.DEFAULT);
-	}
+	@Inject
+	private CollectionCenterPersonService collectionCenterPersonApi;
 
 	@Inject
-	public UserService(UserDao userDao) {
-		super(userDao);
-	}
+	private InspectorService inspectorSerciveApi;
 
-	public User save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
-		User user = objectMappper.readValue(jsonString, User.class);
-		JSONObject jsonObject = new JSONObject(jsonString);
-		String password = jsonObject.getString("password");
-		password = passwordEncoder.encodePassword(password, null);
-		user.setPassword(password);
-		user.setPermissions(defaultPermissions);
-		return save(user);
-	}
+	@Inject
+	private UnionPersonService unionPersonServiceApi;
 
-	public User updatePassword(HttpServletRequest request, String password) {
-		
-		CommonProfile profile = AuthUtility.getCurrentUser(request);
-		User user = findById(Long.parseLong(profile.getId()));
-		
-		password = passwordEncoder.encodePassword(password, null);
-		user.setPassword(password);
-		return update(user);
-	}
-	
-	public User getByEmail(String email) {
-		return findByPropertyWithCondtion("email", email, "=");
-	}
+	@Inject
+	private ICSManagerService icsManagerServiceApi;
 
-	public User getByUserName(String userName) {
-		return findByPropertyWithCondtion("userName", userName, "=");
-	}
+	@Inject
+	private CooperativePersonService cooperativePersonServiceApi;
 
-	public User findByPropertyWithCondtion(String property, String value, String condition) {
-		return dao.findByPropertyWithCondition(property, value, condition);
-	}
+	@Inject
+	private UserServiceApi userServiceApi;
+
+//	@Inject
+//	public UserService(UserDao userDao) {
+//		super(userDao);
+//	}
+
+//	public User save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
+//		User user = objectMappper.readValue(jsonString, User.class);
+//		JSONObject jsonObject = new JSONObject(jsonString);
+//		String password = jsonObject.getString("password");
+//		password = passwordEncoder.encodePassword(password, null);
+//		user.setPassword(password);
+//		user.setPermissions(defaultPermissions);
+//		return save(user);
+//	}
+
+//	public User updatePassword(HttpServletRequest request, String password) {
+//
+//		CommonProfile profile = AuthUtility.getCurrentUser(request);
+//		User user = findById(Long.parseLong(profile.getId()));
+//
+//		password = passwordEncoder.encodePassword(password, null);
+//		user.setPassword(password);
+//		return update(user);
+//	}
+//
+//	public User getByEmail(String email) {
+//		return findByPropertyWithCondtion("email", email, "=");
+//	}
+//
+//	public User getByUserName(String userName) {
+//		return findByPropertyWithCondtion("userName", userName, "=");
+//	}
+//
+//	public User findByPropertyWithCondtion(String property, String value, String condition) {
+//		return dao.findByPropertyWithCondition(property, value, condition);
+//	}
 
 	public Map<String, Object> getMyData(HttpServletRequest request) {
-		//CommonProfile profile = AuthUtility.getCurrentUser(request);
-		//User user = findById(Long.parseLong(profile.getId()));
-
-		User user = findById(Long.parseLong("1"));
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 
 		Map<String, Object> myData = new HashMap<String, Object>();
-		myData.put("user", user);
 
-		// Insert data specific to user
-		myData.put("ccCode", -1);
-		myData.put("coCode", -1);
-		myData.put("unionCode", -1);
+		try {
+			User user = userServiceApi.getUser(profile.getId());
 
-		if (user instanceof UnionPerson) {
-			myData.put("unionCode", ((UnionPerson) user).getUnionCode());
-		} else if (user instanceof Inspector) {
-			myData.put("unionCode", ((Inspector) user).getUnionCode());
-		} else if (user instanceof ICSManager) {
-			myData.put("unionCode", ((ICSManager) user).getUnionCode());
-		} else if (user instanceof CooperativePerson) {
-			CooperativePerson coPerson = (CooperativePerson) user;
+			if (user == null)
+				return null;
+			myData.put("user", user);
+			// Insert data specific to user
+			myData.put("ccCode", -1);
+			myData.put("coCode", -1);
+			myData.put("unionCode", -1);
 
-			int coCode = coPerson.getCoCode();
-			myData.put("coCode", coPerson.getCoCode());
+			for (Role role : user.getRoles()) {
 
-			Response coResponse = cooperativeApi.findByCode(request, (long) coCode);
-			if (coResponse.getEntity() != null) {
-				Cooperative cooperative = (Cooperative) coResponse.getEntity();
-				myData.put("unionCode", cooperative.getUnionCode());
-			}
-		} else if (user instanceof CollectionCenterPerson) {
-			CollectionCenterPerson ccPerson = (CollectionCenterPerson) user;
+				MODULE roleType = AppUtil.getModule(role.getAuthority());
 
-			int ccCode = ccPerson.getCcCode();
-			myData.put("ccCode", ccCode);
+				if (roleType != null && roleType.name().contains("UNION_PERSON")) {
 
-			Response ccResponse = collectionCenterApi.findByCode(request, (long) ccCode);
-			if (ccResponse.getEntity() != null) {
-				CollectionCenter collectionCenter = (CollectionCenter) ccResponse.getEntity();
-				Long coCode = collectionCenter.getCoCode();
-				myData.put("coCode", coCode);
+					UnionPerson unionPerson = unionPersonServiceApi.findByUserId(user.getId());
 
-				Response coResponse = cooperativeApi.findByCode(request, (long) coCode);
-				if (coResponse.getEntity() != null) {
-					Cooperative cooperative = (Cooperative) coResponse.getEntity();
-					myData.put("unionCode", cooperative.getUnionCode());
+					myData.put("unionCode", unionPerson.getUnionCode());
+				} else if (roleType != null && roleType.name().contains("INSPECTOR")) {
+
+					Inspector inspector = inspectorSerciveApi.findByUserId(user.getId());
+
+					myData.put("unionCode", inspector.getUnionCode());
+				} else if (roleType != null && roleType.name().contains("ICS_MANAGER")) {
+
+					ICSManager icsManager = icsManagerServiceApi.findByUserId(user.getId());
+
+					myData.put("unionCode", icsManager.getUnionCode());
+				} else if (roleType != null && roleType.name().contains("COOPERATIVE_PERSON")) {
+
+					CooperativePerson coPerson = cooperativePersonServiceApi.findByUserId(user.getId());
+
+					Long coCode = coPerson.getCoCode();
+					myData.put("coCode", coPerson.getCoCode());
+
+					Response coResponse = cooperativeApi.findByCode(request, (long) coCode);
+					if (coResponse.getEntity() != null) {
+						Cooperative cooperative = (Cooperative) coResponse.getEntity();
+						myData.put("unionCode", cooperative.getUnionCode());
+					}
+				} else if (roleType != null && roleType.name().contains("COLLECTION_CENTER_PERSON")) {
+					CollectionCenterPerson ccPerson = collectionCenterPersonApi.findByUserId(user.getId());
+
+					Long ccCode = ccPerson.getCcCode();
+					myData.put("ccCode", ccCode);
+
+					Response ccResponse = collectionCenterApi.findByCode(request, (long) ccCode);
+					if (ccResponse.getEntity() != null) {
+						CollectionCenter collectionCenter = (CollectionCenter) ccResponse.getEntity();
+						Long coCode = collectionCenter.getCoCode();
+						myData.put("coCode", coCode);
+
+						Response coResponse = cooperativeApi.findByCode(request, (long) coCode);
+						if (coResponse.getEntity() != null) {
+							Cooperative cooperative = (Cooperative) coResponse.getEntity();
+							myData.put("unionCode", cooperative.getUnionCode());
+						}
+					}
 				}
 			}
+		} catch (ApiException e) {
+			logger.error(e.getMessage());
 		}
+
 		return myData;
 	}
 
-	public User uploadSignature(HttpServletRequest request, InputStream inputStream,
-			FormDataContentDisposition fileDetails) throws IOException {
-		CommonProfile profile = AuthUtility.getCommonProfile(request);
-		Long id = Long.parseLong(profile.getId());
-		User user = findById(id);
-		String sign = addImage(inputStream, fileDetails, request);
-		user.setSign(sign);
-		update(user);
-		return user;
-	}
-	
+//	public User uploadSignature(HttpServletRequest request, InputStream inputStream,
+//			FormDataContentDisposition fileDetails) throws IOException {
+//		CommonProfile profile = AuthUtility.getCommonProfile(request);
+//		Long id = Long.parseLong(profile.getId());
+//		User user = findById(id);
+//		String sign = addImage(inputStream, fileDetails, request);
+//		user.setSign(sign);
+//		update(user);
+//		return user;
+//	}
+
 	public String addImage(InputStream inputStream, FormDataContentDisposition fileDetails,
 			HttpServletRequest request) {
 		String fileName = fileDetails.getFileName();
@@ -169,10 +195,10 @@ public class UserService extends AbstractService<User> {
 		UUID uuid = UUID.randomUUID();
 		String dirPath = rootPath + File.separator + uuid.toString();
 		File dir = new File(dirPath);
-		if(!dir.exists()) {
+		if (!dir.exists()) {
 			dir.mkdir();
 		}
-		
+
 		String fileLocation = dirPath + File.separatorChar + fileName;
 
 		boolean uploaded = writeToFile(inputStream, fileLocation);
