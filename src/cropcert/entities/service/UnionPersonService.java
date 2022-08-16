@@ -38,7 +38,7 @@ public class UnionPersonService extends AbstractService<UnionPerson>{
 	}
 	
 	public UnionPerson findByUserId(Long userId) {
-		return findByPropertyWithCondition("user_id", userId, "=");
+		return findByPropertyWithCondition("userId", userId, "=");
 	}
 
 }
