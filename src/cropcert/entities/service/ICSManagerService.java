@@ -39,7 +39,7 @@ public class ICSManagerService extends AbstractService<ICSManager> {
 	}
 
 	public ICSManager findByUserId(Long userId) {
-		return findByPropertyWithCondition("user_id", userId, "=");
+		return findByPropertyWithCondition("userId", userId, "=");
 	}
 
 }

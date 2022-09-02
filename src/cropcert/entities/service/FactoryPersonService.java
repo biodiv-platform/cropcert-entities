@@ -39,7 +39,7 @@ public class FactoryPersonService extends AbstractService<FactoryPerson> {
 	}
 
 	public FactoryPerson findByUserId(Long userId) {
-		return findByPropertyWithCondition("user_id", userId, "=");
+		return findByPropertyWithCondition("userId", userId, "=");
 	}
 
 }

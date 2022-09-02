@@ -39,7 +39,7 @@ public class InspectorService extends AbstractService<Inspector> {
 	}
 
 	public Inspector findByUserId(Long userId) {
-		return findByPropertyWithCondition("user_id", userId, "=");
+		return findByPropertyWithCondition("userId", userId, "=");
 	}
 
 }
