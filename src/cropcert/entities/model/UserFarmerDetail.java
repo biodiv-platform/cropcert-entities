@@ -1,58 +1,40 @@
 package cropcert.entities.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
-
 import io.swagger.annotations.ApiModel;
 
-@Entity
-@Table(name = "farmer")
-@IdClass(EntitiesCompositeKey.class)
-@ApiModel("Farmer")
-public class Farmer {
+@ApiModel("UserFarmerDetail")
 
-	/**
-	 * 
-	 */
+public class UserFarmerDetail {
 
-	@Id
-	@Column(name = "membership_id", nullable = false)
+	private String name;
+	private String username;
+	private String email;
+	private String sexType;
+	private String mobileNumber;
 	private String membershipId;
-	@Column(name = "num_coffee_plots")
 	private Integer numCoffeePlots;
-	@Column(name = "num_coffee_Trees")
 	private Integer numCoffeeTrees;
-	@Column(name = "farm_area")
 	private Float farmArea;
-	@Column(name = "coffee_area")
 	private Float coffeeArea;
-	@Column(name = "farmer_code")
 	private String farmerCode;
-	@Column(name = "cc_code", nullable = false)
 	private Long ccCode;
-	@Column(name = "cc_name")
 	private String ccName;
-	@Column(name = "co_name")
 	private String coName;
-	@Column(name = "union_name")
 	private String unionName;
-	@Column(name = "field_coordinator")
 	private Long fieldCoOrdinator;
-	@Id
-	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
-	public Farmer() {
+	public UserFarmerDetail() {
 		super();
 	}
 
-	public Farmer(String membershipId, Integer numCoffeePlots, Integer numCoffeeTrees, Float farmArea, Float coffeeArea,
-			String farmerCode, Long ccCode, String ccName, String coName, String unionName, Long fieldCoOrdinator,
-			Long userId) {
+	public UserFarmerDetail(String name, String username, String email, String membershipId, Integer numCoffeePlots,
+			Integer numCoffeeTrees, Float farmArea, Float coffeeArea, String farmerCode, Long ccCode, String ccName,
+			String coName, String unionName, Long fieldCoOrdinator, Long userId, String sexType, String mobileNumber) {
 		super();
+		this.name = name;
+		this.username = username;
+		this.email = email;
 		this.membershipId = membershipId;
 		this.numCoffeePlots = numCoffeePlots;
 		this.numCoffeeTrees = numCoffeeTrees;
@@ -65,6 +47,16 @@ public class Farmer {
 		this.unionName = unionName;
 		this.fieldCoOrdinator = fieldCoOrdinator;
 		this.userId = userId;
+		this.sexType = sexType;
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getMembershipId() {
@@ -161,6 +153,38 @@ public class Farmer {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getSexType() {
+		return sexType;
+	}
+
+	public void setSexType(String sexType) {
+		this.sexType = sexType;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 
 }

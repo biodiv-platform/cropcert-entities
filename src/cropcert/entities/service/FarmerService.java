@@ -11,22 +11,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.ValidationException;
 
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import com.opencsv.CSVReader;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
+import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.User;
 
 import cropcert.entities.dao.FarmerDao;
 import cropcert.entities.filter.Permissions;
@@ -34,16 +38,14 @@ import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.Cooperative;
 import cropcert.entities.model.Farmer;
 import cropcert.entities.model.Union;
+import cropcert.entities.model.UserFarmerDetail;
 import cropcert.entities.model.request.FarmerFileMetaData;
-import cropcert.entities.util.MessageDigestPasswordEncoder;
 
 public class FarmerService extends AbstractService<Farmer> {
+	private static final Logger logger = LoggerFactory.getLogger(FarmerService.class);
 
 	@Inject
 	ObjectMapper objectMapper;
-
-	@Inject
-	private MessageDigestPasswordEncoder passwordEncoder;
 
 	@Inject
 	private CollectionCenterService collectionCenterService;
@@ -53,6 +55,9 @@ public class FarmerService extends AbstractService<Farmer> {
 
 	@Inject
 	private UnionService unionService;
+
+	@Inject
+	private UserServiceApi userServiceApi;
 
 	private static Set<String> defaultPermissions;
 	static {
@@ -68,11 +73,6 @@ public class FarmerService extends AbstractService<Farmer> {
 	public Farmer save(String jsonString)
 			throws JsonParseException, JsonMappingException, IOException, JSONException, ValidationException {
 		Farmer farmer = objectMapper.readValue(jsonString, Farmer.class);
-		JSONObject jsonObject = new JSONObject(jsonString);
-		String password = jsonObject.getString("password");
-		password = passwordEncoder.encodePassword(password, null);
-		farmer.setPassword(password);
-		farmer.setPermissions(defaultPermissions);
 
 		String membershipId = farmer.getMembershipId();
 		Long ccCode = farmer.getCcCode();
@@ -109,17 +109,41 @@ public class FarmerService extends AbstractService<Farmer> {
 
 		return save(farmer);
 	}
-	
+
+	public List<UserFarmerDetail> findByUserFarmer(Integer limit, Integer offset) {
+
+		List<Farmer> farmers = new ArrayList<>();
+		if (limit == -1 || offset == -1)
+			farmers = findAll();
+		else
+			farmers = findAll(limit, offset);
+		return getUserFarmerList(farmers);
+
+	}
+
+	public List<UserFarmerDetail> findByUserId(Long userId) {
+		Farmer farmer = findByPropertyWithCondition("userId", userId, "=");
+		List<Farmer> farmerList = new ArrayList<>();
+		farmerList.add(farmer);
+		return getUserFarmerList(farmerList);
+
+	}
+
+	public List<UserFarmerDetail> findByFamerId(Long id) {
+		Farmer farmer = ((FarmerDao) dao).findById(id);
+		List<Farmer> farmerList = new ArrayList<>();
+		farmerList.add(farmer);
+		return getUserFarmerList(farmerList);
+
+	}
+
 	@Override
 	public Farmer save(Farmer farmer) {
-		String password = farmer.getPassword();
-		password = passwordEncoder.encodePassword(password, null);
-		farmer.setPassword(password);
-		farmer.setPermissions(defaultPermissions);
+
 		return super.save(farmer);
 	}
-	
-	public List<Farmer> getFarmerForMultipleCollectionCenter(String ccCodes, String firstName, Integer limit,
+
+	public List<UserFarmerDetail> getFarmerForMultipleCollectionCenter(String ccCodes, String firstName, Integer limit,
 			Integer offset) {
 		List<Long> ccCodesLong = new ArrayList<Long>();
 
@@ -129,10 +153,47 @@ public class FarmerService extends AbstractService<Farmer> {
 			ccCodesLong.add(ccCode);
 		}
 
-		return ((FarmerDao) dao).getFarmerForMultipleCollectionCenter(ccCodesLong, firstName, limit, offset);
+		List<Farmer> farmerList = ((FarmerDao) dao).getFarmerForMultipleCollectionCenter(ccCodesLong, firstName, limit,
+				offset);
+
+		return getUserFarmerList(farmerList);
 	}
 
-	public Map<String, Object> bulkFarmerSave(HttpServletRequest request, FormDataMultiPart multiPart) throws IOException {
+	private List<UserFarmerDetail> getUserFarmerList(List<Farmer> farmerList) {
+		List<UserFarmerDetail> result = new ArrayList<>();
+
+		try {
+			List<Long> userIds = farmerList.stream().map(item -> item.getUserId()).collect(Collectors.toList());
+			List<User> users = userServiceApi.getUserBulk(userIds);
+			int index = 0;
+			for (Farmer farmer : farmerList) {
+				result.add(new UserFarmerDetail(users.get(index).getName(), users.get(index).getUserName(),
+						users.get(index).getEmail(), farmer.getMembershipId(), farmer.getNumCoffeePlots(),
+						farmer.getNumCoffeeTrees(), farmer.getFarmArea(), farmer.getCoffeeArea(),
+						farmer.getFarmerCode(), farmer.getCcCode(), farmer.getCcName(), farmer.getCoName(),
+						farmer.getUnionName(), farmer.getFieldCoOrdinator(), farmer.getUserId(),
+						users.get(index).getSexType(), users.get(index).getMobileNumber()));
+
+				index++;
+			}
+
+			return result;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return result;
+	}
+
+	public List<UserFarmerDetail> getFarmerForCollectionCenter(Long ccCode, Integer limit, Integer offset) {
+		List<Farmer> farmerList = getByPropertyWithCondtion("ccCode", ccCode, "=", limit, offset, "userId");
+
+		return getUserFarmerList(farmerList);
+
+	}
+
+	public Map<String, Object> bulkFarmerSave(HttpServletRequest request, FormDataMultiPart multiPart)
+			throws IOException {
 
 		FormDataBodyPart formdata = multiPart.getField("metadata");
 		if (formdata == null) {
@@ -141,24 +202,23 @@ public class FarmerService extends AbstractService<Farmer> {
 		}
 		InputStream metaDataInputStream = formdata.getValueAs(InputStream.class);
 		InputStreamReader inputStreamReader = new InputStreamReader(metaDataInputStream, StandardCharsets.UTF_8);
-		
+
 		FarmerFileMetaData fileMetaData = objectMapper.readValue(inputStreamReader, FarmerFileMetaData.class);
 		fileMetaData.setCollectionCenterService(collectionCenterService);
 		fileMetaData.setCooperativeService(cooperativeService);
 		fileMetaData.setUnionService(unionService);
 
-		
-		if(fileMetaData.getFileType().equalsIgnoreCase("csv")) {
-			
+		if (fileMetaData.getFileType().equalsIgnoreCase("csv")) {
+
 			formdata = multiPart.getField("csv");
 			InputStream csvDataInputStream = formdata.getValueAs(InputStream.class);
 			inputStreamReader = new InputStreamReader(csvDataInputStream, StandardCharsets.UTF_8);
 			CSVReader reader = new CSVReader(inputStreamReader);
-			
+
 			Map<String, Object> result = ValidateSheet(reader, fileMetaData);
 			if (result.size() > 0)
 				return result;
-			
+
 			csvDataInputStream = formdata.getValueAs(InputStream.class);
 			inputStreamReader = new InputStreamReader(csvDataInputStream, StandardCharsets.UTF_8);
 			reader = new CSVReader(inputStreamReader);
@@ -166,19 +226,7 @@ public class FarmerService extends AbstractService<Farmer> {
 
 			@SuppressWarnings("unused")
 			String[] headers = it.next();
-			
-			while (it.hasNext()) {
-				String[] data = it.next();
-				try {
-				
-					Farmer farmer = fileMetaData.readOneRow(data, false);
-					farmer = save(farmer);
-					result.put("Success", farmer);
-				} catch(Exception e) {
-					reader.close();
-					throw new IOException("Error creating the farmer : " + data);
-				}
-			}
+
 			reader.close();
 			return result;
 		}
@@ -186,28 +234,28 @@ public class FarmerService extends AbstractService<Farmer> {
 	}
 
 	private Map<String, Object> ValidateSheet(CSVReader reader, FarmerFileMetaData fileMetaData) {
-		
+
 		Map<String, Object> validationResult = new HashMap<String, Object>();
-		
+
 		Iterator<String[]> it = reader.iterator();
 
 		String[] headers = it.next();
-		if(!fileMetaData.validateIndices(headers)) {
+		if (!fileMetaData.validateIndices(headers)) {
 			validationResult.put("Failed", "Compulsory column indices in the file are required for metadata");
 			return validationResult;
 		}
 
-		int index = 1;
-		while (it.hasNext()) {
-			String[] data = it.next();
-			try {
-				fileMetaData.readOneRow(data, true);
-			} catch (IOException e) {
-				validationResult.put("Farmer index :  " + index , e.getMessage());
-			}
-			index ++;
-		}
-		
+//		int index = 1;
+//		while (it.hasNext()) {
+//			String[] data = it.next();
+//			try {
+//				fileMetaData.readOneRow(data, true);
+//			} catch (IOException e) {
+//				validationResult.put("Farmer index :  " + index , e.getMessage());
+//			}
+//			index ++;
+//		}
+
 		return validationResult;
 	}
 }

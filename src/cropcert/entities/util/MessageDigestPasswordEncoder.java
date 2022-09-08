@@ -8,7 +8,8 @@ import java.util.Base64;
 
 import org.bouncycastle.util.encoders.Hex;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 
 public class MessageDigestPasswordEncoder {
 	private final String algorithm;

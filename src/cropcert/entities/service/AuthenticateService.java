@@ -5,39 +5,43 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.pac4j.core.context.Pac4jConstants;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.definition.CommonProfileDefinition;
 import org.pac4j.core.profile.jwt.JwtClaims;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import com.strandls.user.ApiException;
+import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.User;
 
 import cropcert.entities.MyApplication;
-import cropcert.entities.model.User;
 import cropcert.entities.util.AuthUtility;
-import cropcert.entities.util.SimpleUsernamePasswordAuthenticator;
 
 public class AuthenticateService {
+	private static final Logger logger = LoggerFactory.getLogger(AuthenticateService.class);
 
 	@Inject
-	private UserService userService;
+	private UserServiceApi userServiceApi;
 
-	@Inject
-	private SimpleUsernamePasswordAuthenticator usernamePasswordAuthenticator;
+	public Map<String, Object> buildTokenResponse(CommonProfile profile, Long userId, boolean getNewRefreshToken) {
+		User user;
+		try {
+			user = userServiceApi.getUser(userId.toString());
+			return buildTokenResponse(profile, user, getNewRefreshToken);
 
-	public CommonProfile authenticate(String username, String password) throws Exception {
-		// Authenticate the user using the credentials provided
-		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-		usernamePasswordAuthenticator.validate(credentials, null);
-		return credentials.getUserProfile();
-	}
+		} catch (ApiException e) {
+			logger.error(e.getMessage());
+		}
+		return null;
 
-	public Map<String, Object> buildTokenResponse(CommonProfile profile, long userId, boolean getNewRefreshToken) {
-		return buildTokenResponse(profile, userService.findById(userId), getNewRefreshToken);
 	}
 
 	/**
@@ -80,10 +84,12 @@ public class AuthenticateService {
 
 		JwtGenerator<CommonProfile> generator = new JwtGenerator<CommonProfile>(
 				new SecretSignatureConfiguration(MyApplication.JWT_SALT));
-		
+
 		Set<String> roles = new HashSet<String>();
-		roles.add(user.getRole());
-		Set<String> permissions = user.getPermissions();
+		if (user.getRoles() != null && user.getRoles().isEmpty()) {
+			roles = user.getRoles().stream().map(item -> item.getAuthority()).collect(Collectors.toSet());
+
+		}
 
 		Map<String, Object> jwtClaims = new HashMap<String, Object>();
 		jwtClaims.put("id", profile.getId());
@@ -93,7 +99,7 @@ public class AuthenticateService {
 		jwtClaims.put(JwtClaims.EXPIRATION_TIME, AuthUtility.getAccessTokenExpiryDate());
 		jwtClaims.put(JwtClaims.ISSUED_AT, new Date());
 		jwtClaims.put("roles", roles);
-		jwtClaims.put("permissions", permissions);
+//		jwtClaims.put("permissions", permissions);
 
 		String jwtToken = generator.generate(jwtClaims);
 		return jwtToken;
@@ -108,9 +114,6 @@ public class AuthenticateService {
 		JwtGenerator<CommonProfile> generator = new JwtGenerator<CommonProfile>(
 				new SecretSignatureConfiguration(MyApplication.JWT_SALT));
 
-		Set<String> roles = new HashSet<String>();
-		roles.add(user.getRole());
-
 		Map<String, Object> jwtClaims = new HashMap<String, Object>();
 		jwtClaims.put("id", profile.getId());
 		jwtClaims.put(JwtClaims.SUBJECT, profile.getId() + "");
@@ -120,7 +123,7 @@ public class AuthenticateService {
 		jwtClaims.put(JwtClaims.ISSUED_AT, new Date());
 
 		generator.setExpirationTime(AuthUtility.getRefreshTokenExpiryDate());
-		
+
 		String jwtToken = generator.generate(jwtClaims);
 		return jwtToken;
 

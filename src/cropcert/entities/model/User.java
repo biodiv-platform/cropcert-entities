@@ -27,65 +27,67 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @XmlRootElement
 @JsonIgnoreProperties
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
-@ApiModel( value = "User", subTypes = {Admin.class, CollectionCenterPerson.class,
-		CooperativePerson.class, FactoryPerson.class, Farmer.class, UnionPerson.class})
+@ApiModel(value = "User", subTypes = { Admin.class, CollectionCenterPerson.class, CooperativePerson.class,
+		FactoryPerson.class, Farmer.class, UnionPerson.class })
 public class User implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4652147376165159112L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_generator")
 	@SequenceGenerator(name = "user_id_generator", sequenceName = "user_id_seq", allocationSize = 50)
 	@Column(name = "id", updatable = false, nullable = false)
 	private long id;
-	@Column(name = "user_name", nullable = false, unique = true)	
+	@Column(name = "user_name", nullable = false, unique = true)
 	private String userName;
-	
+
 	@JsonIgnore
-	@Column(name = "password", nullable = false) 
+	@Column(name = "password", nullable = false)
 	private String password;
-	
+
 	@Column(name = "first_name")
 	private String firstName;
 	@Column(name = "last_name")
 	private String lastName;
-	@Column(name = "date_of_birth") 
+	@Column(name = "date_of_birth")
 	private Timestamp dateOfBirth;
-	@Column(name = "gender") 
+	@Column(name = "gender")
 	private String gender;
-	@Column(name = "cell_number") 
+	@Column(name = "cell_number")
 	private String cellNumber;
-	@Column(name = "email") 
+	@Column(name = "email")
 	private String email;
-	@Column(name = "village") 
+	@Column(name = "village")
 	private String village;
-	@Column(name = "sub_country") 
+	@Column(name = "sub_country")
 	private String subCountry;
-	@Column(name = "sign") 
+	@Column(name = "sign")
 	private String sign;
-	
+
 	@ElementCollection(fetch = FetchType.EAGER)
-	@Column( name = "permissions")
+	@Column(name = "permissions")
 	private Set<String> permissions = new HashSet<String>();
-	
+
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
-		
+
 	public String getUserName() {
 		return userName;
 	}
+
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -93,6 +95,7 @@ public class User implements Serializable {
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -100,20 +103,23 @@ public class User implements Serializable {
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	
+
 	public String getLastName() {
 		return lastName;
 	}
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	
+
 	public Timestamp getDateOfBirth() {
 		return dateOfBirth;
 	}
+
 	public void setDateOfBirth(Timestamp dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
@@ -121,6 +127,7 @@ public class User implements Serializable {
 	public String getGender() {
 		return gender;
 	}
+
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
@@ -128,6 +135,7 @@ public class User implements Serializable {
 	public String getCellNumber() {
 		return cellNumber;
 	}
+
 	public void setCellNumber(String cellNumber) {
 		this.cellNumber = cellNumber;
 	}
@@ -135,6 +143,7 @@ public class User implements Serializable {
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -142,6 +151,7 @@ public class User implements Serializable {
 	public String getVillage() {
 		return village;
 	}
+
 	public void setVillage(String village) {
 		this.village = village;
 	}
@@ -149,20 +159,23 @@ public class User implements Serializable {
 	public String getSubCountry() {
 		return subCountry;
 	}
+
 	public void setSubCountry(String subCountry) {
 		this.subCountry = subCountry;
 	}
-	
+
 	public String getSign() {
 		return sign;
 	}
+
 	public void setSign(String sign) {
 		this.sign = sign;
 	}
-	
+
 	public Set<String> getPermissions() {
 		return permissions;
 	}
+
 	public void setPermissions(Set<String> permissions) {
 		this.permissions = permissions;
 	}
