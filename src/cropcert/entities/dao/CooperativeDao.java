@@ -5,10 +5,9 @@ import org.hibernate.SessionFactory;
 
 import javax.inject.Inject;
 
-
 import cropcert.entities.model.Cooperative;
 
-public class CooperativeDao extends AbstractDao<Cooperative, Long>{
+public class CooperativeDao extends AbstractDao<Cooperative, Long> {
 
 	@Inject
 	protected CooperativeDao(SessionFactory sessionFactory) {

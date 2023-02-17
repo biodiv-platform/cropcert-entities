@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiModel;
 
 public class Utility {
 
-	
 	public static List<Class<?>> getApiAnnotatedClassesFromPackage(String packageName)
 			throws ClassNotFoundException, IOException, URISyntaxException {
 		List<String> classNames = getClassNamesFromPackage(packageName);
@@ -26,8 +25,7 @@ public class Utility {
 			Annotation[] annotations = cls.getAnnotations();
 
 			for (Annotation annotation : annotations) {
-				if (annotation instanceof Api ||
-						annotation instanceof ApiModel) {
+				if (annotation instanceof Api || annotation instanceof ApiModel) {
 					classes.add(cls);
 				}
 			}
@@ -36,7 +34,6 @@ public class Utility {
 		return classes;
 	}
 
-	
 	public static List<Class<?>> getEntityClassesFromPackage(String packageName)
 			throws ClassNotFoundException, IOException, URISyntaxException {
 		List<String> classNames = getClassNamesFromPackage(packageName);
@@ -67,8 +64,8 @@ public class Utility {
 		File folder = new File(uri.getPath());
 
 		Files.find(Paths.get(folder.getAbsolutePath()), 999, (p, bfa) -> bfa.isRegularFile()).forEach(file -> {
-			String name = file.toFile().getAbsolutePath().replaceAll(folder.getAbsolutePath() + File.separatorChar, "").replace(File.separatorChar,
-					'.');
+			String name = file.toFile().getAbsolutePath().replaceAll(folder.getAbsolutePath() + File.separatorChar, "")
+					.replace(File.separatorChar, '.');
 			if (name.indexOf('.') != -1) {
 				name = packageName + '.' + name.substring(0, name.lastIndexOf('.'));
 				names.add(name);

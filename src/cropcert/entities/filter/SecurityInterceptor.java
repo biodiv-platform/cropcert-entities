@@ -100,13 +100,13 @@ public class SecurityInterceptor implements MethodInterceptor {
 
 		// Special grand for admin to do everthing
 		JSONArray userRoles = (JSONArray) commonProfile.getAttribute("roles");
-		if(userRoles.contains(Permissions.ADMIN))
+		if (userRoles.contains(Permissions.ADMIN))
 			return invocation.proceed();
 
 		JSONArray userPermissions = (JSONArray) commonProfile.getAttribute("permissions");
 		userPermissions.retainAll(allowedPermissions);
-		
-		if(userPermissions.size() <= 0) {
+
+		if (userPermissions.size() <= 0) {
 			return Response.status(Status.UNAUTHORIZED).entity("User is not autherized to perform this action").build();
 		}
 

@@ -20,7 +20,7 @@ public class CollectionCenterShow {
 	public CollectionCenterShow() {
 		super();
 	}
-	
+
 	public CollectionCenterShow(CollectionCenter collectionCenter, String coName, String unionName) {
 		this.id = collectionCenter.getId();
 		this.type = collectionCenter.getType();

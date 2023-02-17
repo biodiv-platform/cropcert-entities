@@ -10,10 +10,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import io.swagger.annotations.ApiModel;
 
 @Entity
-@Table (name = "factory")
+@Table(name = "factory")
 @XmlRootElement
-@PrimaryKeyJoinColumn(name="id")
-@DiscriminatorValue(value= "factory")
+@PrimaryKeyJoinColumn(name = "id")
+@DiscriminatorValue(value = "factory")
 @ApiModel("Factory")
 public class Factory extends CropcertEntity {
 
@@ -22,12 +22,13 @@ public class Factory extends CropcertEntity {
 	 */
 	private static final long serialVersionUID = -2129075276095668097L;
 
-	@Column (name = "union_code")
+	@Column(name = "union_code")
 	private Long unionCode;
-	
+
 	public Long getUnionCode() {
 		return unionCode;
 	}
+
 	public void setUnionCode(Long unionCode) {
 		this.unionCode = unionCode;
 	}

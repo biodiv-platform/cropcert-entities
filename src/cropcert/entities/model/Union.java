@@ -9,12 +9,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import io.swagger.annotations.ApiModel;
 
 @Entity
-@Table (name = "union_table")
+@Table(name = "union_table")
 @XmlRootElement
-@PrimaryKeyJoinColumn(name="id")
-@DiscriminatorValue(value= "union")
+@PrimaryKeyJoinColumn(name = "id")
+@DiscriminatorValue(value = "union")
 @ApiModel("Union")
-public class Union extends CropcertEntity{
+public class Union extends CropcertEntity {
 
 	/**
 	 * 
