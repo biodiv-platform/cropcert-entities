@@ -74,7 +74,22 @@ public class CollectionCenterService extends AbstractService<CollectionCenter> {
 		String coName = cooperative.getName();
 		String unionName = union.getName();
 		for (CollectionCenter collectionCenter : collectionCenters) {
-			CollectionCenterShow collectionCenterShow = new CollectionCenterShow(collectionCenter, coName, unionName);
+			CollectionCenterShow collectionCenterShow = new CollectionCenterShow();
+
+			collectionCenterShow.setId(collectionCenter.getId());
+			collectionCenterShow.setType(collectionCenter.getType());
+			collectionCenterShow.setCoCode(collectionCenter.getCoCode());
+			collectionCenterShow.setCode(collectionCenter.getCode());
+			collectionCenterShow.setName(collectionCenter.getName());
+			collectionCenterShow.setVillage(collectionCenter.getVillage());
+			collectionCenterShow.setSubCountry(collectionCenter.getSubCountry());
+			collectionCenterShow.setLatitude(collectionCenter.getLatitude());
+			collectionCenterShow.setLongitude(collectionCenter.getLongitude());
+			collectionCenterShow.setAltitude(collectionCenter.getAltitude());
+
+			collectionCenterShow.setCoName(coName);
+			collectionCenterShow.setUnionName(unionName);
+
 			collectionCenterShows.add(collectionCenterShow);
 		}
 		return collectionCenterShows;
