@@ -6,7 +6,6 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-
 import io.swagger.annotations.ApiModel;
 
 @Entity
@@ -18,7 +17,7 @@ public class CollectionCenterPerson {
 	/**
 	 * 
 	 */
-	
+
 	private String membershipId;
 	private Long ccCode;
 	private Long userId;

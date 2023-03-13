@@ -22,7 +22,6 @@ import org.json.JSONException;
 
 import javax.inject.Inject;
 
-
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.Admin;

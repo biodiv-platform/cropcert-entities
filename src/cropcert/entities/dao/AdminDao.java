@@ -5,10 +5,9 @@ import org.hibernate.SessionFactory;
 
 import javax.inject.Inject;
 
-
 import cropcert.entities.model.Admin;
 
-public class AdminDao extends AbstractDao<Admin, Long>{
+public class AdminDao extends AbstractDao<Admin, Long> {
 
 	@Inject
 	protected AdminDao(SessionFactory sessionFactory) {

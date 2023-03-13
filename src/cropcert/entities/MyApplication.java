@@ -25,10 +25,10 @@ import com.strandls.authentication_utility.filter.InterceptorModule;
 import cropcert.entities.util.Utility;
 import io.swagger.jaxrs.config.BeanConfig;
 
-public class MyApplication extends Application{
-	
+public class MyApplication extends Application {
+
 	public static final Logger logger = LoggerFactory.getLogger(MyApplication.class);
-	
+
 	public static final String JWT_SALT;
 
 	static {
@@ -65,7 +65,7 @@ public class MyApplication extends Application{
 
 	}
 
-        @Override
+	@Override
 	public Set<Object> getSingletons() {
 
 		Set<Object> singletons = new HashSet<Object>();
@@ -107,7 +107,7 @@ public class MyApplication extends Application{
 		} catch (ClassNotFoundException | IOException | URISyntaxException e) {
 			logger.error(e.getMessage());
 		}
-		
+
 		classes.add(io.swagger.jaxrs.listing.ApiListingResource.class);
 		classes.add(io.swagger.jaxrs.listing.SwaggerSerializers.class);
 		return classes;

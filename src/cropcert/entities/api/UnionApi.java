@@ -20,7 +20,6 @@ import javax.ws.rs.core.Response.Status;
 
 import javax.inject.Inject;
 
-
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.CollectionCenter;
