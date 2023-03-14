@@ -25,7 +25,9 @@ import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.CollectionCenterPerson;
 import cropcert.entities.model.Union;
+import cropcert.entities.model.UnionEntities;
 import cropcert.entities.service.UnionService;
+import cropcert.entities.service.UnionServiceNew;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -36,6 +38,9 @@ import io.swagger.annotations.ApiOperation;
 public class UnionApi {
 
 	private UnionService unionService;
+
+	private UnionServiceNew unionServiceNew;
+
 
 	@Inject
 	public UnionApi(UnionService collectionCenterService) {
@@ -49,6 +54,18 @@ public class UnionApi {
 	@ApiOperation(value = "Get the Union by id", response = Union.class)
 	public Response find(@Context HttpServletRequest request, @PathParam("id") Long id) {
 		Union union = unionService.findById(id);
+		if (union == null)
+			return Response.status(Status.NO_CONTENT).build();
+		return Response.status(Status.CREATED).entity(union).build();
+	}
+
+	@Path("new/{id}")
+	@GET
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Get the Union by id", response = UnionEntities.class)
+	public Response findbyId(@Context HttpServletRequest request, @PathParam("id") Long id) {
+		UnionEntities union = unionServiceNew.findById(id);
 		if (union == null)
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.status(Status.CREATED).entity(union).build();
