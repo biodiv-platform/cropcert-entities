@@ -115,6 +115,30 @@ public abstract class AbstractDao<T, K extends Serializable> {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public T deleteByProperty(String property, Object value, String condition) {
+		String queryStr = "" + "from " + daoType.getSimpleName() + " t " + "where t." + property + " " + condition
+				+ " :value";
+		Session session = sessionFactory.openSession();
+		org.hibernate.query.Query query = session.createQuery(queryStr);
+		query.setParameter("value", value);
+
+		T entity = (T) query.uniqueResult();
+		if (entity != null) {
+			Transaction tx = session.beginTransaction();
+			try {
+				session.delete(entity);
+				tx.commit();
+			} catch (RuntimeException e) {
+				tx.rollback();
+				throw e;
+			} finally {
+				session.close();
+			}
+		}
+		return entity;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<T> getByPropertyWithCondtion(String property, Object value, String condition, int limit, int offset,
 			String orderBy) {
 		String queryStr = "" + "from " + daoType.getSimpleName() + " t " + "where t." + property + " " + condition

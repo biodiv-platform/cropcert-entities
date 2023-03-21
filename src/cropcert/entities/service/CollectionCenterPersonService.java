@@ -2,6 +2,7 @@ package cropcert.entities.service;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -41,6 +42,14 @@ public class CollectionCenterPersonService extends AbstractService<CollectionCen
 
 	public CollectionCenterPerson findByUserId(Long userId) {
 		return findByPropertyWithCondition("userId", userId, "=");
+	}
+
+	public List<CollectionCenterPerson> findByCollectionCenterId(Long ccCode, int limit, int offset, String orderBy) {
+		return getByPropertyWithCondtion("ccCode", ccCode, "=", limit, limit, orderBy);
+	}
+
+	public CollectionCenterPerson deleteByUserId(Long userId) {
+		return deleteByPropertyWithCondition("userId", userId, "=");
 	}
 
 }

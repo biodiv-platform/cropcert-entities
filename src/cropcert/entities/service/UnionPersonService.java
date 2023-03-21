@@ -2,6 +2,7 @@ package cropcert.entities.service;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.json.JSONException;
@@ -39,6 +40,14 @@ public class UnionPersonService extends AbstractService<UnionPerson> {
 
 	public UnionPerson findByUserId(Long userId) {
 		return findByPropertyWithCondition("userId", userId, "=");
+	}
+
+	public List<UnionPerson> findByUnionId(Long unionCode, int limit, int offset, String orderBy) {
+		return getByPropertyWithCondtion("unionCode", unionCode, "=", limit, limit, orderBy);
+	}
+
+	public UnionPerson deleteByUserId(Long userId) {
+		return deleteByPropertyWithCondition("userId", userId, "=");
 	}
 
 }

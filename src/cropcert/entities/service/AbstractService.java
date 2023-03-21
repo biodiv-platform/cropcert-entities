@@ -87,4 +87,8 @@ public abstract class AbstractService<T> {
 			Integer offset) {
 		return dao.getByMultiplePropertyWithCondtion(properties, values, limit, offset);
 	}
+
+	public T deleteByPropertyWithCondition(String property, Object value, String condition) {
+		return dao.deleteByProperty(property, value, condition);
+	}
 }

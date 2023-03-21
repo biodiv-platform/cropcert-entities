@@ -3,6 +3,7 @@ package cropcert.entities.api;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -18,103 +19,94 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.json.JSONException;
-
-import javax.inject.Inject;
-
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
-import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.model.UnionEntities;
-import cropcert.entities.service.CooperativePersonService;
+import cropcert.entities.service.UnionEntityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Path("coUser")
-@Api("Cooperative person")
-public class CooperativePersonApi {
+@Path("unionentities")
+@Api("UnionEntities")
+public class UnionEntitiesApi {
 
-	private CooperativePersonService coPersonService;
+	private UnionEntityService unionEntityService;
 
 	@Inject
-	public CooperativePersonApi(CooperativePersonService farmerService) {
-		this.coPersonService = farmerService;
+	public UnionEntitiesApi(UnionEntityService unionEntityService) {
+		this.unionEntityService = unionEntityService;
 	}
 
 	@Path("{id}")
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get co-operative person by id", response = CooperativePerson.class)
-	public Response find(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		CooperativePerson ccPerson = coPersonService.findByUserId(id);
-		if (ccPerson == null)
+	@ApiOperation(value = "Get the Union by id", response = UnionEntities.class)
+	public Response findbyId(@Context HttpServletRequest request, @PathParam("id") Long id) {
+		UnionEntities union = unionEntityService.findById(id);
+		if (union == null)
 			return Response.status(Status.NO_CONTENT).build();
-		return Response.status(Status.CREATED).entity(ccPerson).build();
+		return Response.status(Status.CREATED).entity(union).build();
 	}
 
-	@Path("cocode/{cocode}")
+	@Path("code/{code}")
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get union by its code", response = UnionEntities.class)
-	public Response findByCode(@Context HttpServletRequest request, @PathParam("cocode") Long coCode,
-			@DefaultValue("-1") @QueryParam("limit") Integer limit,
-			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
-		List<CooperativePerson> unionPerson;
-		if (limit == -1 || offset == -1)
-			unionPerson = coPersonService.findByCooperativeId(coCode, 0, 0, "coCode desc");
-		else
-			unionPerson = coPersonService.findByCooperativeId(coCode, limit, offset, "coCode desc");
-
-		return Response.status(Status.CREATED).entity(unionPerson).build();
+	public Response findByCode(@Context HttpServletRequest request, @PathParam("code") Long code) {
+		UnionEntities union = unionEntityService.findByCode(code);
+		if (union == null)
+			return Response.status(Status.NO_CONTENT).build();
+		return Response.ok().entity(union).build();
 	}
 
 	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get all the co-operatvie persons", response = CooperativePerson.class, responseContainer = "List")
+	@ApiOperation(value = "Get all the Union", response = UnionEntities.class, responseContainer = "List")
 	public Response findAll(@Context HttpServletRequest request, @DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
-		List<CooperativePerson> coPersons;
+		List<UnionEntities> unions;
 		if (limit == -1 || offset == -1)
-			coPersons = coPersonService.findAll();
+			unions = unionEntityService.findAll();
 		else
-			coPersons = coPersonService.findAll(limit, offset);
-		return Response.ok().entity(coPersons).build();
+			unions = unionEntityService.findAll(limit, offset);
+		return Response.ok().entity(unions).build();
 	}
 
+	@Path("create")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Save the co operative person", response = CooperativePerson.class)
+	@ApiOperation(value = "Save the Union", response = UnionEntities.class)
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response save(@Context HttpServletRequest request, String jsonString) {
-		CooperativePerson coPerson;
+		UnionEntities union;
 		try {
-			coPerson = coPersonService.save(jsonString);
-			return Response.status(Status.CREATED).entity(coPerson).build();
-		} catch (IOException | JSONException e) {
+			union = unionEntityService.save(jsonString);
+			return Response.status(Status.CREATED).entity(union).build();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
 	}
 
-	@Path("{id}")
+	@Path("delete/{id}")
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.TEXT_PLAIN)
-	@ApiOperation(value = "Delete the cooperative person by id", response = CooperativePerson.class)
+	@ApiOperation(value = "Delete the union by id", response = UnionEntities.class)
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response delete(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		CooperativePerson ccPerson = coPersonService.deleteByUserId(id);
-		return Response.status(Status.ACCEPTED).entity(ccPerson).build();
+		UnionEntities union = unionEntityService.delete(id);
+		return Response.status(Status.ACCEPTED).entity(union).build();
 	}
 
 }

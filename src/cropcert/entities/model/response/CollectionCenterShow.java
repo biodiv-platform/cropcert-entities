@@ -1,8 +1,8 @@
 package cropcert.entities.model.response;
 
-import cropcert.entities.model.CropcertEntity;
+import cropcert.entities.model.CollectionCenterEntity;
 
-public class CollectionCenterShow extends CropcertEntity {
+public class CollectionCenterShow extends CollectionCenterEntity {
 
 	/**
 	 * 

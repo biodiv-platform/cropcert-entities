@@ -7,16 +7,16 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.inject.Inject;
 
-import cropcert.entities.dao.UnionNewDao;
+import cropcert.entities.dao.UnionEntityDao;
 import cropcert.entities.model.UnionEntities;
 
-public class UnionServiceNew extends AbstractService<UnionEntities> {
+public class UnionEntityService extends AbstractService<UnionEntities> {
 
 	@Inject
 	ObjectMapper objectMapper;
 
 	@Inject
-	public UnionServiceNew(UnionNewDao dao) {
+	public UnionEntityService(UnionEntityDao dao) {
 		super(dao);
 	}
 

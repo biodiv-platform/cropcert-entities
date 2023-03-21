@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.CollectionCenterPerson;
+import cropcert.entities.model.UnionEntities;
 import cropcert.entities.service.CollectionCenterPersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -51,9 +52,26 @@ public class CollectionCenterPersonApi {
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.CC_PERSON })
 	public Response find(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		CollectionCenterPerson ccPerson = ccPersonService.findById(id);
+		CollectionCenterPerson ccPerson = ccPersonService.findByUserId(id);
 		if (ccPerson == null)
 			return Response.status(Status.NO_CONTENT).build();
+		return Response.status(Status.CREATED).entity(ccPerson).build();
+	}
+
+	@Path("cccode/{cccode}")
+	@GET
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Get union by its code", response = UnionEntities.class)
+	public Response findByCode(@Context HttpServletRequest request, @PathParam("cccode") Long ccCode,
+			@DefaultValue("-1") @QueryParam("limit") Integer limit,
+			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
+		List<CollectionCenterPerson> ccPerson;
+		if (limit == -1 || offset == -1)
+			ccPerson = ccPersonService.findByCollectionCenterId(ccCode, 0, 0, "ccCode desc");
+		else
+			ccPerson = ccPersonService.findByCollectionCenterId(ccCode, limit, offset, "ccCode desc");
+
 		return Response.status(Status.CREATED).entity(ccPerson).build();
 	}
 
@@ -103,7 +121,7 @@ public class CollectionCenterPersonApi {
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response delete(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		CollectionCenterPerson ccPerson = ccPersonService.delete(id);
+		CollectionCenterPerson ccPerson = ccPersonService.deleteByUserId(id);
 		return Response.status(Status.ACCEPTED).entity(ccPerson).build();
 	}
 

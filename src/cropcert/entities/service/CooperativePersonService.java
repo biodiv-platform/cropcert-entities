@@ -2,6 +2,7 @@ package cropcert.entities.service;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -43,5 +44,14 @@ public class CooperativePersonService extends AbstractService<CooperativePerson>
 	public CooperativePerson findByUserId(Long userId) {
 		return findByPropertyWithCondition("userId", userId, "=");
 	}
+
+	public List<CooperativePerson> findByCooperativeId(Long coCode, int limit, int offset, String orderBy) {
+		return getByPropertyWithCondtion("coCode", coCode, "=", limit, limit, orderBy);
+	}
+
+	public CooperativePerson deleteByUserId(Long userId) {
+		return deleteByPropertyWithCondition("userId", userId, "=");
+	}
+
 
 }

@@ -7,10 +7,10 @@ import javax.inject.Inject;
 
 import cropcert.entities.model.UnionEntities;
 
-public class UnionNewDao extends AbstractDao<UnionEntities, Long> {
+public class UnionEntityDao extends AbstractDao<UnionEntities, Long> {
 
 	@Inject
-	protected UnionNewDao(SessionFactory sessionFactory) {
+	protected UnionEntityDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
 

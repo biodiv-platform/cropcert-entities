@@ -8,11 +8,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+/**
+ * @author Arun
+ *
+ */
 @Entity
 @Table(name = "union_entities")
 
-public class UnionEntities implements Serializable{
+public class UnionEntities implements Serializable {
 	/**
 	 * 
 	 */
@@ -24,12 +27,16 @@ public class UnionEntities implements Serializable{
 	private Long id;
 
 	@Column(name = "name")
-	private Long name;
+	private String name;
 
-	public UnionEntities(Long id, Long name) {
+	@Column(name = "code", nullable = false)
+	private Long code;
+
+	public UnionEntities(Long id, String name, Long code) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.code = code;
 	}
 
 	public UnionEntities() {
@@ -44,13 +51,20 @@ public class UnionEntities implements Serializable{
 		this.id = id;
 	}
 
-	public Long getName() {
+	public String getName() {
 		return name;
 	}
 
-	public void setName(Long name) {
+	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	public Long getCode() {
+		return code;
+	}
+
+	public void setCode(Long code) {
+		this.code = code;
+	}
 
 }
