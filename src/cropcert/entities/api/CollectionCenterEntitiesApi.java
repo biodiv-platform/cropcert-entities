@@ -30,7 +30,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Path("new/cc")
+@Path("cc")
 @Api("Collection  center")
 public class CollectionCenterEntitiesApi {
 

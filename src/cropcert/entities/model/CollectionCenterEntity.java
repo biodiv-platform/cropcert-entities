@@ -39,11 +39,11 @@ public class CollectionCenterEntity implements Serializable {
 	@Column(name = "sub_country")
 	private String subCountry;
 
-	@Column(name = "union_id", nullable = false)
-	private Long unionId;
+	@Column(name = "union_code", nullable = false)
+	private Long unionCode;
 
-	@Column(name = "cooperative_id", nullable = false)
-	private Long CooperativeId;
+	@Column(name = "cooperative_code", nullable = false)
+	private Long cooperativeCode;
 
 	@Column(name = "latitude")
 	private float latitude;
@@ -61,16 +61,16 @@ public class CollectionCenterEntity implements Serializable {
 		super();
 	}
 
-	public CollectionCenterEntity(Long id, String name, String village, String type, String subCountry, Long unionId,
-			Long CooperativeId, float latitude, float longitude, float altitude, Long code) {
+	public CollectionCenterEntity(Long id, String name, String village, String type, String subCountry, Long unionCode,
+			Long cooperativeCode, float latitude, float longitude, float altitude, Long code) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.village = village;
 		this.type = type;
 		this.subCountry = subCountry;
-		this.unionId = unionId;
-		this.CooperativeId = CooperativeId;
+		this.unionCode = unionCode;
+		this.cooperativeCode = cooperativeCode;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.altitude = altitude;
@@ -117,20 +117,20 @@ public class CollectionCenterEntity implements Serializable {
 		this.subCountry = subCountry;
 	}
 
-	public Long getUnionId() {
-		return unionId;
+	public Long getUnionCode() {
+		return unionCode;
 	}
 
-	public void setUnionId(Long unionId) {
-		this.unionId = unionId;
+	public void setUnionCode(Long unionId) {
+		this.unionCode = unionId;
 	}
 
-	public Long getCooperativeId() {
-		return CooperativeId;
+	public Long getCooperativeCode() {
+		return cooperativeCode;
 	}
 
-	public void setCooperativeId(Long CooperativeId) {
-		this.CooperativeId = CooperativeId;
+	public void setCooperativeCode(Long cooperativeCode) {
+		this.cooperativeCode = cooperativeCode;
 	}
 
 	public float getLatitude() {

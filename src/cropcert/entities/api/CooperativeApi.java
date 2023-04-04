@@ -30,7 +30,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Path("co")
+@Path("old/co")
 @Api("Cooperative")
 public class CooperativeApi {
 

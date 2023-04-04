@@ -47,7 +47,7 @@ public class CollectionCenterEntityService extends AbstractService<CollectionCen
 		for (String value : ccCodesString.split(",")) {
 			Long ccCode = Long.parseLong(value);
 			CollectionCenterEntity collectionCenter = findByPropertyWithCondition("code", ccCode, "=");
-			coCode = collectionCenter.getCooperativeId();
+			coCode = collectionCenter.getCooperativeCode();
 			ccNames.add(collectionCenter.getName());
 		}
 
@@ -63,15 +63,14 @@ public class CollectionCenterEntityService extends AbstractService<CollectionCen
 	}
 
 	public List<CollectionCenterShow> findAllByCoCode(HttpServletRequest request, Long coCode) {
-		List<CollectionCenterEntity> collectionCenters = getByPropertyWithCondtion("coCode", coCode, "=", -1, -1,
-				"name");
+		List<CollectionCenterEntity> collectionCenters = getByPropertyWithCondtion("cooperativeCode", coCode, "=", -1, -1, "name");
 
 		List<CollectionCenterShow> collectionCenterShows = new ArrayList<CollectionCenterShow>();
 		if (collectionCenters.isEmpty())
 			return collectionCenterShows;
 
 		CooperativeEntity cooperative = cooperativeEntityService.findByCode(coCode);
-		UnionEntities union = unionEntityService.findByCode(cooperative.getUnionId());
+		UnionEntities union = unionEntityService.findByCode(cooperative.getUnionCode());
 		String coName = cooperative.getName();
 		String unionName = union.getName();
 		for (CollectionCenterEntity collectionCenter : collectionCenters) {
@@ -79,7 +78,7 @@ public class CollectionCenterEntityService extends AbstractService<CollectionCen
 
 			collectionCenterShow.setId(collectionCenter.getId());
 			collectionCenterShow.setType(collectionCenter.getType());
-			collectionCenterShow.setCoCode(collectionCenter.getCooperativeId());
+			collectionCenterShow.setCoCode(collectionCenter.getCooperativeCode());
 			collectionCenterShow.setCode(collectionCenter.getCode());
 			collectionCenterShow.setName(collectionCenter.getName());
 			collectionCenterShow.setVillage(collectionCenter.getVillage());

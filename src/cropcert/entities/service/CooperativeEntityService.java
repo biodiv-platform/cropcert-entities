@@ -30,7 +30,7 @@ public class CooperativeEntityService extends AbstractService<CooperativeEntity>
 	}
 
 	public List<CooperativeEntity> getByUnion(Long unionId) {
-		return getByPropertyWithCondtion("unionId", unionId, "=", -1, -1, "name");
+		return getByPropertyWithCondtion("unionCode", unionId, "=", -1, -1, "name");
 	}
 
 }

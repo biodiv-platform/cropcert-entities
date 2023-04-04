@@ -39,14 +39,14 @@ public class CooperativeEntity implements Serializable {
 	@Column(name = "manager")
 	private String manager;
 
-	@Column(name = "union_id", nullable = false)
-	private Long unionId;
+	@Column(name = "union_code", nullable = false)
+	private Long unionCode;
 
 	@Column(name = "code", nullable = false)
 	private Long code;
 
 	public CooperativeEntity(Long id, String name, String fullName, String conact, String manager, Long code,
-			Long unionId) {
+			Long unionCode) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -54,7 +54,7 @@ public class CooperativeEntity implements Serializable {
 		this.conact = conact;
 		this.manager = manager;
 		this.code = code;
-		this.unionId = unionId;
+		this.unionCode = unionCode;
 	}
 	
     public CooperativeEntity() {
@@ -109,12 +109,12 @@ public class CooperativeEntity implements Serializable {
 		this.manager = manager;
 	}
 
-	public Long getUnionId() {
-		return unionId;
+	public Long getUnionCode() {
+		return unionCode;
 	}
 
-	public void setUnionId(Long unionId) {
-		this.unionId = unionId;
+	public void setUnionCode(Long unionCode) {
+		this.unionCode = unionCode;
 	}
 
 }

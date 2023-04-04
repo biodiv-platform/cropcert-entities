@@ -3,6 +3,7 @@ package cropcert.entities.api;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -20,27 +21,21 @@ import javax.ws.rs.core.Response.Status;
 
 import org.json.JSONException;
 
-import javax.inject.Inject;
-
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.UnionPerson;
-import cropcert.entities.service.UnionPersonService;
+import cropcert.entities.service.UnionPersonServices;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Path("old/unionPerson")
+@Path("unionPerson")
 @Api("Union person")
-public class UnionPersonApi {
-
-	private UnionPersonService unionPersonService;
+public class UnionPersonController {
 
 	@Inject
-	public UnionPersonApi(UnionPersonService unionService) {
-		this.unionPersonService = unionService;
-	}
+	private UnionPersonServices unionPersonService;
 
 	@Path("{id}")
 	@GET
@@ -48,7 +43,7 @@ public class UnionPersonApi {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get the Union person by user id", response = UnionPerson.class)
 	public Response findByUserId(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		UnionPerson unionPerson = unionPersonService.findByUserId(id);
+		UnionPerson unionPerson = unionPersonService.getByUserId(id);
 		if (unionPerson == null)
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.status(Status.CREATED).entity(unionPerson).build();
@@ -82,9 +77,9 @@ public class UnionPersonApi {
 		else
 			unionPerson = unionPersonService.findByUnionId(unionCode, limit, offset, "unionCode desc");
 
-		return Response.status(Status.CREATED).entity(unionPerson).build();
+		return Response.status(Status.OK).entity(unionPerson).build();
 	}
-
+	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -94,14 +89,11 @@ public class UnionPersonApi {
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response save(@Context HttpServletRequest request, String jsonString) {
 		UnionPerson unionPerson;
-		try {
-			unionPerson = unionPersonService.save(jsonString);
-			return Response.status(Status.CREATED).entity(unionPerson).build();
-		} catch (IOException | JSONException e) {
-			e.printStackTrace();
-		}
-		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
+		unionPerson = unionPersonService.create(jsonString);
+		return Response.status(Status.CREATED).entity(unionPerson).build();
 	}
+
+
 
 	@Path("{id}")
 	@DELETE
@@ -115,4 +107,5 @@ public class UnionPersonApi {
 		UnionPerson unionPerson = unionPersonService.deleteByUserId(id);
 		return Response.status(Status.ACCEPTED).entity(unionPerson).build();
 	}
+
 }

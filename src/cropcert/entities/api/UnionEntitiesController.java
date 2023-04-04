@@ -1,6 +1,5 @@
 package cropcert.entities.api;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,21 +21,26 @@ import javax.ws.rs.core.Response.Status;
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.UnionEntities;
-import cropcert.entities.service.UnionEntityService;
+import cropcert.entities.service.UnionEntitiesService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Path("unionentities")
+@Path("union")
 @Api("UnionEntities")
-public class UnionEntitiesApi {
 
-	private UnionEntityService unionEntityService;
+public class UnionEntitiesController {
 
 	@Inject
-	public UnionEntitiesApi(UnionEntityService unionEntityService) {
-		this.unionEntityService = unionEntityService;
+	private UnionEntitiesService unionService;
+
+	@GET
+	@Path("/ping")
+	@Produces(MediaType.TEXT_PLAIN)
+	@ApiOperation(value = "Dummy API Ping", notes = "Checks validity of war file at deployment", response = String.class)
+	public Response ping() {
+		return Response.status(Status.OK).entity("PONG").build();
 	}
 
 	@Path("{id}")
@@ -44,11 +48,16 @@ public class UnionEntitiesApi {
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get the Union by id", response = UnionEntities.class)
-	public Response findbyId(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		UnionEntities union = unionEntityService.findById(id);
-		if (union == null)
-			return Response.status(Status.NO_CONTENT).build();
-		return Response.status(Status.CREATED).entity(union).build();
+	public Response findbyIdnew(@Context HttpServletRequest request, @PathParam("id") Long id) {
+
+		try {
+			UnionEntities union = unionService.getUnionById(id);
+			return Response.status(Status.OK).entity(union).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.NO_CONTENT).entity(e.getMessage()).build();
+
+		}
 	}
 
 	@Path("code/{code}")
@@ -57,10 +66,15 @@ public class UnionEntitiesApi {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get union by its code", response = UnionEntities.class)
 	public Response findByCode(@Context HttpServletRequest request, @PathParam("code") Long code) {
-		UnionEntities union = unionEntityService.findByCode(code);
-		if (union == null)
-			return Response.status(Status.NO_CONTENT).build();
-		return Response.ok().entity(union).build();
+		try {
+			UnionEntities union = unionService.getUnionByCode(code);
+			return Response.status(Status.OK).entity(union).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.NO_CONTENT).entity(e.getMessage()).build();
+
+		}
+
 	}
 
 	@Path("all")
@@ -69,12 +83,17 @@ public class UnionEntitiesApi {
 	@ApiOperation(value = "Get all the Union", response = UnionEntities.class, responseContainer = "List")
 	public Response findAll(@Context HttpServletRequest request, @DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
-		List<UnionEntities> unions;
-		if (limit == -1 || offset == -1)
-			unions = unionEntityService.findAll();
-		else
-			unions = unionEntityService.findAll(limit, offset);
-		return Response.ok().entity(unions).build();
+		try {
+			List<UnionEntities> unions;
+			if (limit == -1 || offset == -1)
+				unions = unionService.findAll();
+			else
+				unions = unionService.findAll(limit, offset);
+			return Response.ok().entity(unions).build();
+		} catch (Exception e) {
+			return Response.status(Status.NO_CONTENT).entity(e.getMessage()).build();
+
+		}
 	}
 
 	@Path("create")
@@ -88,9 +107,9 @@ public class UnionEntitiesApi {
 	public Response save(@Context HttpServletRequest request, String jsonString) {
 		UnionEntities union;
 		try {
-			union = unionEntityService.save(jsonString);
+			union = unionService.createUnion(jsonString);
 			return Response.status(Status.CREATED).entity(union).build();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
@@ -104,8 +123,9 @@ public class UnionEntitiesApi {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
-	public Response delete(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		UnionEntities union = unionEntityService.delete(id);
+	public Response delete(@Context HttpServletRequest request, @PathParam("id") Long id,
+			@DefaultValue("false") @QueryParam("code") Boolean code) {
+		UnionEntities union = unionService.deleteUnion(id, code);
 		return Response.status(Status.ACCEPTED).entity(union).build();
 	}
 
