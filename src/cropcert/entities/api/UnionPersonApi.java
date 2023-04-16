@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Path("old/unionPerson")
-@Api("Union person")
+@Api("Union person Old")
 public class UnionPersonApi {
 
 	private UnionPersonService unionPersonService;

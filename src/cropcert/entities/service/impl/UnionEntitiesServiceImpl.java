@@ -21,7 +21,7 @@ public class UnionEntitiesServiceImpl implements UnionEntitiesService {
 	@Override
 	public UnionEntities getUnionById(Long id) {
 		UnionEntities union = unionDao.findById(id);
-		if (union.equals(null)) {
+		if (union == null) {
 			return null;
 		}
 		return union;
@@ -30,7 +30,7 @@ public class UnionEntitiesServiceImpl implements UnionEntitiesService {
 	@Override
 	public UnionEntities getUnionByCode(Long code) {
 		UnionEntities union = unionDao.findByPropertyWithCondition("code", code, "=");
-		if (union.equals(null)) {
+		if (union == null) {
 			return null;
 		}
 		return union;
@@ -39,7 +39,7 @@ public class UnionEntitiesServiceImpl implements UnionEntitiesService {
 	@Override
 	public List<UnionEntities> findAll() {
 		List<UnionEntities> union = unionDao.findAll();
-		if (union.equals(null) || union.isEmpty()) {
+		if (union == null || union.isEmpty()) {
 			return null;
 		}
 		return union;
@@ -49,7 +49,7 @@ public class UnionEntitiesServiceImpl implements UnionEntitiesService {
 	public List<UnionEntities> findAll(Integer limit, Integer offset) {
 		List<UnionEntities> union = unionDao.findAll(limit, offset);
 		System.out.println(union);
-		if (union.equals(null) || union.isEmpty()) {
+		if (union == null || union.isEmpty()) {
 			return null;
 		}
 		return union;

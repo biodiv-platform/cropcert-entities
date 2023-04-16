@@ -19,16 +19,11 @@ public class CollectionCenterEntityDao extends AbstractDao<CollectionCenterEntit
 
 	@Override
 	public CollectionCenterEntity findById(Long id) {
-		Session session = sessionFactory.openSession();
-		CollectionCenterEntity entity = null;
-		try {
-			entity = session.get(CollectionCenterEntity.class, id);
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			session.close();
-		}
-		return entity;
+	    try (Session session = sessionFactory.openSession()) {
+	        return session.get(CollectionCenterEntity.class, id);
+	    } catch (Exception e) {
+	        throw e;
+	    }
 	}
 
 	public CollectionCenterEntity findByName(String name, String code) {

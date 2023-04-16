@@ -1,6 +1,5 @@
 package cropcert.entities.api;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,8 +17,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.json.JSONException;
 
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
@@ -79,7 +76,7 @@ public class UnionPersonController {
 
 		return Response.status(Status.OK).entity(unionPerson).build();
 	}
-	
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -92,8 +89,6 @@ public class UnionPersonController {
 		unionPerson = unionPersonService.create(jsonString);
 		return Response.status(Status.CREATED).entity(unionPerson).build();
 	}
-
-
 
 	@Path("{id}")
 	@DELETE

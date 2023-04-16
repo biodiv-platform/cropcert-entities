@@ -19,26 +19,19 @@ public class CollectionCenterDao extends AbstractDao<CollectionCenter, Long> {
 
 	@Override
 	public CollectionCenter findById(Long id) {
-		Session session = sessionFactory.openSession();
-		CollectionCenter entity = null;
-		try {
-			entity = session.get(CollectionCenter.class, id);
+		try (Session session = sessionFactory.openSession()) {
+			return session.get(CollectionCenter.class, id);
 		} catch (Exception e) {
 			throw e;
-		} finally {
-			session.close();
 		}
-		return entity;
 	}
 
 	public CollectionCenter findByName(String name, String code) {
+		String queryStr = "from CollectionCenter t where trim(lower(t.name)) = :name";
+		try (Session session = sessionFactory.openSession()) {
+			Query<CollectionCenter> query = session.createQuery(queryStr, CollectionCenter.class);
+			query.setParameter("name", name.toLowerCase().trim());
 
-		String queryStr = "" + "from CollectionCenter t where trim(lower(t.name)) = :name";
-		Session session = sessionFactory.openSession();
-		Query<CollectionCenter> query = session.createQuery(queryStr, CollectionCenter.class);
-		query.setParameter("name", name.toLowerCase().trim());
-
-		try {
 			List<CollectionCenter> ccs = query.getResultList();
 			CollectionCenter cc = null;
 			if (ccs.size() > 1) {
@@ -48,11 +41,10 @@ public class CollectionCenterDao extends AbstractDao<CollectionCenter, Long> {
 						break;
 					}
 				}
-			} else
+			} else {
 				cc = ccs.get(0);
+			}
 			return cc;
-		} finally {
-			session.close();
 		}
 	}
 }
