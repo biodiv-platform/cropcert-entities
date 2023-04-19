@@ -24,8 +24,8 @@ import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.Role;
 import com.strandls.user.pojo.User;
 
-import cropcert.entities.api.CollectionCenterApi;
-import cropcert.entities.api.CooperativeApi;
+import cropcert.entities.api.CollectionCenterEntitiesApi;
+import cropcert.entities.api.CooperativeEntitiesApi;
 import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.CollectionCenterPerson;
 import cropcert.entities.model.Cooperative;
@@ -42,10 +42,10 @@ public class UserService {
 	public final static String rootPath = System.getProperty("user.home") + File.separatorChar + "cropcert-image";
 
 	@Inject
-	private CooperativeApi cooperativeApi;
+	private CooperativeEntitiesApi cooperativeEntitiesApi;
 
 	@Inject
-	private CollectionCenterApi collectionCenterApi;
+	private CollectionCenterEntitiesApi collectionCenterEntitiesApi;
 
 	@Inject
 	private CollectionCenterPersonService collectionCenterPersonApi;
@@ -64,43 +64,6 @@ public class UserService {
 
 	@Inject
 	private UserServiceApi userServiceApi;
-
-//	@Inject
-//	public UserService(UserDao userDao) {
-//		super(userDao);
-//	}
-
-//	public User save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
-//		User user = objectMappper.readValue(jsonString, User.class);
-//		JSONObject jsonObject = new JSONObject(jsonString);
-//		String password = jsonObject.getString("password");
-//		password = passwordEncoder.encodePassword(password, null);
-//		user.setPassword(password);
-//		user.setPermissions(defaultPermissions);
-//		return save(user);
-//	}
-
-//	public User updatePassword(HttpServletRequest request, String password) {
-//
-//		CommonProfile profile = AuthUtility.getCurrentUser(request);
-//		User user = findById(Long.parseLong(profile.getId()));
-//
-//		password = passwordEncoder.encodePassword(password, null);
-//		user.setPassword(password);
-//		return update(user);
-//	}
-//
-//	public User getByEmail(String email) {
-//		return findByPropertyWithCondtion("email", email, "=");
-//	}
-//
-//	public User getByUserName(String userName) {
-//		return findByPropertyWithCondtion("userName", userName, "=");
-//	}
-//
-//	public User findByPropertyWithCondtion(String property, String value, String condition) {
-//		return dao.findByPropertyWithCondition(property, value, condition);
-//	}
 
 	public Map<String, Object> getMyData(HttpServletRequest request) {
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -144,7 +107,7 @@ public class UserService {
 					Long coCode = coPerson.getCoCode();
 					myData.put("coCode", coPerson.getCoCode());
 
-					Response coResponse = cooperativeApi.findByCode(request, (long) coCode);
+					Response coResponse = cooperativeEntitiesApi.findByCode(request, (long) coCode);
 					if (coResponse.getEntity() != null) {
 						Cooperative cooperative = (Cooperative) coResponse.getEntity();
 						myData.put("unionCode", cooperative.getUnionCode());
@@ -155,13 +118,13 @@ public class UserService {
 					Long ccCode = ccPerson.getCcCode();
 					myData.put("ccCode", ccCode);
 
-					Response ccResponse = collectionCenterApi.findByCode(request, (long) ccCode);
+					Response ccResponse = collectionCenterEntitiesApi.findByCode(request, (long) ccCode);
 					if (ccResponse.getEntity() != null) {
 						CollectionCenter collectionCenter = (CollectionCenter) ccResponse.getEntity();
 						Long coCode = collectionCenter.getCoCode();
 						myData.put("coCode", coCode);
 
-						Response coResponse = cooperativeApi.findByCode(request, (long) coCode);
+						Response coResponse = cooperativeEntitiesApi.findByCode(request, (long) coCode);
 						if (coResponse.getEntity() != null) {
 							Cooperative cooperative = (Cooperative) coResponse.getEntity();
 							myData.put("unionCode", cooperative.getUnionCode());

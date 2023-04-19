@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 /**
  * @author Arun
  *
@@ -45,8 +46,14 @@ public class CooperativeEntity implements Serializable {
 	@Column(name = "code", nullable = false)
 	private Long code;
 
+	@Column(name = "num_farmer")
+	private Long numFarmer;
+
+	@Column(name = "farmer_seq_number")
+	private Long farSeqNumber;
+
 	public CooperativeEntity(Long id, String name, String fullName, String conact, String manager, Long code,
-			Long unionCode) {
+			Long unionCode, Long numFarmer, Long farSeqNumber) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -55,11 +62,14 @@ public class CooperativeEntity implements Serializable {
 		this.manager = manager;
 		this.code = code;
 		this.unionCode = unionCode;
+		this.numFarmer = numFarmer;
+		this.farSeqNumber = farSeqNumber;
+
 	}
-	
-    public CooperativeEntity() {
-        super();
-    }
+
+	public CooperativeEntity() {
+		super();
+	}
 
 	public Long getId() {
 		return id;
@@ -115,6 +125,22 @@ public class CooperativeEntity implements Serializable {
 
 	public void setUnionCode(Long unionCode) {
 		this.unionCode = unionCode;
+	}
+
+	public Long getNumFarmer() {
+		return numFarmer;
+	}
+
+	public void setNumFarmer(Long numFarmer) {
+		this.numFarmer = numFarmer;
+	}
+
+	public Long getFarSeqNumber() {
+		return farSeqNumber;
+	}
+
+	public void setFarSeqNumber(Long farSeqNumber) {
+		this.farSeqNumber = farSeqNumber;
 	}
 
 }

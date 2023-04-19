@@ -11,9 +11,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.Cooperative;
 import cropcert.entities.model.Union;
-import cropcert.entities.service.CollectionCenterService;
-import cropcert.entities.service.CooperativeService;
-import cropcert.entities.service.UnionService;
+import cropcert.entities.service.CollectionCenterEntityService;
+import cropcert.entities.service.CooperativeEntityService;
+import cropcert.entities.service.UnionEntityService;
 import io.swagger.annotations.ApiModel;
 
 @ApiModel("FarmerFileMetadata")
@@ -73,13 +73,13 @@ public class FarmerFileMetaData {
 	private Integer subCountryColumnIndex;
 
 	@JsonIgnore
-	private CollectionCenterService collectionCenterService;
+	private CollectionCenterEntityService collectionCenterEntityService;
 
 	@JsonIgnore
-	private CooperativeService cooperativeService;
+	private CooperativeEntityService cooperativeEntityService;
 
 	@JsonIgnore
-	private UnionService unionService;
+	private UnionEntityService unionEntityService;
 
 	@JsonIgnore
 	private Map<String, List<CollectionCenter>> collectionCenterMap = new HashMap<>();
@@ -95,16 +95,16 @@ public class FarmerFileMetaData {
 		super();
 	}
 
-	public void setCollectionCenterService(CollectionCenterService collectionCenterService) {
-		this.collectionCenterService = collectionCenterService;
+	public void setCollectionCenterService(CollectionCenterEntityService collectionCenterEntityService) {
+		this.collectionCenterEntityService = collectionCenterEntityService;
 	}
 
-	public void setCooperativeService(CooperativeService cooperativeService) {
-		this.cooperativeService = cooperativeService;
+	public void setCooperativeService(CooperativeEntityService cooperativeEntityService) {
+		this.cooperativeEntityService = cooperativeEntityService;
 	}
 
-	public void setUnionService(UnionService unionService) {
-		this.unionService = unionService;
+	public void setUnionService(UnionEntityService unionEntityService) {
+		this.unionEntityService = unionEntityService;
 	}
 
 	public boolean validateIndices(String[] headers) {

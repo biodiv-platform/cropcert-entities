@@ -34,10 +34,10 @@ import com.strandls.user.pojo.User;
 
 import cropcert.entities.dao.FarmerDao;
 import cropcert.entities.filter.Permissions;
-import cropcert.entities.model.CollectionCenter;
-import cropcert.entities.model.Cooperative;
+import cropcert.entities.model.CollectionCenterEntity;
+import cropcert.entities.model.CooperativeEntity;
 import cropcert.entities.model.Farmer;
-import cropcert.entities.model.Union;
+import cropcert.entities.model.UnionEntities;
 import cropcert.entities.model.UserFarmerDetail;
 import cropcert.entities.model.request.FarmerFileMetaData;
 
@@ -48,13 +48,13 @@ public class FarmerService extends AbstractService<Farmer> {
 	ObjectMapper objectMapper;
 
 	@Inject
-	private CollectionCenterService collectionCenterService;
+	private CollectionCenterEntityService collectionCenterEntityService;
 
 	@Inject
-	private CooperativeService cooperativeService;
+	private CooperativeEntityService cooperativeEntityService;
 
 	@Inject
-	private UnionService unionService;
+	private UnionEntityService unionEntityService;
 
 	@Inject
 	private UserServiceApi userServiceApi;
@@ -78,9 +78,10 @@ public class FarmerService extends AbstractService<Farmer> {
 		Long ccCode = farmer.getCcCode();
 		if (ccCode == null)
 			throw new ValidationException("Collection center code is compulsory");
-		CollectionCenter collectionCenter = collectionCenterService.findByPropertyWithCondition("code", ccCode, "=");
-		Cooperative cooperative = cooperativeService.findByPropertyWithCondition("code", collectionCenter.getCoCode(),
-				"=");
+		CollectionCenterEntity collectionCenter = collectionCenterEntityService.findByPropertyWithCondition("code",
+				ccCode, "=");
+		CooperativeEntity cooperative = cooperativeEntityService.findByPropertyWithCondition("code",
+				collectionCenter.getCooperativeCode(), "=");
 
 		if (membershipId == null) {
 			membershipId = "";
@@ -100,11 +101,11 @@ public class FarmerService extends AbstractService<Farmer> {
 			cooperative.setFarSeqNumber(seqNumber + 1);
 			cooperative.setNumFarmer(numFarmer + 1);
 
-			cooperativeService.update(cooperative);
+			cooperativeEntityService.update(cooperative);
 		}
 		farmer.setCcName(collectionCenter.getName());
 		farmer.setCoName(cooperative.getName());
-		Union unionObject = unionService.findById(cooperative.getUnionCode());
+		UnionEntities unionObject = unionEntityService.findById(cooperative.getUnionCode());
 		farmer.setUnionName(unionObject.getName());
 
 		return save(farmer);
@@ -204,9 +205,9 @@ public class FarmerService extends AbstractService<Farmer> {
 		InputStreamReader inputStreamReader = new InputStreamReader(metaDataInputStream, StandardCharsets.UTF_8);
 
 		FarmerFileMetaData fileMetaData = objectMapper.readValue(inputStreamReader, FarmerFileMetaData.class);
-		fileMetaData.setCollectionCenterService(collectionCenterService);
-		fileMetaData.setCooperativeService(cooperativeService);
-		fileMetaData.setUnionService(unionService);
+		fileMetaData.setCollectionCenterService(collectionCenterEntityService);
+		fileMetaData.setCooperativeService(cooperativeEntityService);
+		fileMetaData.setUnionService(unionEntityService);
 
 		if (fileMetaData.getFileType().equalsIgnoreCase("csv")) {
 
