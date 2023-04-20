@@ -19,7 +19,7 @@ public class Utility {
 	public static List<Class<?>> getApiAnnotatedClassesFromPackage(String packageName)
 			throws ClassNotFoundException, IOException, URISyntaxException {
 		List<String> classNames = getClassNamesFromPackage(packageName);
-		List<Class<?>> classes = new ArrayList<Class<?>>();
+		List<Class<?>> classes = new ArrayList<>();
 		for (String className : classNames) {
 			Class<?> cls = Class.forName(className);
 			Annotation[] annotations = cls.getAnnotations();
@@ -37,7 +37,7 @@ public class Utility {
 	public static List<Class<?>> getEntityClassesFromPackage(String packageName)
 			throws ClassNotFoundException, IOException, URISyntaxException {
 		List<String> classNames = getClassNamesFromPackage(packageName);
-		List<Class<?>> classes = new ArrayList<Class<?>>();
+		List<Class<?>> classes = new ArrayList<>();
 		for (String className : classNames) {
 			Class<?> cls = Class.forName(className);
 			Annotation[] annotations = cls.getAnnotations();
@@ -56,7 +56,7 @@ public class Utility {
 	private static ArrayList<String> getClassNamesFromPackage(final String packageName)
 			throws IOException, URISyntaxException, ClassNotFoundException {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<>();
 
 		URL packageURL = classLoader.getResource(packageName);
 

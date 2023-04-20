@@ -23,7 +23,7 @@ public class InspectorService extends AbstractService<Inspector> {
 
 	private static Set<String> defaultPermissions;
 	static {
-		defaultPermissions = new HashSet<String>();
+		defaultPermissions = new HashSet<>();
 		defaultPermissions.add(Permissions.INSPECTOR);
 	}
 

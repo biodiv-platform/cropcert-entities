@@ -19,6 +19,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.CooperativeEntity;
@@ -31,6 +34,8 @@ import io.swagger.annotations.ApiOperation;
 @Path("co")
 @Api("CooperativeEntites")
 public class CooperativeEntitiesApi {
+
+	private static final Logger logger = LoggerFactory.getLogger(CooperativeEntitiesApi.class);
 
 	private CooperativeEntityService cooperativeEntityService;
 
@@ -101,7 +106,7 @@ public class CooperativeEntitiesApi {
 			cooperative = cooperativeEntityService.save(jsonString);
 			return Response.status(Status.CREATED).entity(cooperative).build();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
 	}

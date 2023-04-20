@@ -29,7 +29,7 @@ public class CooperativePersonService extends AbstractService<CooperativePerson>
 
 	private static Set<String> defaultPermissions;
 	static {
-		defaultPermissions = new HashSet<String>();
+		defaultPermissions = new HashSet<>();
 		defaultPermissions.add(Permissions.CO_PERSON);
 		defaultPermissions.add(Permissions.CC_PERSON);
 		defaultPermissions.add(Permissions.FARMER);

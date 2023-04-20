@@ -26,7 +26,7 @@ public class AuthUtility {
 			return null;
 		try {
 			// Set<String> roles = user.getRoles();
-			List<String> authorities = new ArrayList<String>();
+			List<String> authorities = new ArrayList<>();
 			/*
 			 * for (Role role : roles) { authorities.add(role.getAuthority()); }
 			 */

@@ -23,7 +23,7 @@ public class FactoryPersonService extends AbstractService<FactoryPerson> {
 
 	private static Set<String> defaultPermissions;
 	static {
-		defaultPermissions = new HashSet<String>();
+		defaultPermissions = new HashSet<>();
 		defaultPermissions.add(Permissions.FACTORY);
 	}
 

@@ -58,7 +58,7 @@ public class AuthenticateService {
 		try {
 			String jwtToken = generateAccessToken(profile, user);
 
-			Map<String, Object> result = new HashMap<String, Object>();
+			Map<String, Object> result = new HashMap<>();
 			result.put("access_token", jwtToken);
 			result.put("token_type", "bearer");
 			result.put("timeout", AuthUtility.getAccessTokenExpiryDate());
@@ -82,16 +82,16 @@ public class AuthenticateService {
 	 */
 	private String generateAccessToken(CommonProfile profile, User user) {
 
-		JwtGenerator<CommonProfile> generator = new JwtGenerator<CommonProfile>(
+		JwtGenerator<CommonProfile> generator = new JwtGenerator<>(
 				new SecretSignatureConfiguration(MyApplication.JWT_SALT));
 
-		Set<String> roles = new HashSet<String>();
+		Set<String> roles = new HashSet<>();
 		if (user.getRoles() != null && user.getRoles().isEmpty()) {
 			roles = user.getRoles().stream().map(item -> item.getAuthority()).collect(Collectors.toSet());
 
 		}
 
-		Map<String, Object> jwtClaims = new HashMap<String, Object>();
+		Map<String, Object> jwtClaims = new HashMap<>();
 		jwtClaims.put("id", profile.getId());
 		jwtClaims.put(JwtClaims.SUBJECT, profile.getId() + "");
 		jwtClaims.put(Pac4jConstants.USERNAME, profile.getUsername());
@@ -111,10 +111,10 @@ public class AuthenticateService {
 	 * @return dummy
 	 */
 	private String generateRefreshToken(CommonProfile profile, User user) {
-		JwtGenerator<CommonProfile> generator = new JwtGenerator<CommonProfile>(
+		JwtGenerator<CommonProfile> generator = new JwtGenerator<>(
 				new SecretSignatureConfiguration(MyApplication.JWT_SALT));
 
-		Map<String, Object> jwtClaims = new HashMap<String, Object>();
+		Map<String, Object> jwtClaims = new HashMap<>();
 		jwtClaims.put("id", profile.getId());
 		jwtClaims.put(JwtClaims.SUBJECT, profile.getId() + "");
 		jwtClaims.put(Pac4jConstants.USERNAME, profile.getUsername());

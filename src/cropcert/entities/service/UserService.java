@@ -68,7 +68,7 @@ public class UserService {
 	public Map<String, Object> getMyData(HttpServletRequest request) {
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 
-		Map<String, Object> myData = new HashMap<String, Object>();
+		Map<String, Object> myData = new HashMap<>();
 
 		try {
 			User user = userServiceApi.getUser(profile.getId());

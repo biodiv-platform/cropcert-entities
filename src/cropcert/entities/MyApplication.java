@@ -68,7 +68,7 @@ public class MyApplication extends Application {
 	@Override
 	public Set<Object> getSingletons() {
 
-		Set<Object> singletons = new HashSet<Object>();
+		Set<Object> singletons = new HashSet<>();
 		singletons.add(new ContainerLifecycleListener() {
 
 			@Override
@@ -100,7 +100,7 @@ public class MyApplication extends Application {
 
 	@Override
 	public Set<Class<?>> getClasses() {
-		Set<Class<?>> classes = new HashSet<Class<?>>();
+		Set<Class<?>> classes = new HashSet<>();
 		try {
 			List<Class<?>> apiClasses = Utility.getApiAnnotatedClassesFromPackage("cropcert");
 			classes.addAll(apiClasses);

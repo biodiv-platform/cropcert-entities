@@ -18,6 +18,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.UnionEntities;
@@ -31,6 +34,8 @@ import io.swagger.annotations.ApiOperation;
 @Api("UnionEntities")
 
 public class UnionEntitiesController {
+
+	private static final Logger logger = LoggerFactory.getLogger(UnionEntitiesController.class);
 
 	@Inject
 	private UnionEntitiesService unionService;
@@ -110,7 +115,7 @@ public class UnionEntitiesController {
 			union = unionService.createUnion(jsonString);
 			return Response.status(Status.CREATED).entity(union).build();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
 	}

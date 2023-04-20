@@ -23,7 +23,7 @@ public class UnionPersonService extends AbstractService<UnionPerson> {
 
 	private static Set<String> defaultPermissions;
 	static {
-		defaultPermissions = new HashSet<String>();
+		defaultPermissions = new HashSet<>();
 		defaultPermissions.add(Permissions.UNION);
 	}
 

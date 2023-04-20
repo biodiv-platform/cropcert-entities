@@ -51,7 +51,7 @@ public class UserServletContextListener extends GuiceServletContextListener {
 				bind(UserServiceApi.class).in(Scopes.SINGLETON);
 				bind(ServletContainer.class).in(Scopes.SINGLETON);
 
-				Map<String, String> props = new HashMap<String, String>();
+				Map<String, String> props = new HashMap<>();
 				props.put("javax.ws.rs.Application", MyApplication.class.getName());
 				props.put("jersey.config.server.provider.packages", "cropcert");
 				props.put("jersey.config.server.wadl.disableWadl", "true");

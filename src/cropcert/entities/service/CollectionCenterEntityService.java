@@ -42,7 +42,7 @@ public class CollectionCenterEntityService extends AbstractService<CollectionCen
 
 	public Map<String, Object> getOriginNames(HttpServletRequest request, String ccCodesString) {
 		Long coCode = -1L;
-		List<String> ccNames = new ArrayList<String>();
+		List<String> ccNames = new ArrayList<>();
 
 		for (String value : ccCodesString.split(",")) {
 			Long ccCode = Long.parseLong(value);
@@ -51,7 +51,7 @@ public class CollectionCenterEntityService extends AbstractService<CollectionCen
 			ccNames.add(collectionCenter.getName());
 		}
 
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		if (coCode != null && coCode != -1) {
 			CooperativeEntity cooperative = cooperativeEntityService.findByCode(coCode);
 			if (cooperative != null)
@@ -65,7 +65,7 @@ public class CollectionCenterEntityService extends AbstractService<CollectionCen
 	public List<CollectionCenterShow> findAllByCoCode(HttpServletRequest request, Long coCode) {
 		List<CollectionCenterEntity> collectionCenters = getByPropertyWithCondtion("cooperativeCode", coCode, "=", -1, -1, "name");
 
-		List<CollectionCenterShow> collectionCenterShows = new ArrayList<CollectionCenterShow>();
+		List<CollectionCenterShow> collectionCenterShows = new ArrayList<>();
 		if (collectionCenters.isEmpty())
 			return collectionCenterShows;
 

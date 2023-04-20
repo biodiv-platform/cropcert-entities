@@ -61,7 +61,7 @@ public class FarmerService extends AbstractService<Farmer> {
 
 	private static Set<String> defaultPermissions;
 	static {
-		defaultPermissions = new HashSet<String>();
+		defaultPermissions = new HashSet<>();
 		defaultPermissions.add(Permissions.FARMER);
 	}
 
@@ -146,7 +146,7 @@ public class FarmerService extends AbstractService<Farmer> {
 
 	public List<UserFarmerDetail> getFarmerForMultipleCollectionCenter(String ccCodes, String firstName, Integer limit,
 			Integer offset) {
-		List<Long> ccCodesLong = new ArrayList<Long>();
+		List<Long> ccCodesLong = new ArrayList<>();
 
 		String[] ccCodesString = ccCodes.split(",");
 		for (String ccCodeString : ccCodesString) {
@@ -236,7 +236,7 @@ public class FarmerService extends AbstractService<Farmer> {
 
 	private Map<String, Object> ValidateSheet(CSVReader reader, FarmerFileMetaData fileMetaData) {
 
-		Map<String, Object> validationResult = new HashMap<String, Object>();
+		Map<String, Object> validationResult = new HashMap<>();
 
 		Iterator<String[]> it = reader.iterator();
 

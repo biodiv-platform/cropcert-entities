@@ -85,10 +85,10 @@ public class FarmerFileMetaData {
 	private Map<String, List<CollectionCenter>> collectionCenterMap = new HashMap<>();
 
 	@JsonIgnore
-	private Map<Long, Cooperative> coCodeToCooperativeMap = new HashMap<Long, Cooperative>();
+	private Map<Long, Cooperative> coCodeToCooperativeMap = new HashMap<>();
 
 	@JsonIgnore
-	private Map<Long, Union> unionCodeToUnionCenterMap = new HashMap<Long, Union>();
+	private Map<Long, Union> unionCodeToUnionCenterMap = new HashMap<>();
 
 	@Inject
 	public FarmerFileMetaData() {

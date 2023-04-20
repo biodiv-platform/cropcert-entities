@@ -48,7 +48,6 @@ public class UnionEntitiesServiceImpl implements UnionEntitiesService {
 	@Override
 	public List<UnionEntities> findAll(Integer limit, Integer offset) {
 		List<UnionEntities> union = unionDao.findAll(limit, offset);
-		System.out.println(union);
 		if (union == null || union.isEmpty()) {
 			return null;
 		}

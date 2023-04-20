@@ -27,7 +27,7 @@ public class AdminService extends AbstractService<Admin> {
 
 	private static Set<String> defaultPermissions;
 	static {
-		defaultPermissions = new HashSet<String>();
+		defaultPermissions = new HashSet<>();
 		defaultPermissions.add(Permissions.ADMIN);
 	}
 

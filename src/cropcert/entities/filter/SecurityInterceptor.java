@@ -96,7 +96,7 @@ public class SecurityInterceptor implements MethodInterceptor {
 
 		// Get roles allowed from the annotation
 		TokenAndUserAuthenticated annotation = method.getAnnotation(TokenAndUserAuthenticated.class);
-		Set<String> allowedPermissions = new HashSet<String>(Arrays.asList(annotation.permissions()));
+		Set<String> allowedPermissions = new HashSet<>(Arrays.asList(annotation.permissions()));
 
 		// Special grand for admin to do everthing
 		JSONArray userRoles = (JSONArray) commonProfile.getAttribute("roles");
