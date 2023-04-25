@@ -7,8 +7,6 @@ import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.inject.Inject;
 
@@ -36,7 +34,7 @@ public class AdminService extends AbstractService<Admin> {
 		super(adminDao);
 	}
 
-	public Admin save(String jsonString) throws JsonParseException, JsonMappingException, IOException, JSONException {
+	public Admin save(String jsonString) throws IOException, JSONException {
 		Admin admin = objectMapper.readValue(jsonString, Admin.class);
 		JSONObject jsonObject = new JSONObject(jsonString);
 		String password = jsonObject.getString("password");

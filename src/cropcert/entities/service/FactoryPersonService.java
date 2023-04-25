@@ -6,10 +6,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.json.JSONException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cropcert.entities.dao.FactoryPersonDao;
@@ -32,8 +28,7 @@ public class FactoryPersonService extends AbstractService<FactoryPerson> {
 		super(factoryPersonDao);
 	}
 
-	public FactoryPerson save(String jsonString)
-			throws JsonParseException, JsonMappingException, IOException, JSONException {
+	public FactoryPerson save(String jsonString) throws IOException {
 		FactoryPerson factoryPerson = objectMapper.readValue(jsonString, FactoryPerson.class);
 		return save(factoryPerson);
 	}

@@ -3,16 +3,20 @@ package cropcert.entities.service;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cropcert.entities.dao.AbstractDao;
 
 public abstract class AbstractService<T> {
 
-	public Class<T> entityClass;
+	protected Class<T> entityClass;
 	protected AbstractDao<T, Long> dao;
 
+	private static final Logger logger = LoggerFactory.getLogger(AbstractService.class);
+
 	@SuppressWarnings("unchecked")
-	public AbstractService(AbstractDao<T, Long> dao) {
-		System.out.println("\nAbstractService constructor");
+	protected AbstractService(AbstractDao<T, Long> dao) {
 		this.dao = dao;
 		entityClass = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
 	}
@@ -20,58 +24,70 @@ public abstract class AbstractService<T> {
 	public T save(T entity) {
 		try {
 			this.dao.save(entity);
-			return entity;
 		} catch (RuntimeException re) {
-			throw re;
+			logger.error(re.getMessage());
 		}
+		return entity;
+
 	}
 
 	public T update(T entity) {
 		try {
 			this.dao.update(entity);
-			return entity;
 		} catch (RuntimeException re) {
-			throw re;
+			logger.error(re.getMessage());
 		}
+		return entity;
 
 	}
 
 	public T delete(Long id) {
+		T entity = this.dao.findById(id);
 		try {
-			T entity = (T) this.dao.findById(id);
 			this.dao.delete(entity);
-			return entity;
 		} catch (RuntimeException re) {
-			throw re;
+			logger.error(re.getMessage());
 		}
+		return entity;
+
 	}
 
 	public T findById(Long id) {
+		T entity = null;
 		try {
-			T entity = (T) this.dao.findById(id);
-			return entity;
+			entity = this.dao.findById(id);
+
 		} catch (RuntimeException re) {
-			throw re;
+			logger.error(re.getMessage());
 		}
+		return entity;
+
 	}
 
 	public List<T> findAll(int limit, int offset) {
+		List<T> entities = null;
+
 		try {
-			List<T> entities = this.dao.findAll(limit, offset);
-			return entities;
+			entities = this.dao.findAll(limit, offset);
+
 		} catch (RuntimeException re) {
-			throw re;
+			logger.error(re.getMessage());
 		}
+		return entities;
+
 	}
 
 	public List<T> findAll() {
+		List<T> entities = null;
 
 		try {
-			List<T> entities = this.dao.findAll();
-			return entities;
+			entities = this.dao.findAll();
+
 		} catch (RuntimeException re) {
-			throw re;
+			logger.error(re.getMessage());
 		}
+		return entities;
+
 	}
 
 	public T findByPropertyWithCondition(String property, Object value, String condition) {

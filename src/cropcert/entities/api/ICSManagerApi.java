@@ -15,8 +15,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.json.JSONException;
-
 import javax.inject.Inject;
 
 import cropcert.entities.filter.Permissions;
@@ -64,7 +62,7 @@ public class ICSManagerApi {
 		try {
 			icsManager = icsManagerService.save(jsonString);
 			return Response.status(Status.CREATED).entity(icsManager).build();
-		} catch (IOException | JSONException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();

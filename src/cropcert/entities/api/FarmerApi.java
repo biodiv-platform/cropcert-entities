@@ -23,7 +23,6 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.ValidationException;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.json.JSONException;
 
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
@@ -133,7 +132,7 @@ public class FarmerApi {
 		try {
 			farmer = farmerService.save(jsonString);
 			return Response.status(Status.CREATED).entity(farmer).build();
-		} catch (IOException | JSONException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ValidationException e) {
 			return Response.status(Status.NO_CONTENT).entity(e.getMessage()).build();

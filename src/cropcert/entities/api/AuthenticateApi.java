@@ -37,7 +37,7 @@ public class AuthenticateApi {
 		// check for the valid refresh token
 		CommonProfile profile = SecurityInterceptor.jwtAuthenticator.validateToken(refreshToken);
 		if (profile == null) {
-			System.out.println("Invalid refresh token");
+			logger.error("Invalid refresh token");
 			return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Invalid refresh token").build();
 		}
 		try {

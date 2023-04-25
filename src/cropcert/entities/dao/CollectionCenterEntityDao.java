@@ -7,10 +7,14 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cropcert.entities.model.CollectionCenterEntity;
 
 public class CollectionCenterEntityDao extends AbstractDao<CollectionCenterEntity, Long>{
+
+	private static final Logger logger = LoggerFactory.getLogger(CollectionCenterEntityDao.class);
 
 	@Inject
 	protected CollectionCenterEntityDao(SessionFactory sessionFactory) {
@@ -22,8 +26,9 @@ public class CollectionCenterEntityDao extends AbstractDao<CollectionCenterEntit
 	    try (Session session = sessionFactory.openSession()) {
 	        return session.get(CollectionCenterEntity.class, id);
 	    } catch (Exception e) {
-	        throw e;
+			logger.error(e.getMessage());
 	    }
+		return null;
 	}
 
 	public CollectionCenterEntity findByName(String name, String code) {

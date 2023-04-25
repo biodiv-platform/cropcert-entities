@@ -7,10 +7,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.json.JSONException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cropcert.entities.dao.CooperativePersonDao;
@@ -35,8 +31,7 @@ public class CooperativePersonService extends AbstractService<CooperativePerson>
 		defaultPermissions.add(Permissions.FARMER);
 	}
 
-	public CooperativePerson save(String jsonString)
-			throws JsonParseException, JsonMappingException, IOException, JSONException {
+	public CooperativePerson save(String jsonString) throws IOException {
 		CooperativePerson coPerson = objectMapper.readValue(jsonString, CooperativePerson.class);
 		return save(coPerson);
 	}
@@ -46,12 +41,11 @@ public class CooperativePersonService extends AbstractService<CooperativePerson>
 	}
 
 	public List<CooperativePerson> findByCooperativeId(Long coCode, int limit, int offset, String orderBy) {
-		return getByPropertyWithCondtion("coCode", coCode, "=", limit, limit, orderBy);
+		return getByPropertyWithCondtion("coCode", coCode, "=", limit, offset, orderBy);
 	}
 
 	public CooperativePerson deleteByUserId(Long userId) {
 		return deleteByPropertyWithCondition("userId", userId, "=");
 	}
-
 
 }

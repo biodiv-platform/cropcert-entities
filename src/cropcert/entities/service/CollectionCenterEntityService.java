@@ -2,6 +2,7 @@ package cropcert.entities.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,15 +10,17 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import org.pac4j.core.profile.CommonProfile;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.strandls.authentication_utility.util.AuthUtil;
 
 import cropcert.entities.dao.CollectionCenterEntityDao;
 import cropcert.entities.model.CollectionCenterEntity;
 import cropcert.entities.model.CooperativeEntity;
 import cropcert.entities.model.UnionEntities;
 import cropcert.entities.model.response.CollectionCenterShow;
+import net.minidev.json.JSONArray;
 
 public class CollectionCenterEntityService extends AbstractService<CollectionCenterEntity> {
 
@@ -35,7 +38,7 @@ public class CollectionCenterEntityService extends AbstractService<CollectionCen
 		super(dao);
 	}
 
-	public CollectionCenterEntity save(String jsonString) throws JsonParseException, JsonMappingException, IOException {
+	public CollectionCenterEntity save(String jsonString) throws IOException {
 		CollectionCenterEntity collectionCenter = objectMapper.readValue(jsonString, CollectionCenterEntity.class);
 		return save(collectionCenter);
 	}
@@ -63,36 +66,48 @@ public class CollectionCenterEntityService extends AbstractService<CollectionCen
 	}
 
 	public List<CollectionCenterShow> findAllByCoCode(HttpServletRequest request, Long coCode) {
-		List<CollectionCenterEntity> collectionCenters = getByPropertyWithCondtion("cooperativeCode", coCode, "=", -1, -1, "name");
 
-		List<CollectionCenterShow> collectionCenterShows = new ArrayList<>();
-		if (collectionCenters.isEmpty())
-			return collectionCenterShows;
-
-		CooperativeEntity cooperative = cooperativeEntityService.findByCode(coCode);
-		UnionEntities union = unionEntityService.findByCode(cooperative.getUnionCode());
-		String coName = cooperative.getName();
-		String unionName = union.getName();
-		for (CollectionCenterEntity collectionCenter : collectionCenters) {
-			CollectionCenterShow collectionCenterShow = new CollectionCenterShow();
-
-			collectionCenterShow.setId(collectionCenter.getId());
-			collectionCenterShow.setType(collectionCenter.getType());
-			collectionCenterShow.setCoCode(collectionCenter.getCooperativeCode());
-			collectionCenterShow.setCode(collectionCenter.getCode());
-			collectionCenterShow.setName(collectionCenter.getName());
-			collectionCenterShow.setVillage(collectionCenter.getVillage());
-			collectionCenterShow.setSubCountry(collectionCenter.getSubCountry());
-			collectionCenterShow.setLatitude(collectionCenter.getLatitude());
-			collectionCenterShow.setLongitude(collectionCenter.getLongitude());
-			collectionCenterShow.setAltitude(collectionCenter.getAltitude());
-
-			collectionCenterShow.setCoName(coName);
-			collectionCenterShow.setUnionName(unionName);
-
-			collectionCenterShows.add(collectionCenterShow);
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		Boolean isAdmin = null;
+		if (profile != null) {
+			JSONArray roles = (JSONArray) profile.getAttribute("roles");
+			isAdmin = roles.contains("ROLE_ADMIN");
 		}
-		return collectionCenterShows;
+
+		if (Boolean.TRUE.equals(isAdmin)) {
+			List<CollectionCenterEntity> collectionCenters = getByPropertyWithCondtion("cooperativeCode", coCode, "=",
+					-1, -1, "name");
+
+			List<CollectionCenterShow> collectionCenterShows = new ArrayList<>();
+			if (collectionCenters.isEmpty())
+				return collectionCenterShows;
+
+			CooperativeEntity cooperative = cooperativeEntityService.findByCode(coCode);
+			UnionEntities union = unionEntityService.findByCode(cooperative.getUnionCode());
+			String coName = cooperative.getName();
+			String unionName = union.getName();
+			for (CollectionCenterEntity collectionCenter : collectionCenters) {
+				CollectionCenterShow collectionCenterShow = new CollectionCenterShow();
+
+				collectionCenterShow.setId(collectionCenter.getId());
+				collectionCenterShow.setType(collectionCenter.getType());
+				collectionCenterShow.setCoCode(collectionCenter.getCooperativeCode());
+				collectionCenterShow.setCode(collectionCenter.getCode());
+				collectionCenterShow.setName(collectionCenter.getName());
+				collectionCenterShow.setVillage(collectionCenter.getVillage());
+				collectionCenterShow.setSubCountry(collectionCenter.getSubCountry());
+				collectionCenterShow.setLatitude(collectionCenter.getLatitude());
+				collectionCenterShow.setLongitude(collectionCenter.getLongitude());
+				collectionCenterShow.setAltitude(collectionCenter.getAltitude());
+
+				collectionCenterShow.setCoName(coName);
+				collectionCenterShow.setUnionName(unionName);
+
+				collectionCenterShows.add(collectionCenterShow);
+			}
+			return collectionCenterShows;
+		}
+		return Collections.emptyList();
 	}
 
 	public CollectionCenterEntity findByName(String name, String code) {

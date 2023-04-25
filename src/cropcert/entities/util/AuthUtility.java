@@ -5,13 +5,14 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.definition.CommonProfileDefinition;
 import org.pac4j.core.profile.jwt.JwtClaims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cropcert.entities.filter.SecurityInterceptor;
 import cropcert.entities.model.User;
@@ -21,19 +22,22 @@ public class AuthUtility {
 	private static final long ACCESS_TOKEN_EXPIRY_TIME_IN_DAYS = 1;
 	private static final long EXPIRY_TIME_IN_DAYS = 30;
 
+	private static final Logger logger = LoggerFactory.getLogger(AuthUtility.class);
+
+	protected AuthUtility() {
+	}
+
 	public static CommonProfile createUserProfile(User user) {
 		if (user == null)
 			return null;
 		try {
-			// Set<String> roles = user.getRoles();
 			List<String> authorities = new ArrayList<>();
-			/*
-			 * for (Role role : roles) { authorities.add(role.getAuthority()); }
-			 */
+
 			return createUserProfile(user.getId(), user.getFirstName(), user.getEmail(), authorities);
 		} catch (Exception e) {
-			throw e;
+			logger.error(e.getMessage());
 		}
+		return null;
 	}
 
 	public static CommonProfile createUserProfile(Long userId, String username, String email,
@@ -53,8 +57,8 @@ public class AuthUtility {
 		profile.addAttribute(CommonProfileDefinition.EMAIL, email);
 		profile.addAttribute(JwtClaims.EXPIRATION_TIME, getAccessTokenExpiryDate());
 		profile.addAttribute(JwtClaims.ISSUED_AT, new Date());
-		for (Object authority : authorities) {
-			profile.addRole((String) authority);
+		for (String authority : authorities) {
+			profile.addRole(authority);
 		}
 	}
 
@@ -72,7 +76,8 @@ public class AuthUtility {
 	}
 
 	public static CommonProfile getCurrentUser(HttpServletRequest request) {
-		return getCurrentUser(request, null);
+		return getCommonProfile(request);
+
 	}
 
 	public static CommonProfile getCommonProfile(HttpServletRequest request) {
@@ -81,7 +86,4 @@ public class AuthUtility {
 		return SecurityInterceptor.jwtAuthenticator.validateToken(token);
 	}
 
-	public static CommonProfile getCurrentUser(HttpServletRequest request, HttpServletResponse response) {
-		return getCommonProfile(request);
-	}
 }

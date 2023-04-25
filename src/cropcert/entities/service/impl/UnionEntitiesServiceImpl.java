@@ -1,7 +1,11 @@
 package cropcert.entities.service.impl;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -11,6 +15,8 @@ import cropcert.entities.model.UnionEntities;
 import cropcert.entities.service.UnionEntitiesService;
 
 public class UnionEntitiesServiceImpl implements UnionEntitiesService {
+
+	private static final Logger logger = LoggerFactory.getLogger(UnionEntitiesServiceImpl.class);
 
 	@Inject
 	private UnionEntityDao unionDao;
@@ -40,7 +46,7 @@ public class UnionEntitiesServiceImpl implements UnionEntitiesService {
 	public List<UnionEntities> findAll() {
 		List<UnionEntities> union = unionDao.findAll();
 		if (union == null || union.isEmpty()) {
-			return null;
+			return Collections.emptyList();
 		}
 		return union;
 	}
@@ -49,7 +55,7 @@ public class UnionEntitiesServiceImpl implements UnionEntitiesService {
 	public List<UnionEntities> findAll(Integer limit, Integer offset) {
 		List<UnionEntities> union = unionDao.findAll(limit, offset);
 		if (union == null || union.isEmpty()) {
-			return null;
+			return Collections.emptyList();
 		}
 		return union;
 	}
@@ -62,7 +68,7 @@ public class UnionEntitiesServiceImpl implements UnionEntitiesService {
 			unionDao.save(union);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return union;
 	}
@@ -70,7 +76,7 @@ public class UnionEntitiesServiceImpl implements UnionEntitiesService {
 	@Override
 	public UnionEntities deleteUnion(Long id, Boolean code) {
 
-		UnionEntities union = code ? getUnionByCode(id) : getUnionById(id);
+		UnionEntities union = Boolean.TRUE.equals(code) ? getUnionByCode(id) : getUnionById(id);
 		unionDao.delete(union);
 
 		return null;

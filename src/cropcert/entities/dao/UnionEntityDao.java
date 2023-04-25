@@ -2,12 +2,16 @@ package cropcert.entities.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
 import cropcert.entities.model.UnionEntities;
 
 public class UnionEntityDao extends AbstractDao<UnionEntities, Long> {
+
+	private static final Logger logger = LoggerFactory.getLogger(UnionEntityDao.class);
 
 	@Inject
 	protected UnionEntityDao(SessionFactory sessionFactory) {
@@ -21,7 +25,7 @@ public class UnionEntityDao extends AbstractDao<UnionEntities, Long> {
 		try {
 			entity = session.get(UnionEntities.class, id);
 		} catch (Exception e) {
-			throw e;
+			logger.error(e.getMessage());
 		} finally {
 			session.close();
 		}

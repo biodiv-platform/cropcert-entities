@@ -60,8 +60,8 @@ public class MyApplication extends Application {
 		beanConfig.setHost(properties.getProperty("host"));
 		beanConfig.setBasePath(properties.getProperty("basePath"));
 		beanConfig.setResourcePackage(properties.getProperty("resourcePackage"));
-		beanConfig.setPrettyPrint(new Boolean(properties.getProperty("prettyPrint")));
-		beanConfig.setScan(new Boolean(properties.getProperty("scan")));
+		beanConfig.setPrettyPrint(Boolean.parseBoolean(properties.getProperty("prettyPrint")));
+		beanConfig.setScan(Boolean.parseBoolean(properties.getProperty("scan")));
 
 	}
 
@@ -85,12 +85,12 @@ public class MyApplication extends Application {
 
 			@Override
 			public void onShutdown(Container container) {
-
+				// Shutdown the Container
 			}
 
 			@Override
 			public void onReload(Container container) {
-
+				// Reload the Container
 			}
 		});
 		singletons.add(new InterceptorModule());

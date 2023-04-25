@@ -2,12 +2,16 @@ package cropcert.entities.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
 import cropcert.entities.model.CollectionCenterPerson;
 
 public class CollectionCenterPersonDao extends AbstractDao<CollectionCenterPerson, Long> {
+
+	private static final Logger logger = LoggerFactory.getLogger(CollectionCenterPersonDao.class);
 
 	@Inject
 	protected CollectionCenterPersonDao(SessionFactory sessionFactory) {
@@ -21,7 +25,7 @@ public class CollectionCenterPersonDao extends AbstractDao<CollectionCenterPerso
 		try {
 			entity = session.get(CollectionCenterPerson.class, id);
 		} catch (Exception e) {
-			throw e;
+			logger.error(e.getMessage());
 		} finally {
 			session.close();
 		}

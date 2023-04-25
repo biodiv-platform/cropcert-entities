@@ -5,10 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.json.JSONException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.inject.Inject;
 
@@ -32,8 +28,7 @@ public class UnionPersonService extends AbstractService<UnionPerson> {
 		super(coPersonDao);
 	}
 
-	public UnionPerson save(String jsonString)
-			throws JsonParseException, JsonMappingException, IOException, JSONException {
+	public UnionPerson save(String jsonString) throws IOException {
 		UnionPerson ccPerson = objectMapper.readValue(jsonString, UnionPerson.class);
 		return save(ccPerson);
 	}
@@ -43,7 +38,7 @@ public class UnionPersonService extends AbstractService<UnionPerson> {
 	}
 
 	public List<UnionPerson> findByUnionId(Long unionCode, int limit, int offset, String orderBy) {
-		return getByPropertyWithCondtion("unionCode", unionCode, "=", limit, limit, orderBy);
+		return getByPropertyWithCondtion("unionCode", unionCode, "=", limit, offset, orderBy);
 	}
 
 	public UnionPerson deleteByUserId(Long userId) {

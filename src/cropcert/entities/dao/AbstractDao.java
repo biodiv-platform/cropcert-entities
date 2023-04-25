@@ -34,6 +34,8 @@ public abstract class AbstractDao<T, K extends Serializable> {
 
 	private String valueConstant = "VALUE";
 
+	private String from = "FROM";
+
 	@SuppressWarnings("unchecked")
 	protected AbstractDao(SessionFactory sessionFactory) {
 		daoType = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
@@ -176,11 +178,8 @@ public abstract class AbstractDao<T, K extends Serializable> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<T> getByPropertyWithCondtion(String property, Object value, String condition, int limit, int offset,
 			String orderBy) {
-		String queryStr = propertyQuery + " order by t." + orderBy;
-		queryStr = queryStr.replace(tableNameConstant, daoType.getSimpleName());
-		queryStr = queryStr.replace(tableNameConstant, property);
-		queryStr = queryStr.replace(tableNameConstant, condition);
-
+		String queryStr = from + " " + daoType.getSimpleName() + " t " + "where t." + property + " " + condition
+				+ " :value" + " order by t." + orderBy;
 		Session session = sessionFactory.openSession();
 		org.hibernate.query.Query query = session.createQuery(queryStr);
 		query.setParameter("value", value);
@@ -200,7 +199,7 @@ public abstract class AbstractDao<T, K extends Serializable> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<T> getByPropertyfromArray(String property, Object[] values, int limit, int offset) {
-		String queryStr = "" + "from " + daoType.getSimpleName() + " t " + "where t." + property + " in (:values)"
+		String queryStr = from + " " + daoType.getSimpleName() + " t " + "where t." + property + " in (:values)"
 				+ " order by id";
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery(queryStr);
@@ -223,7 +222,7 @@ public abstract class AbstractDao<T, K extends Serializable> {
 	public List<T> getByMultiplePropertyWithCondtion(String[] properties, Object[] values, Integer limit,
 			Integer offset) {
 
-		StringBuilder queryBuilder = new StringBuilder("from " + daoType.getSimpleName() + " t where ");
+		StringBuilder queryBuilder = new StringBuilder(from + " " + daoType.getSimpleName() + " t where ");
 		for (int i = 0; i < properties.length; i++) {
 			String property = properties[i];
 			queryBuilder.append(" t.").append(property).append(" = :value").append(i);

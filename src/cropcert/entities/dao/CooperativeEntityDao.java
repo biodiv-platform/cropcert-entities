@@ -4,11 +4,15 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cropcert.entities.model.CooperativeEntity;
 
-public class CooperativeEntityDao extends AbstractDao<CooperativeEntity, Long>{
-	
+public class CooperativeEntityDao extends AbstractDao<CooperativeEntity, Long> {
+
+	private static final Logger logger = LoggerFactory.getLogger(CooperativeEntityDao.class);
+
 	@Inject
 	protected CooperativeEntityDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
@@ -21,7 +25,7 @@ public class CooperativeEntityDao extends AbstractDao<CooperativeEntity, Long>{
 		try {
 			entity = session.get(CooperativeEntity.class, id);
 		} catch (Exception e) {
-			throw e;
+			logger.error(e.getMessage());
 		} finally {
 			session.close();
 		}

@@ -28,7 +28,7 @@ public class UserServletContextListener extends GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
 
-		Injector injector = Guice.createInjector(new ServletModule() {
+		return Guice.createInjector(new ServletModule() {
 			@Override
 			protected void configureServlets() {
 
@@ -58,8 +58,6 @@ public class UserServletContextListener extends GuiceServletContextListener {
 
 				serve("/api/*").with(ServletContainer.class, props);
 			}
-		}, new DaoModule(), new APIModule() , new ServiceModule());
-
-		return injector;
+		}, new DaoModule(), new APIModule(), new ServiceModule());
 	}
 }
