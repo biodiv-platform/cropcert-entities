@@ -176,6 +176,20 @@ public abstract class AbstractDao<T, K extends Serializable> {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private List<T> getResultList(Query query, int limit, int offset) {
+		List<T> resultList = new ArrayList<>();
+		try {
+			if (limit > 0 && offset >= 0) {
+				query.setFirstResult(offset).setMaxResults(limit);
+			}
+			resultList = query.getResultList();
+		} catch (NoResultException e) {
+			logger.error(e.getMessage());
+		}
+		return resultList;
+	}
+
+	@SuppressWarnings({ "rawtypes" })
 	public List<T> getByPropertyWithCondtion(String property, Object value, String condition, int limit, int offset,
 			String orderBy) {
 		String queryStr = from + " " + daoType.getSimpleName() + " t " + "where t." + property + " " + condition
@@ -183,37 +197,21 @@ public abstract class AbstractDao<T, K extends Serializable> {
 		Session session = sessionFactory.openSession();
 		org.hibernate.query.Query query = session.createQuery(queryStr);
 		query.setParameter("value", value);
+		List<T> resultList = getResultList(query, limit, offset);
 
-		List<T> resultList = new ArrayList<>();
-		try {
-			if (limit > 0 && offset >= 0)
-				query = query.setFirstResult(offset).setMaxResults(limit);
-			resultList = query.getResultList();
-
-		} catch (NoResultException e) {
-			logger.error(e.getMessage());
-		}
 		session.close();
 		return resultList;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	public List<T> getByPropertyfromArray(String property, Object[] values, int limit, int offset) {
 		String queryStr = from + " " + daoType.getSimpleName() + " t " + "where t." + property + " in (:values)"
 				+ " order by id";
 		Session session = sessionFactory.openSession();
 		Query query = session.createQuery(queryStr);
 		query.setParameterList("values", values);
+		List<T> resultList = getResultList(query, limit, offset);
 
-		List<T> resultList = new ArrayList<>();
-		try {
-			if (limit > 0 && offset >= 0)
-				query = query.setFirstResult(offset).setMaxResults(limit);
-			resultList = query.getResultList();
-
-		} catch (NoResultException e) {
-			logger.error(e.getMessage());
-		}
 		session.close();
 		return resultList;
 	}

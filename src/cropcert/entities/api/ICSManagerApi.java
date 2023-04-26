@@ -15,6 +15,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 
 import cropcert.entities.filter.Permissions;
@@ -32,6 +35,8 @@ import io.swagger.annotations.ApiOperation;
 public class ICSManagerApi {
 
 	private ICSManagerService icsManagerService;
+
+	private static final Logger logger = LoggerFactory.getLogger(ICSManagerApi.class);
 
 	@Inject
 	public ICSManagerApi(ICSManagerService icsManagerService) {
@@ -63,9 +68,9 @@ public class ICSManagerApi {
 			icsManager = icsManagerService.save(jsonString);
 			return Response.status(Status.CREATED).entity(icsManager).build();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
-		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
+		return Response.status(Status.NO_CONTENT).entity("Creating ics manager failed").build();
 	}
 
 	@Path("{id}")

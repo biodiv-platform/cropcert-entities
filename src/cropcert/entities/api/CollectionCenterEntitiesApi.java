@@ -121,7 +121,7 @@ public class CollectionCenterEntitiesApi {
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
+		return Response.status(Status.NO_CONTENT).entity("Creating cc failed").build();
 	}
 
 	@Path("{id}")

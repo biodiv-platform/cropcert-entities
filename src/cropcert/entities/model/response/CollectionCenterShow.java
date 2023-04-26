@@ -13,10 +13,12 @@ public class CollectionCenterShow extends CollectionCenterEntity {
 	private String coName;
 	private String unionName;
 
+	@Override
 	public String getType() {
 		return type;
 	}
 
+	@Override
 	public void setType(String type) {
 		this.type = type;
 	}
