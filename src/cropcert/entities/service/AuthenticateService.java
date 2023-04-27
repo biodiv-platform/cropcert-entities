@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.strandls.user.ApiException;
 import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.Role;
 import com.strandls.user.pojo.User;
 
 import cropcert.entities.MyApplication;
@@ -88,7 +89,7 @@ public class AuthenticateService {
 
 		Set<String> roles = new HashSet<>();
 		if (user.getRoles() != null && user.getRoles().isEmpty()) {
-			roles = user.getRoles().stream().map(item -> item.getAuthority()).collect(Collectors.toSet());
+			roles = user.getRoles().stream().map(Role::getAuthority).collect(Collectors.toSet());
 
 		}
 

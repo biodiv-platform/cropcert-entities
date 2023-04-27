@@ -1,6 +1,9 @@
 package cropcert.entities.filter;
 
-public interface Permissions {
+public class Permissions {
+	private Permissions() {
+
+	}
 
 	/**
 	 * General constants

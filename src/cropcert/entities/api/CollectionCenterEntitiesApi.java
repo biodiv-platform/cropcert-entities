@@ -102,7 +102,7 @@ public class CollectionCenterEntitiesApi {
 	@ApiOperation(value = "Get map of origins by cc codes", response = Map.class, responseContainer = "Map")
 	public Response getOriginNames(@Context HttpServletRequest request,
 			@DefaultValue("") @QueryParam("ccCodes") String ccCodes) {
-		Map<String, Object> originMap = collectionCenterEntityService.getOriginNames(request, ccCodes);
+		Map<String, Object> originMap = collectionCenterEntityService.getOriginNames(ccCodes);
 		return Response.ok().entity(originMap).build();
 	}
 

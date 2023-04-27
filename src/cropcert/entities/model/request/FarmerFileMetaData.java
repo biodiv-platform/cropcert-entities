@@ -1,8 +1,10 @@
 package cropcert.entities.model.request;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -108,50 +110,32 @@ public class FarmerFileMetaData {
 	}
 
 	public boolean validateIndices(String[] headers) {
-
 		if (!fileType.equals("csv") || (ccNameColumnName == null && ccCodeColumnName == null)
 				|| (farmerCodeColumnName == null && farmerIdColumnName == null) || nameColumnName == null
-				|| genderColumnName == null)
+				|| genderColumnName == null) {
 			return false;
-
-		for (int i = 0; i < headers.length; i++) {
-			String header = headers[i].trim();
-
-			if (header.equalsIgnoreCase(ccNameColumnName))
-				ccNameColumnIndex = i;
-			else if (header.equalsIgnoreCase(ccCodeColumnName))
-				ccCodeColumnIndex = i;
-			else if (header.equalsIgnoreCase(farmerCodeColumnName))
-				farmerCodeColumnIndex = i;
-			else if (header.equalsIgnoreCase(farmerIdColumnName))
-				farmerIdColumnIndex = i;
-			else if (header.equalsIgnoreCase(nameColumnName))
-				nameColumnIndex = i;
-			else if (header.equalsIgnoreCase(genderColumnName))
-				genderColumnIndex = i;
-			else if (header.equalsIgnoreCase(birthDateColumnName))
-				birthDateColumnIndex = i;
-			else if (header.equalsIgnoreCase(numCoffeePlotsColumnName))
-				numCoffeePlotsColumnIndex = i;
-			else if (header.equalsIgnoreCase(numCoffeeTreesColumnName))
-				numCoffeeTreesColumnIndex = i;
-			else if (header.equalsIgnoreCase(farmAreaColumnName))
-				farmAreaColumnIndex = i;
-			else if (header.equalsIgnoreCase(coffeeAreaColumnName))
-				coffeeAreaColumnIndex = i;
-			else if (header.equalsIgnoreCase(cellNumberColumnName))
-				cellNumberColumnIndex = i;
-			else if (header.equalsIgnoreCase(emailColumnName))
-				emailColumnIndex = i;
-			else if (header.equalsIgnoreCase(villageColumnName))
-				villageColumnIndex = i;
-			else if (header.equalsIgnoreCase(subCountryColumnName))
-				subCountryColumnIndex = i;
-			else {
-				return false;
-			}
 		}
-		return true;
+
+		Map<String, Integer> expectedHeaders = new HashMap<>();
+		expectedHeaders.put(ccNameColumnName, ccNameColumnIndex);
+		expectedHeaders.put(ccCodeColumnName, ccCodeColumnIndex);
+		expectedHeaders.put(farmerCodeColumnName, farmerCodeColumnIndex);
+		expectedHeaders.put(farmerIdColumnName, farmerIdColumnIndex);
+		expectedHeaders.put(nameColumnName, nameColumnIndex);
+		expectedHeaders.put(genderColumnName, genderColumnIndex);
+		expectedHeaders.put(birthDateColumnName, birthDateColumnIndex);
+		expectedHeaders.put(numCoffeePlotsColumnName, numCoffeePlotsColumnIndex);
+		expectedHeaders.put(numCoffeeTreesColumnName, numCoffeeTreesColumnIndex);
+		expectedHeaders.put(farmAreaColumnName, farmAreaColumnIndex);
+		expectedHeaders.put(coffeeAreaColumnName, coffeeAreaColumnIndex);
+		expectedHeaders.put(cellNumberColumnName, cellNumberColumnIndex);
+		expectedHeaders.put(emailColumnName, emailColumnIndex);
+		expectedHeaders.put(villageColumnName, villageColumnIndex);
+		expectedHeaders.put(subCountryColumnName, subCountryColumnIndex);
+
+		// Check if all expected headers are present and assign their indices
+		return Arrays.stream(headers).map(String::trim).map(String::toLowerCase).map(expectedHeaders::get)
+				.filter(Objects::nonNull).reduce((a, b) -> a).orElse(-1) >= 0;
 	}
 
 	public String getFileType() {

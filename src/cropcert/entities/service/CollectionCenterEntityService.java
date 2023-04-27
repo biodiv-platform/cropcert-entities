@@ -43,7 +43,7 @@ public class CollectionCenterEntityService extends AbstractService<CollectionCen
 		return save(collectionCenter);
 	}
 
-	public Map<String, Object> getOriginNames(HttpServletRequest request, String ccCodesString) {
+	public Map<String, Object> getOriginNames(String ccCodesString) {
 		Long coCode = -1L;
 		List<String> ccNames = new ArrayList<>();
 
