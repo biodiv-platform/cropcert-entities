@@ -23,7 +23,7 @@ public class CooperativeEntity extends UnionEntities {
 	private String fullName;
 
 	@Column(name = "contact")
-	private String conact;
+	private String contact;
 
 	@Column(name = "manager")
 	private String manager;
@@ -37,12 +37,12 @@ public class CooperativeEntity extends UnionEntities {
 	@Column(name = "farmer_seq_number")
 	private Long farSeqNumber;
 
-	public CooperativeEntity(String fullName, String conact, String manager, Long unionCode, Long numFarmer,
+	public CooperativeEntity(String fullName, String contact, String manager, Long unionCode, Long numFarmer,
 			Long farSeqNumber) {
 		super();
 
 		this.fullName = fullName;
-		this.conact = conact;
+		this.contact = contact;
 		this.manager = manager;
 		this.unionCode = unionCode;
 		this.numFarmer = numFarmer;
@@ -62,12 +62,12 @@ public class CooperativeEntity extends UnionEntities {
 		this.fullName = fullName;
 	}
 
-	public String getConact() {
-		return conact;
+	public String getContact() {
+		return contact;
 	}
 
-	public void setConact(String conact) {
-		this.conact = conact;
+	public void setContact(String conact) {
+		this.contact = conact;
 	}
 
 	public String getManager() {
