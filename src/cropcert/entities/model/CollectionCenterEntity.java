@@ -1,7 +1,12 @@
 package cropcert.entities.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -11,12 +16,20 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "collection_center_entities")
 
-public class CollectionCenterEntity extends UnionEntities {
+public class CollectionCenterEntity implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 86089644487109439L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "id", nullable = false)
+	private Long id;
+
+	@Column(name = "name")
+	private String name;
 
 	@Column(name = "village")
 	private String village;
@@ -42,13 +55,18 @@ public class CollectionCenterEntity extends UnionEntities {
 	@Column(name = "altitude")
 	private float altitude;
 
+	@Column(name = "code", nullable = false)
+	private Long code;
+
 	public CollectionCenterEntity() {
 		super();
 	}
 
-	public CollectionCenterEntity(String village, String type, String subCountry, Long unionCode, Long cooperativeCode,
-			float latitude, float longitude, float altitude) {
+	public CollectionCenterEntity(Long id, String name, String village, String type, String subCountry, Long unionCode,
+			Long cooperativeCode, float latitude, float longitude, float altitude, Long code) {
 		super();
+		this.id = id;
+		this.name = name;
 		this.village = village;
 		this.type = type;
 		this.subCountry = subCountry;
@@ -57,6 +75,23 @@ public class CollectionCenterEntity extends UnionEntities {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.altitude = altitude;
+		this.code = code;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getVillage() {
@@ -121,6 +156,14 @@ public class CollectionCenterEntity extends UnionEntities {
 
 	public void setAltitude(float altitude) {
 		this.altitude = altitude;
+	}
+
+	public Long getCode() {
+		return code;
+	}
+
+	public void setCode(Long code) {
+		this.code = code;
 	}
 
 }

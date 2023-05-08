@@ -1,8 +1,12 @@
 package cropcert.entities.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -12,12 +16,20 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "cooperative_entities")
 
-public class CooperativeEntity extends UnionEntities {
+public class CooperativeEntity implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3935478797789760195L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "id", nullable = false)
+	private Long id;
+
+	@Column(name = "name")
+	private String name;
 
 	@Column(name = "full_name")
 	private String fullName;
@@ -31,23 +43,52 @@ public class CooperativeEntity extends UnionEntities {
 	@Column(name = "union_code", nullable = false)
 	private Long unionCode;
 
+	@Column(name = "code", nullable = false)
+	private Long code;
+
 	@Column(name = "num_farmer")
 	private Long numFarmer;
 
 	@Column(name = "farmer_seq_number")
 	private Long farSeqNumber;
 
-	public CooperativeEntity(String fullName, String contact, String manager, Long unionCode, Long numFarmer,
-			Long farSeqNumber) {
+	public CooperativeEntity(Long id, String name, String fullName, String contact, String manager, Long unionCode,
+			Long numFarmer, Long farSeqNumber, Long code) {
 		super();
-
+		this.id = id;
+		this.name = name;
 		this.fullName = fullName;
 		this.contact = contact;
 		this.manager = manager;
 		this.unionCode = unionCode;
 		this.numFarmer = numFarmer;
 		this.farSeqNumber = farSeqNumber;
+		this.code = code;
 
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Long getCode() {
+		return code;
+	}
+
+	public void setCode(Long code) {
+		this.code = code;
 	}
 
 	public CooperativeEntity() {
