@@ -19,7 +19,6 @@ import com.strandls.user.controller.UserServiceApi;
 
 import cropcert.entities.api.APIModule;
 import cropcert.entities.dao.DaoModule;
-import cropcert.entities.service.impl.ServiceModule;
 import cropcert.entities.util.AuthUtility;
 import cropcert.entities.util.Utility;
 
@@ -58,6 +57,6 @@ public class UserServletContextListener extends GuiceServletContextListener {
 
 				serve("/api/*").with(ServletContainer.class, props);
 			}
-		}, new DaoModule(), new APIModule(), new ServiceModule());
+		}, new DaoModule(), new APIModule());
 	}
 }
