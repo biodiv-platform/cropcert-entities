@@ -62,7 +62,7 @@ public class FarmerDao extends AbstractDao<Farmer, Long> {
 			if (limit != null && limit != -1) {
 				query.setMaxResults(limit);
 			}
-			if (offset != null && limit != -1) {
+			if (offset != null && limit != -1 && limit != null) {
 				query.setFirstResult(offset);
 			}
 			return query.getResultList();
