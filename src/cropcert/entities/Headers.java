@@ -11,8 +11,7 @@ public class Headers {
 		userService.getApiClient().addDefaultHeader(HttpHeaders.AUTHORIZATION, authHeader);
 		return userService;
 	}
-	
-	
+
 	public AuthenticationServiceApi addAuthHeaders(AuthenticationServiceApi authService, String authHeader) {
 		authService.getApiClient().addDefaultHeader(HttpHeaders.AUTHORIZATION, authHeader);
 		return authService;

@@ -20,7 +20,7 @@ public class AuthUtility {
 
 	private static final long ACCESS_TOKEN_EXPIRY_TIME_IN_DAYS = 1;
 	private static final long EXPIRY_TIME_IN_DAYS = 30;
-	
+
 	public static CommonProfile createUserProfile(User user) {
 		if (user == null)
 			return null;
@@ -80,7 +80,7 @@ public class AuthUtility {
 		String token = authorizationHeader.substring("Bearer".length()).trim();
 		return SecurityInterceptor.jwtAuthenticator.validateToken(token);
 	}
-	
+
 	public static CommonProfile getCurrentUser(HttpServletRequest request, HttpServletResponse response) {
 		return getCommonProfile(request);
 	}

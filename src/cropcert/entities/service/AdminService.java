@@ -12,26 +12,25 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.inject.Inject;
 
-
 import cropcert.entities.dao.AdminDao;
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.model.Admin;
 import cropcert.entities.util.MessageDigestPasswordEncoder;
 
-public class AdminService extends AbstractService<Admin>{
+public class AdminService extends AbstractService<Admin> {
 
-	@Inject 
+	@Inject
 	private ObjectMapper objectMapper;
-	
+
 	@Inject
 	private MessageDigestPasswordEncoder passwordEncoder;
-	
+
 	private static Set<String> defaultPermissions;
 	static {
 		defaultPermissions = new HashSet<String>();
 		defaultPermissions.add(Permissions.ADMIN);
 	}
-	
+
 	@Inject
 	public AdminService(AdminDao adminDao) {
 		super(adminDao);

@@ -58,7 +58,7 @@ public class FarmerApi {
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.ok().entity(farmer.get(0)).build();
 	}
-	
+
 	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

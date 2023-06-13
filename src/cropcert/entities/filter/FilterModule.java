@@ -5,9 +5,9 @@ import com.google.inject.matcher.Matchers;
 
 public class FilterModule extends AbstractModule {
 
-	
 	@Override
 	protected void configure() {
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(TokenAndUserAuthenticated.class), new SecurityInterceptor());
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(TokenAndUserAuthenticated.class),
+				new SecurityInterceptor());
 	}
 }

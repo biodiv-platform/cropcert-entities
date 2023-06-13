@@ -39,7 +39,6 @@ import cropcert.entities.util.AppUtil.MODULE;
 public class UserService {
 	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-
 	public final static String rootPath = System.getProperty("user.home") + File.separatorChar + "cropcert-image";
 
 	@Inject

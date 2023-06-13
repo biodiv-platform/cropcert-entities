@@ -5,12 +5,11 @@ import java.util.List;
 
 import cropcert.entities.dao.AbstractDao;
 
-
 public abstract class AbstractService<T> {
 
 	public Class<T> entityClass;
-	protected  AbstractDao<T, Long> dao;
-	
+	protected AbstractDao<T, Long> dao;
+
 	@SuppressWarnings("unchecked")
 	public AbstractService(AbstractDao<T, Long> dao) {
 		System.out.println("\nAbstractService constructor");
@@ -27,7 +26,7 @@ public abstract class AbstractService<T> {
 		}
 	}
 
-	public T update(T entity)  {
+	public T update(T entity) {
 		try {
 			this.dao.update(entity);
 			return entity;
@@ -64,9 +63,9 @@ public abstract class AbstractService<T> {
 			throw re;
 		}
 	}
-	
+
 	public List<T> findAll() {
-		
+
 		try {
 			List<T> entities = this.dao.findAll();
 			return entities;
@@ -74,15 +73,16 @@ public abstract class AbstractService<T> {
 			throw re;
 		}
 	}
-	
+
 	public T findByPropertyWithCondition(String property, Object value, String condition) {
 		return dao.findByPropertyWithCondition(property, value, condition);
 	}
-	
-	public List<T> getByPropertyWithCondtion(String property, Object value, String condition, int limit, int offset, String orderBy) {
+
+	public List<T> getByPropertyWithCondtion(String property, Object value, String condition, int limit, int offset,
+			String orderBy) {
 		return dao.getByPropertyWithCondtion(property, value, condition, limit, offset, orderBy);
 	}
-	
+
 	public List<T> getByMultiplePropertyWithCondtion(String[] properties, Object[] values, Integer limit,
 			Integer offset) {
 		return dao.getByMultiplePropertyWithCondtion(properties, values, limit, offset);

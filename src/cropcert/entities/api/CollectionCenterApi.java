@@ -21,7 +21,6 @@ import javax.ws.rs.core.Response.Status;
 
 import javax.inject.Inject;
 
-
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.CollectionCenter;
@@ -119,7 +118,7 @@ public class CollectionCenterApi {
 		}
 		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
 	}
-	
+
 	@Path("{id}")
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)

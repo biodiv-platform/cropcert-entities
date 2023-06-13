@@ -6,7 +6,6 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.inject.Inject;
 
-
 import cropcert.entities.dao.CooperativeDao;
 import cropcert.entities.model.Cooperative;
 

@@ -10,15 +10,14 @@ import org.bouncycastle.util.encoders.Hex;
 
 import javax.inject.Inject;
 
-
 public class MessageDigestPasswordEncoder {
 	private final String algorithm;
 	private int iterations = 1;
-	
-	//Default values 
+
+	// Default values
 	private boolean encodeHashAsBase64 = false;
 	private static final String ALGORITHM_NAME = "MD5";
-	
+
 	@Inject
 	public MessageDigestPasswordEncoder() {
 		this(ALGORITHM_NAME);
@@ -66,41 +65,37 @@ public class MessageDigestPasswordEncoder {
 	}
 
 	/**
-	 * Encodes the rawPass using a MessageDigest. If a salt is specified it will be merged
-	 * with the password before encoding.
+	 * Encodes the rawPass using a MessageDigest. If a salt is specified it will be
+	 * merged with the password before encoding.
 	 *
-	 * @param rawPass
-	 *The plain text password
-	 * @param salt
-	 *  The salt to sprinkle
-	 * @return 
-	 * Hex string of password digest (or base64 encoded string if
+	 * @param rawPass The plain text password
+	 * @param salt    The salt to sprinkle
+	 * @return Hex string of password digest (or base64 encoded string if
 	 * 
-	 * encodeHashAsBase64 is enabled.
+	 *         encodeHashAsBase64 is enabled.
 	 */
 	public String encodePassword(String rawPass, Object salt) {
 		String saltedPass = mergePasswordAndSalt(rawPass, salt, false);
-	  
+
 		MessageDigest messageDigest = getMessageDigest();
-	  
-		//byte[] digest = messageDigest.digest(Utf8.encode(saltedPass));
+
+		// byte[] digest = messageDigest.digest(Utf8.encode(saltedPass));
 		ByteBuffer utfPass = StandardCharsets.UTF_16.encode(saltedPass);
 		byte[] digest = messageDigest.digest(utfPass.array());
-	  
-	    // "stretch" the encoded value if configured to do so 
-		for (int i = 1; i < this.iterations; i++) { 
-			digest = messageDigest.digest(digest); 
+
+		// "stretch" the encoded value if configured to do so
+		for (int i = 1; i < this.iterations; i++) {
+			digest = messageDigest.digest(digest);
 		}
-	  
-		if (getEncodeHashAsBase64()) { 
-			//return Utf8.decode(Base64.getEncoder().encode(digest));
+
+		if (getEncodeHashAsBase64()) {
+			// return Utf8.decode(Base64.getEncoder().encode(digest));
 			byte[] base64Digest = Base64.getEncoder().encode(digest);
 			return StandardCharsets.UTF_16.decode(ByteBuffer.wrap(base64Digest)).toString();
-		} 
-		else { 
-			//return new String(Hex.encode(digest));
+		} else {
+			// return new String(Hex.encode(digest));
 			return Hex.toHexString(digest);
-		}	 
+		}
 	}
 
 	/**

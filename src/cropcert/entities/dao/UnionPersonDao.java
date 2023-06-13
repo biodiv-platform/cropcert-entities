@@ -5,10 +5,9 @@ import org.hibernate.SessionFactory;
 
 import javax.inject.Inject;
 
-
 import cropcert.entities.model.UnionPerson;
 
-public class UnionPersonDao extends AbstractDao<UnionPerson, Long>{
+public class UnionPersonDao extends AbstractDao<UnionPerson, Long> {
 
 	@Inject
 	protected UnionPersonDao(SessionFactory sessionFactory) {
