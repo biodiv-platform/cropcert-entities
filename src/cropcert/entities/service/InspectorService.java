@@ -6,10 +6,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.json.JSONException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cropcert.entities.dao.InspectorDao;
@@ -23,7 +19,7 @@ public class InspectorService extends AbstractService<Inspector> {
 
 	private static Set<String> defaultPermissions;
 	static {
-		defaultPermissions = new HashSet<String>();
+		defaultPermissions = new HashSet<>();
 		defaultPermissions.add(Permissions.INSPECTOR);
 	}
 
@@ -32,8 +28,7 @@ public class InspectorService extends AbstractService<Inspector> {
 		super(inspectorDao);
 	}
 
-	public Inspector save(String jsonString)
-			throws JsonParseException, JsonMappingException, IOException, JSONException {
+	public Inspector save(String jsonString) throws IOException {
 		Inspector inspector = objectMapper.readValue(jsonString, Inspector.class);
 		return save(inspector);
 	}

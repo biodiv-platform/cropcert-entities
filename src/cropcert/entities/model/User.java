@@ -74,7 +74,7 @@ public class User implements Serializable {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "permissions")
-	private Set<String> permissions = new HashSet<String>();
+	private Set<String> permissions = new HashSet<>();
 
 	public long getId() {
 		return id;

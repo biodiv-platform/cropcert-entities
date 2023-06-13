@@ -1,8 +1,8 @@
 package cropcert.entities.model.response;
 
-import cropcert.entities.model.CropcertEntity;
+import cropcert.entities.model.CollectionCenterEntity;
 
-public class CollectionCenterShow extends CropcertEntity {
+public class CollectionCenterShow extends CollectionCenterEntity {
 
 	/**
 	 * 
@@ -13,10 +13,12 @@ public class CollectionCenterShow extends CropcertEntity {
 	private String coName;
 	private String unionName;
 
+	@Override
 	public String getType() {
 		return type;
 	}
 
+	@Override
 	public void setType(String type) {
 		this.type = type;
 	}

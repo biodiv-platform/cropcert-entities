@@ -6,10 +6,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.json.JSONException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cropcert.entities.dao.ICSManagerDao;
@@ -23,7 +19,7 @@ public class ICSManagerService extends AbstractService<ICSManager> {
 
 	private static Set<String> defaultPermissions;
 	static {
-		defaultPermissions = new HashSet<String>();
+		defaultPermissions = new HashSet<>();
 		defaultPermissions.add(Permissions.ICS_MANAGER);
 	}
 
@@ -32,8 +28,7 @@ public class ICSManagerService extends AbstractService<ICSManager> {
 		super(icsManagerDao);
 	}
 
-	public ICSManager save(String jsonString)
-			throws JsonParseException, JsonMappingException, IOException, JSONException {
+	public ICSManager save(String jsonString) throws IOException {
 		ICSManager icsManager = objectMapper.readValue(jsonString, ICSManager.class);
 		return save(icsManager);
 	}

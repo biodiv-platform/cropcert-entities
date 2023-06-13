@@ -18,7 +18,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -37,6 +38,8 @@ import io.swagger.annotations.ApiOperation;
 public class FactoryPersonApi {
 
 	private FactoryPersonService factoryPersonService;
+
+	private static final Logger logger = LoggerFactory.getLogger(FactoryPersonApi.class);
 
 	@Inject
 	public FactoryPersonApi(FactoryPersonService farmerService) {
@@ -81,10 +84,10 @@ public class FactoryPersonApi {
 		try {
 			factoryPerson = factoryPersonService.save(jsonString);
 			return Response.status(Status.CREATED).entity(factoryPerson).build();
-		} catch (IOException | JSONException e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
 		}
-		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
+		return Response.status(Status.NO_CONTENT).entity("Creating factory person failed").build();
 	}
 
 	@Path("{id}")

@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.strandls.user.ApiException;
 import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.Role;
 import com.strandls.user.pojo.User;
 
 import cropcert.entities.MyApplication;
@@ -32,15 +33,14 @@ public class AuthenticateService {
 	private UserServiceApi userServiceApi;
 
 	public Map<String, Object> buildTokenResponse(CommonProfile profile, Long userId, boolean getNewRefreshToken) {
-		User user;
+		User user = null;
 		try {
 			user = userServiceApi.getUser(userId.toString());
-			return buildTokenResponse(profile, user, getNewRefreshToken);
 
 		} catch (ApiException e) {
 			logger.error(e.getMessage());
 		}
-		return null;
+		return buildTokenResponse(profile, user, getNewRefreshToken);
 
 	}
 
@@ -55,22 +55,24 @@ public class AuthenticateService {
 	 */
 
 	public Map<String, Object> buildTokenResponse(CommonProfile profile, User user, boolean getNewRefreshToken) {
+		Map<String, Object> result = new HashMap<>();
+
 		try {
 			String jwtToken = generateAccessToken(profile, user);
 
-			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("access_token", jwtToken);
 			result.put("token_type", "bearer");
 			result.put("timeout", AuthUtility.getAccessTokenExpiryDate());
 
 			if (getNewRefreshToken) {
-				String refreshToken = generateRefreshToken(profile, user);
+				String refreshToken = generateRefreshToken(profile);
 				result.put("refresh_token", refreshToken);
 			}
-			return result;
 		} catch (Exception e) {
-			throw e;
+			logger.error(e.getMessage());
 		}
+		return result;
+
 	}
 
 	/**
@@ -78,20 +80,20 @@ public class AuthenticateService {
 	 * the profile.
 	 * 
 	 * @param profile dummy
-	 * @return TODO : use bcrypt encryption for token
+	 * @return : use bcrypt encryption for token
 	 */
 	private String generateAccessToken(CommonProfile profile, User user) {
 
-		JwtGenerator<CommonProfile> generator = new JwtGenerator<CommonProfile>(
+		JwtGenerator<CommonProfile> generator = new JwtGenerator<>(
 				new SecretSignatureConfiguration(MyApplication.JWT_SALT));
 
-		Set<String> roles = new HashSet<String>();
+		Set<String> roles = new HashSet<>();
 		if (user.getRoles() != null && user.getRoles().isEmpty()) {
-			roles = user.getRoles().stream().map(item -> item.getAuthority()).collect(Collectors.toSet());
+			roles = user.getRoles().stream().map(Role::getAuthority).collect(Collectors.toSet());
 
 		}
 
-		Map<String, Object> jwtClaims = new HashMap<String, Object>();
+		Map<String, Object> jwtClaims = new HashMap<>();
 		jwtClaims.put("id", profile.getId());
 		jwtClaims.put(JwtClaims.SUBJECT, profile.getId() + "");
 		jwtClaims.put(Pac4jConstants.USERNAME, profile.getUsername());
@@ -99,10 +101,8 @@ public class AuthenticateService {
 		jwtClaims.put(JwtClaims.EXPIRATION_TIME, AuthUtility.getAccessTokenExpiryDate());
 		jwtClaims.put(JwtClaims.ISSUED_AT, new Date());
 		jwtClaims.put("roles", roles);
-//		jwtClaims.put("permissions", permissions);
 
-		String jwtToken = generator.generate(jwtClaims);
-		return jwtToken;
+		return generator.generate(jwtClaims);
 	}
 
 	/**
@@ -110,11 +110,11 @@ public class AuthenticateService {
 	 * 
 	 * @return dummy
 	 */
-	private String generateRefreshToken(CommonProfile profile, User user) {
-		JwtGenerator<CommonProfile> generator = new JwtGenerator<CommonProfile>(
+	private String generateRefreshToken(CommonProfile profile) {
+		JwtGenerator<CommonProfile> generator = new JwtGenerator<>(
 				new SecretSignatureConfiguration(MyApplication.JWT_SALT));
 
-		Map<String, Object> jwtClaims = new HashMap<String, Object>();
+		Map<String, Object> jwtClaims = new HashMap<>();
 		jwtClaims.put("id", profile.getId());
 		jwtClaims.put(JwtClaims.SUBJECT, profile.getId() + "");
 		jwtClaims.put(Pac4jConstants.USERNAME, profile.getUsername());
@@ -124,8 +124,7 @@ public class AuthenticateService {
 
 		generator.setExpirationTime(AuthUtility.getRefreshTokenExpiryDate());
 
-		String jwtToken = generator.generate(jwtClaims);
-		return jwtToken;
+		return generator.generate(jwtClaims);
 
 	}
 }

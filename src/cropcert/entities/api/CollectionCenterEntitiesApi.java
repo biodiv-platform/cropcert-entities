@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -19,14 +20,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import javax.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
-import cropcert.entities.model.CollectionCenter;
-import cropcert.entities.model.CollectionCenterPerson;
+import cropcert.entities.model.CollectionCenterEntity;
 import cropcert.entities.model.response.CollectionCenterShow;
-import cropcert.entities.service.CollectionCenterService;
+import cropcert.entities.service.CollectionCenterEntityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -34,22 +35,24 @@ import io.swagger.annotations.ApiOperation;
 
 @Path("cc")
 @Api("Collection  center")
-public class CollectionCenterApi {
+public class CollectionCenterEntitiesApi {
 
-	private CollectionCenterService collectionCenterService;
+	private static final Logger logger = LoggerFactory.getLogger(CollectionCenterEntitiesApi.class);
+
+	private CollectionCenterEntityService collectionCenterEntityService;
 
 	@Inject
-	public CollectionCenterApi(CollectionCenterService collectionCenterService) {
-		this.collectionCenterService = collectionCenterService;
+	public CollectionCenterEntitiesApi(CollectionCenterEntityService collectionCenterEntityService) {
+		this.collectionCenterEntityService = collectionCenterEntityService;
 	}
 
 	@Path("{id}")
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get cc by id", response = CollectionCenter.class)
+	@ApiOperation(value = "Get cc by id", response = CollectionCenterEntity.class)
 	public Response find(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		CollectionCenter collectionCenter = collectionCenterService.findById(id);
+		CollectionCenterEntity collectionCenter = collectionCenterEntityService.findById(id);
 		if (collectionCenter == null)
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.status(Status.CREATED).entity(collectionCenter).build();
@@ -59,9 +62,10 @@ public class CollectionCenterApi {
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get cc by its code", response = CollectionCenter.class)
+	@ApiOperation(value = "Get cc by its code", response = CollectionCenterEntity.class)
 	public Response findByCode(@Context HttpServletRequest request, @PathParam("code") Long code) {
-		CollectionCenter collectionCenter = collectionCenterService.findByPropertyWithCondition("code", code, "=");
+		CollectionCenterEntity collectionCenter = collectionCenterEntityService.findByPropertyWithCondition("code",
+				code, "=");
 		if (collectionCenter == null)
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.ok().entity(collectionCenter).build();
@@ -70,14 +74,14 @@ public class CollectionCenterApi {
 	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get all the collection centers", response = CollectionCenter.class, responseContainer = "List")
+	@ApiOperation(value = "Get all the collection centers", response = CollectionCenterEntity.class, responseContainer = "List")
 	public Response findAll(@Context HttpServletRequest request, @DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
-		List<CollectionCenter> collectionCenters;
+		List<CollectionCenterEntity> collectionCenters;
 		if (limit == -1 || offset == -1)
-			collectionCenters = collectionCenterService.findAll();
+			collectionCenters = collectionCenterEntityService.findAll();
 		else
-			collectionCenters = collectionCenterService.findAll(limit, offset);
+			collectionCenters = collectionCenterEntityService.findAll(limit, offset);
 		return Response.ok().entity(collectionCenters).build();
 	}
 
@@ -86,7 +90,8 @@ public class CollectionCenterApi {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get list of cc by co-operative code", response = CollectionCenterShow.class, responseContainer = "List")
 	public Response findAll(@Context HttpServletRequest request, @PathParam("coCode") Long coCode) {
-		List<CollectionCenterShow> collectionCenterShows = collectionCenterService.findAllByCoCode(request, coCode);
+		List<CollectionCenterShow> collectionCenterShows = collectionCenterEntityService.findAllByCoCode(request,
+				coCode);
 		return Response.ok().entity(collectionCenterShows).build();
 	}
 
@@ -97,38 +102,38 @@ public class CollectionCenterApi {
 	@ApiOperation(value = "Get map of origins by cc codes", response = Map.class, responseContainer = "Map")
 	public Response getOriginNames(@Context HttpServletRequest request,
 			@DefaultValue("") @QueryParam("ccCodes") String ccCodes) {
-		Map<String, Object> originMap = collectionCenterService.getOriginNames(request, ccCodes);
+		Map<String, Object> originMap = collectionCenterEntityService.getOriginNames(ccCodes);
 		return Response.ok().entity(originMap).build();
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Save the cc", response = CollectionCenter.class)
+	@ApiOperation(value = "Save the cc", response = CollectionCenterEntity.class)
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response save(@Context HttpServletRequest request, String jsonString) {
-		CollectionCenter collectionCenter;
+		CollectionCenterEntity collectionCenter;
 		try {
-			collectionCenter = collectionCenterService.save(jsonString);
+			collectionCenter = collectionCenterEntityService.save(jsonString);
 			return Response.status(Status.CREATED).entity(collectionCenter).build();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
-		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
+		return Response.status(Status.NO_CONTENT).entity("Creating cc failed").build();
 	}
 
 	@Path("{id}")
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.TEXT_PLAIN)
-	@ApiOperation(value = "Delete the collection center by id", response = CollectionCenterPerson.class)
+	@ApiOperation(value = "Delete the collection center by id", response = CollectionCenterEntity.class)
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response delete(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		CollectionCenter cc = collectionCenterService.delete(id);
+		CollectionCenterEntity cc = collectionCenterEntityService.delete(id);
 		return Response.status(Status.ACCEPTED).entity(cc).build();
 	}
 

@@ -1,8 +1,10 @@
 package cropcert.entities.model.request;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -11,9 +13,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.Cooperative;
 import cropcert.entities.model.Union;
-import cropcert.entities.service.CollectionCenterService;
-import cropcert.entities.service.CooperativeService;
-import cropcert.entities.service.UnionService;
+import cropcert.entities.service.CollectionCenterEntityService;
+import cropcert.entities.service.CooperativeEntityService;
+import cropcert.entities.service.UnionEntityService;
 import io.swagger.annotations.ApiModel;
 
 @ApiModel("FarmerFileMetadata")
@@ -73,203 +75,68 @@ public class FarmerFileMetaData {
 	private Integer subCountryColumnIndex;
 
 	@JsonIgnore
-	private CollectionCenterService collectionCenterService;
+	private CollectionCenterEntityService collectionCenterEntityService;
 
 	@JsonIgnore
-	private CooperativeService cooperativeService;
+	private CooperativeEntityService cooperativeEntityService;
 
 	@JsonIgnore
-	private UnionService unionService;
+	private UnionEntityService unionEntityService;
 
 	@JsonIgnore
 	private Map<String, List<CollectionCenter>> collectionCenterMap = new HashMap<>();
 
 	@JsonIgnore
-	private Map<Long, Cooperative> coCodeToCooperativeMap = new HashMap<Long, Cooperative>();
+	private Map<Long, Cooperative> coCodeToCooperativeMap = new HashMap<>();
 
 	@JsonIgnore
-	private Map<Long, Union> unionCodeToUnionCenterMap = new HashMap<Long, Union>();
+	private Map<Long, Union> unionCodeToUnionCenterMap = new HashMap<>();
 
 	@Inject
 	public FarmerFileMetaData() {
 		super();
 	}
 
-	public void setCollectionCenterService(CollectionCenterService collectionCenterService) {
-		this.collectionCenterService = collectionCenterService;
+	public void setCollectionCenterService(CollectionCenterEntityService collectionCenterEntityService) {
+		this.collectionCenterEntityService = collectionCenterEntityService;
 	}
 
-	public void setCooperativeService(CooperativeService cooperativeService) {
-		this.cooperativeService = cooperativeService;
+	public void setCooperativeService(CooperativeEntityService cooperativeEntityService) {
+		this.cooperativeEntityService = cooperativeEntityService;
 	}
 
-	public void setUnionService(UnionService unionService) {
-		this.unionService = unionService;
+	public void setUnionService(UnionEntityService unionEntityService) {
+		this.unionEntityService = unionEntityService;
 	}
 
 	public boolean validateIndices(String[] headers) {
-
 		if (!fileType.equals("csv") || (ccNameColumnName == null && ccCodeColumnName == null)
 				|| (farmerCodeColumnName == null && farmerIdColumnName == null) || nameColumnName == null
-				|| genderColumnName == null)
+				|| genderColumnName == null) {
 			return false;
-
-		for (int i = 0; i < headers.length; i++) {
-			String header = headers[i].trim();
-
-			if (header.equalsIgnoreCase(ccNameColumnName))
-				ccNameColumnIndex = i;
-			else if (header.equalsIgnoreCase(ccCodeColumnName))
-				ccCodeColumnIndex = i;
-			else if (header.equalsIgnoreCase(farmerCodeColumnName))
-				farmerCodeColumnIndex = i;
-			else if (header.equalsIgnoreCase(farmerIdColumnName))
-				farmerIdColumnIndex = i;
-			else if (header.equalsIgnoreCase(nameColumnName))
-				nameColumnIndex = i;
-			else if (header.equalsIgnoreCase(genderColumnName))
-				genderColumnIndex = i;
-			else if (header.equalsIgnoreCase(birthDateColumnName))
-				birthDateColumnIndex = i;
-			else if (header.equalsIgnoreCase(numCoffeePlotsColumnName))
-				numCoffeePlotsColumnIndex = i;
-			else if (header.equalsIgnoreCase(numCoffeeTreesColumnName))
-				numCoffeeTreesColumnIndex = i;
-			else if (header.equalsIgnoreCase(farmAreaColumnName))
-				farmAreaColumnIndex = i;
-			else if (header.equalsIgnoreCase(coffeeAreaColumnName))
-				coffeeAreaColumnIndex = i;
-			else if (header.equalsIgnoreCase(cellNumberColumnName))
-				cellNumberColumnIndex = i;
-			else if (header.equalsIgnoreCase(emailColumnName))
-				emailColumnIndex = i;
-			else if (header.equalsIgnoreCase(villageColumnName))
-				villageColumnIndex = i;
-			else if (header.equalsIgnoreCase(subCountryColumnName))
-				subCountryColumnIndex = i;
-			else {
-				return false;
-			}
 		}
-		return true;
-	}
 
-//	public Farmer readOneRow(String[] data, boolean validation) throws IOException {
-//		if (data[nameColumnIndex] == null && "".equals(data[nameColumnIndex].trim())) {
-//			throw new IOException("Name missing");
-//		}
-//		if ((data[ccNameColumnIndex] == null && "".equals(data[ccNameColumnIndex].trim()))
-//				|| (data[ccCodeColumnIndex] == null && "".equals(data[ccCodeColumnIndex].trim()))) {
-//			throw new IOException("CC Name and/or code missing");
-//		}
-//		if ((data[farmerIdColumnIndex] == null && "".equals(data[farmerIdColumnIndex].trim()))
-//				|| (data[farmerCodeColumnIndex] == null && "".equals(data[farmerCodeColumnIndex].trim()))) {
-//			throw new IOException("Farmer id missing");
-//		}
-//		if (data[genderColumnIndex] == null && "".equals(data[genderColumnIndex].trim())) {
-//			throw new IOException("Gender missing");
-//		}
-//
-//		CollectionCenter cc;
-//		try {
-//			cc = collectionCenterService.findByName(data[ccNameColumnIndex], data[ccCodeColumnIndex]);
-//		} catch (Exception e) {
-//			throw new IOException("Invalid collection center : " + data[ccNameColumnIndex]);
-//		}
-//		if (cc == null)
-//			throw new IOException("Invalid collection center : " + data[ccNameColumnIndex]);
-//		/*
-//		 * try { if (collectionCenterMap.containsKey(ccName)) { cc =
-//		 * collectionCenterMap.get(ccName); } else { cc =
-//		 * collectionCenterService.findByName(data[ccNameColumnIndex]);//
-//		 * findByPropertyWithCondition("name", data[ccNameColumnIndex].trim(), "=");
-//		 * collectionCenterMap.put(ccName, cc); } } catch (Exception e) { throw new
-//		 * IOException("Invalid collection center : " + data[ccNameColumnIndex]); }
-//		 */
-//
-//		if (validation) {
-//			return null;
-//		}
-//
-//		Farmer farmer = new Farmer();
-//		farmer.setPassword(RandomStringUtils.randomAlphanumeric(8));
-//
-//		String[] names = StringUtils.split(data[nameColumnIndex]);
-//		if (names.length > 0)
-//			farmer.setFirstName(names[0]);
-//		else
-//			farmer.setFirstName("");
-//		if (names.length > 1)
-//			farmer.setLastName(names[1]);
-//		else
-//			farmer.setLastName("");
-//
-//		if (birthDateColumnIndex != null && data[birthDateColumnIndex] != null) {
-//			Timestamp birthDate = null;
-//			try {
-//				birthDate = new Timestamp(Date.valueOf(data[9]).getTime());
-//			} catch (Exception e) {
-//			} finally {
-//				farmer.setDateOfBirth(birthDate);
-//			}
-//		}
-//		farmer.setGender(data[genderColumnIndex]);
-//
-//		if (cellNumberColumnIndex != null && !"".equals(data[cellNumberColumnIndex]))
-//			farmer.setCellNumber(data[cellNumberColumnIndex]);
-//
-//		if (emailColumnIndex != null && !"".equals(data[emailColumnIndex]))
-//			farmer.setEmail(data[emailColumnIndex]);
-//
-//		if (villageColumnIndex != null && !"".equals(data[villageColumnIndex]))
-//			farmer.setVillage(data[villageColumnIndex]);
-//
-//		if (subCountryColumnIndex != null && !"".equals(data[subCountryColumnIndex]))
-//			farmer.setSubCountry(data[subCountryColumnIndex]);
-//
-//		// Need to modify the number of plots to Float in futre if possible
-//		if (numCoffeePlotsColumnIndex != null && !"".equals(data[numCoffeePlotsColumnIndex].trim()))
-//			farmer.setNumCoffeePlots((int) Float.parseFloat(data[numCoffeePlotsColumnIndex].trim()));
-//		if (numCoffeeTreesColumnIndex != null && !"".equals(data[numCoffeeTreesColumnIndex].trim()))
-//			farmer.setNumCoffeeTrees((int) Float.parseFloat(data[numCoffeeTreesColumnIndex].trim()));
-//		if (farmAreaColumnIndex != null && !"".equals(data[farmAreaColumnIndex].trim()))
-//			farmer.setFarmArea(Float.parseFloat(data[farmAreaColumnIndex].trim()));
-//		if (coffeeAreaColumnIndex != null && !"".equals(data[coffeeAreaColumnIndex].trim()))
-//			farmer.setCoffeeArea(Float.parseFloat(data[coffeeAreaColumnIndex].trim()));
-//
-//		String farmerCode = data[farmerIdColumnIndex] + "_" + data[farmerCodeColumnIndex];
-//		farmer.setFarmerCode(farmerCode);
-//		farmer.setCcCode(cc.getCode());
-//		farmer.setCcName(cc.getName());
-//
-//		Cooperative cooperative;
-//		if (coCodeToCooperativeMap.containsKey(cc.getCoCode())) {
-//			cooperative = coCodeToCooperativeMap.get(cc.getCoCode());
-//		} else {
-//			cooperative = cooperativeService.findByPropertyWithCondition("code", cc.getCoCode(), "=");
-//			coCodeToCooperativeMap.put(cc.getCoCode(), cooperative);
-//		}
-//		farmer.setCoName(cooperative.getName());
-//
-//		Union union;
-//		if (unionCodeToUnionCenterMap.containsKey(cooperative.getUnionCode())) {
-//			union = unionCodeToUnionCenterMap.get(cooperative.getUnionCode());
-//		} else {
-//			union = unionService.findByPropertyWithCondition("code", cooperative.getUnionCode(), "=");
-//			unionCodeToUnionCenterMap.put(cooperative.getUnionCode(), union);
-//		}
-//		farmer.setUnionName(union.getName());
-//
-//		farmer.setFieldCoOrdinator(1L);
-//
-//		String userName = farmer.getFirstName().toLowerCase() + "_" + farmer.getLastName().toLowerCase() + "_"
-//				+ cooperative.getName().toLowerCase() + "_" + farmer.getFarmerCode() + "_" + farmer.getFarmerCode() + "_" + farmer.getCcCode()
-//				+ "@cropcert.org";
-//		String membershipId = userName;
-//		farmer.setMembershipId(membershipId);
-//		farmer.setUserName(userName);
-//		return farmer;
-//	}
+		Map<String, Integer> expectedHeaders = new HashMap<>();
+		expectedHeaders.put(ccNameColumnName, ccNameColumnIndex);
+		expectedHeaders.put(ccCodeColumnName, ccCodeColumnIndex);
+		expectedHeaders.put(farmerCodeColumnName, farmerCodeColumnIndex);
+		expectedHeaders.put(farmerIdColumnName, farmerIdColumnIndex);
+		expectedHeaders.put(nameColumnName, nameColumnIndex);
+		expectedHeaders.put(genderColumnName, genderColumnIndex);
+		expectedHeaders.put(birthDateColumnName, birthDateColumnIndex);
+		expectedHeaders.put(numCoffeePlotsColumnName, numCoffeePlotsColumnIndex);
+		expectedHeaders.put(numCoffeeTreesColumnName, numCoffeeTreesColumnIndex);
+		expectedHeaders.put(farmAreaColumnName, farmAreaColumnIndex);
+		expectedHeaders.put(coffeeAreaColumnName, coffeeAreaColumnIndex);
+		expectedHeaders.put(cellNumberColumnName, cellNumberColumnIndex);
+		expectedHeaders.put(emailColumnName, emailColumnIndex);
+		expectedHeaders.put(villageColumnName, villageColumnIndex);
+		expectedHeaders.put(subCountryColumnName, subCountryColumnIndex);
+
+		// Check if all expected headers are present and assign their indices
+		return Arrays.stream(headers).map(String::trim).map(String::toLowerCase).map(expectedHeaders::get)
+				.filter(Objects::nonNull).reduce((a, b) -> a).orElse(-1) >= 0;
+	}
 
 	public String getFileType() {
 		return fileType;

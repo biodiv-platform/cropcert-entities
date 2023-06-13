@@ -6,54 +6,52 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.inject.Inject;
 
-import cropcert.entities.dao.CollectionCenterDao;
-import cropcert.entities.model.CollectionCenter;
-import cropcert.entities.model.Cooperative;
-import cropcert.entities.model.Union;
+import cropcert.entities.dao.CollectionCenterEntityDao;
+import cropcert.entities.model.CollectionCenterEntity;
+import cropcert.entities.model.CooperativeEntity;
+import cropcert.entities.model.UnionEntities;
 import cropcert.entities.model.response.CollectionCenterShow;
 
-public class CollectionCenterService extends AbstractService<CollectionCenter> {
+public class CollectionCenterEntityService extends AbstractService<CollectionCenterEntity> {
 
 	@Inject
 	ObjectMapper objectMapper;
 
 	@Inject
-	private CooperativeService cooperativeService;
+	private CooperativeEntityService cooperativeEntityService;
 
 	@Inject
-	private UnionService unionService;
+	private UnionEntityService unionEntityService;
 
 	@Inject
-	public CollectionCenterService(CollectionCenterDao dao) {
+	public CollectionCenterEntityService(CollectionCenterEntityDao dao) {
 		super(dao);
 	}
 
-	public CollectionCenter save(String jsonString) throws JsonParseException, JsonMappingException, IOException {
-		CollectionCenter collectionCenter = objectMapper.readValue(jsonString, CollectionCenter.class);
+	public CollectionCenterEntity save(String jsonString) throws IOException {
+		CollectionCenterEntity collectionCenter = objectMapper.readValue(jsonString, CollectionCenterEntity.class);
 		return save(collectionCenter);
 	}
 
-	public Map<String, Object> getOriginNames(HttpServletRequest request, String ccCodesString) {
+	public Map<String, Object> getOriginNames(String ccCodesString) {
 		Long coCode = -1L;
-		List<String> ccNames = new ArrayList<String>();
+		List<String> ccNames = new ArrayList<>();
 
 		for (String value : ccCodesString.split(",")) {
 			Long ccCode = Long.parseLong(value);
-			CollectionCenter collectionCenter = findByPropertyWithCondition("code", ccCode, "=");
-			coCode = collectionCenter.getCoCode();
+			CollectionCenterEntity collectionCenter = findByPropertyWithCondition("code", ccCode, "=");
+			coCode = collectionCenter.getCooperativeCode();
 			ccNames.add(collectionCenter.getName());
 		}
 
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		if (coCode != null && coCode != -1) {
-			Cooperative cooperative = cooperativeService.findByCode(coCode);
+			CooperativeEntity cooperative = cooperativeEntityService.findByCode(coCode);
 			if (cooperative != null)
 				result.put("cooperativeName", cooperative.getName());
 		}
@@ -63,22 +61,24 @@ public class CollectionCenterService extends AbstractService<CollectionCenter> {
 	}
 
 	public List<CollectionCenterShow> findAllByCoCode(HttpServletRequest request, Long coCode) {
-		List<CollectionCenter> collectionCenters = getByPropertyWithCondtion("coCode", coCode, "=", -1, -1, "name");
 
-		List<CollectionCenterShow> collectionCenterShows = new ArrayList<CollectionCenterShow>();
+		List<CollectionCenterEntity> collectionCenters = getByPropertyWithCondtion("cooperativeCode", coCode, "=", -1,
+				-1, "name");
+
+		List<CollectionCenterShow> collectionCenterShows = new ArrayList<>();
 		if (collectionCenters.isEmpty())
 			return collectionCenterShows;
 
-		Cooperative cooperative = cooperativeService.findByCode(coCode);
-		Union union = unionService.findByCode(cooperative.getUnionCode());
+		CooperativeEntity cooperative = cooperativeEntityService.findByCode(coCode);
+		UnionEntities union = unionEntityService.findByCode(cooperative.getUnionCode());
 		String coName = cooperative.getName();
 		String unionName = union.getName();
-		for (CollectionCenter collectionCenter : collectionCenters) {
+		for (CollectionCenterEntity collectionCenter : collectionCenters) {
 			CollectionCenterShow collectionCenterShow = new CollectionCenterShow();
 
 			collectionCenterShow.setId(collectionCenter.getId());
 			collectionCenterShow.setType(collectionCenter.getType());
-			collectionCenterShow.setCoCode(collectionCenter.getCoCode());
+			collectionCenterShow.setCoCode(collectionCenter.getCooperativeCode());
 			collectionCenterShow.setCode(collectionCenter.getCode());
 			collectionCenterShow.setName(collectionCenter.getName());
 			collectionCenterShow.setVillage(collectionCenter.getVillage());
@@ -93,10 +93,11 @@ public class CollectionCenterService extends AbstractService<CollectionCenter> {
 			collectionCenterShows.add(collectionCenterShow);
 		}
 		return collectionCenterShows;
+
 	}
 
-	public CollectionCenter findByName(String name, String code) {
-		return ((CollectionCenterDao) dao).findByName(name, code);
+	public CollectionCenterEntity findByName(String name, String code) {
+		return ((CollectionCenterEntityDao) dao).findByName(name, code);
 	}
 
 }
