@@ -7,12 +7,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import org.bouncycastle.util.encoders.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
 public class MessageDigestPasswordEncoder {
 	private final String algorithm;
 	private int iterations = 1;
+	private static final Logger logger = LoggerFactory.getLogger(MessageDigestPasswordEncoder.class);
 
 	// Default values
 	private boolean encodeHashAsBase64 = false;
@@ -79,7 +82,6 @@ public class MessageDigestPasswordEncoder {
 
 		MessageDigest messageDigest = getMessageDigest();
 
-		// byte[] digest = messageDigest.digest(Utf8.encode(saltedPass));
 		ByteBuffer utfPass = StandardCharsets.UTF_16.encode(saltedPass);
 		byte[] digest = messageDigest.digest(utfPass.array());
 
@@ -89,11 +91,9 @@ public class MessageDigestPasswordEncoder {
 		}
 
 		if (getEncodeHashAsBase64()) {
-			// return Utf8.decode(Base64.getEncoder().encode(digest));
 			byte[] base64Digest = Base64.getEncoder().encode(digest);
 			return StandardCharsets.UTF_16.decode(ByteBuffer.wrap(base64Digest)).toString();
 		} else {
-			// return new String(Hex.encode(digest));
 			return Hex.toHexString(digest);
 		}
 	}
@@ -143,11 +143,10 @@ public class MessageDigestPasswordEncoder {
 	 *                   hashed password/salt value. Defaults to 1.
 	 */
 	public void setIterations(int iterations) {
-		if (iterations > 0) {
-			System.out.println("Iterations value must be greater than zero");
-			return;
-		} else {
+		if (iterations >= 1) {
 			this.iterations = iterations;
+		} else {
+			logger.warn("Iterations value must be greater than zero");
 		}
 	}
 
@@ -213,10 +212,9 @@ public class MessageDigestPasswordEncoder {
 			password = "";
 		}
 
-		if (strict && (salt != null)) {
-			if ((salt.toString().lastIndexOf("{") != -1) || (salt.toString().lastIndexOf("}") != -1)) {
-				throw new IllegalArgumentException("Cannot use { or } in salt.toString()");
-			}
+		if (strict && (salt != null)
+				&& ((salt.toString().lastIndexOf("{") != -1) || (salt.toString().lastIndexOf("}") != -1))) {
+			throw new IllegalArgumentException("Cannot use { or } in salt.toString()");
 		}
 
 		if ((salt == null) || "".equals(salt)) {
@@ -239,6 +237,10 @@ public class MessageDigestPasswordEncoder {
 		int expectedLength = expectedBytes == null ? -1 : expectedBytes.length;
 		int actualLength = actualBytes == null ? -1 : actualBytes.length;
 
+		if (expectedBytes == null || actualBytes == null) {
+			return false;
+		}
+
 		int result = expectedLength == actualLength ? 0 : 1;
 		for (int i = 0; i < actualLength; i++) {
 			byte expectedByte = expectedLength <= 0 ? 0 : expectedBytes[i % expectedLength];
@@ -250,11 +252,9 @@ public class MessageDigestPasswordEncoder {
 
 	private static byte[] bytesUtf8(String s) {
 		if (s == null) {
-			return null;
+			return new byte[0];
 		}
 
 		return s.getBytes();
-		// return Utf8.encode(s); // need to check if Utf8.encode() runs in constant
-		// time (probably not). This may leak length of string.
 	}
 }

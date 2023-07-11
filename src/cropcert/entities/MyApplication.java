@@ -60,15 +60,15 @@ public class MyApplication extends Application {
 		beanConfig.setHost(properties.getProperty("host"));
 		beanConfig.setBasePath(properties.getProperty("basePath"));
 		beanConfig.setResourcePackage(properties.getProperty("resourcePackage"));
-		beanConfig.setPrettyPrint(new Boolean(properties.getProperty("prettyPrint")));
-		beanConfig.setScan(new Boolean(properties.getProperty("scan")));
+		beanConfig.setPrettyPrint(Boolean.parseBoolean(properties.getProperty("prettyPrint")));
+		beanConfig.setScan(Boolean.parseBoolean(properties.getProperty("scan")));
 
 	}
 
 	@Override
 	public Set<Object> getSingletons() {
 
-		Set<Object> singletons = new HashSet<Object>();
+		Set<Object> singletons = new HashSet<>();
 		singletons.add(new ContainerLifecycleListener() {
 
 			@Override
@@ -85,12 +85,12 @@ public class MyApplication extends Application {
 
 			@Override
 			public void onShutdown(Container container) {
-
+				// Shutdown the Container
 			}
 
 			@Override
 			public void onReload(Container container) {
-
+				// Reload the Container
 			}
 		});
 		singletons.add(new InterceptorModule());
@@ -100,7 +100,7 @@ public class MyApplication extends Application {
 
 	@Override
 	public Set<Class<?>> getClasses() {
-		Set<Class<?>> classes = new HashSet<Class<?>>();
+		Set<Class<?>> classes = new HashSet<>();
 		try {
 			List<Class<?>> apiClasses = Utility.getApiAnnotatedClassesFromPackage("cropcert");
 			classes.addAll(apiClasses);

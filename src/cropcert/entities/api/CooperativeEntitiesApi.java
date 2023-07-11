@@ -3,6 +3,7 @@ package cropcert.entities.api;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -18,36 +19,38 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import javax.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
-import cropcert.entities.model.CollectionCenterPerson;
-import cropcert.entities.model.Cooperative;
-import cropcert.entities.service.CooperativeService;
+import cropcert.entities.model.CooperativeEntity;
+import cropcert.entities.service.CooperativeEntityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Path("co")
-@Api("Cooperative")
-public class CooperativeApi {
+@Api("CooperativeEntites")
+public class CooperativeEntitiesApi {
 
-	private CooperativeService cooperativeService;
+	private static final Logger logger = LoggerFactory.getLogger(CooperativeEntitiesApi.class);
+
+	private CooperativeEntityService cooperativeEntityService;
 
 	@Inject
-	public CooperativeApi(CooperativeService cooperativeService) {
-		this.cooperativeService = cooperativeService;
+	public CooperativeEntitiesApi(CooperativeEntityService cooperativeEntityService) {
+		this.cooperativeEntityService = cooperativeEntityService;
 	}
 
 	@Path("{id}")
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get co-operative by id", response = Cooperative.class)
+	@ApiOperation(value = "Get co-operative by id", response = CooperativeEntity.class)
 	public Response find(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		Cooperative cooperative = cooperativeService.findById(id);
+		CooperativeEntity cooperative = cooperativeEntityService.findById(id);
 		if (cooperative == null)
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.status(Status.CREATED).entity(cooperative).build();
@@ -57,9 +60,9 @@ public class CooperativeApi {
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get co-opearative by its code", response = Cooperative.class)
+	@ApiOperation(value = "Get co-opearative by its code", response = CooperativeEntity.class)
 	public Response findByCode(@Context HttpServletRequest request, @PathParam("code") Long code) {
-		Cooperative cooperative = cooperativeService.findByCode(code);
+		CooperativeEntity cooperative = cooperativeEntityService.findByCode(code);
 		if (cooperative == null)
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.ok().entity(cooperative).build();
@@ -68,43 +71,42 @@ public class CooperativeApi {
 	@Path("union")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get list of co-operative from given union", response = Cooperative.class, responseContainer = "List")
+	@ApiOperation(value = "Get list of co-operative from given union", response = CooperativeEntity.class, responseContainer = "List")
 	public Response getByUnion(@Context HttpServletRequest request,
 			@DefaultValue("-1") @QueryParam("unionCode") Long unionCode) {
-		List<Cooperative> cooperatives = cooperativeService.getByPropertyWithCondtion("unionCode", unionCode, "=", -1,
-				-1, "name");
+		List<CooperativeEntity> cooperatives = cooperativeEntityService.getByUnion(unionCode);
 		return Response.ok().entity(cooperatives).build();
 	}
 
 	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get all the co-operative", response = Cooperative.class, responseContainer = "List")
+	@ApiOperation(value = "Get all the co-operative", response = CooperativeEntity.class, responseContainer = "List")
 	public Response findAll(@Context HttpServletRequest request, @DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
 
-		List<Cooperative> cooperatives;
+		List<CooperativeEntity> cooperatives;
 		if (limit == -1 || offset == -1)
-			cooperatives = cooperativeService.findAll();
+			cooperatives = cooperativeEntityService.findAll();
 		else
-			cooperatives = cooperativeService.findAll(limit, offset);
+			cooperatives = cooperativeEntityService.findAll(limit, offset);
 		return Response.ok().entity(cooperatives).build();
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Save the co-operative", response = Cooperative.class)
+	@ApiOperation(value = "Save the co-operative", response = CooperativeEntity.class)
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response save(@Context HttpServletRequest request, String jsonString) {
-		Cooperative cooperative;
+		CooperativeEntity cooperative;
 		try {
-			cooperative = cooperativeService.save(jsonString);
+			cooperative = cooperativeEntityService.save(jsonString);
 			return Response.status(Status.CREATED).entity(cooperative).build();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
 	}
@@ -113,12 +115,13 @@ public class CooperativeApi {
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.TEXT_PLAIN)
-	@ApiOperation(value = "Delete the cooperative by id", response = CollectionCenterPerson.class)
+	@ApiOperation(value = "Delete the cooperative by id", response = CooperativeEntity.class)
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response delete(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		Cooperative cooperative = cooperativeService.delete(id);
+		CooperativeEntity cooperative = cooperativeEntityService.delete(id);
 		return Response.status(Status.ACCEPTED).entity(cooperative).build();
 	}
+
 }

@@ -7,23 +7,23 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
-import cropcert.entities.model.ICSManager;
+import cropcert.entities.model.UnionEntities;
 
-public class ICSManagerDao extends AbstractDao<ICSManager, Long> {
+public class UnionEntityDao extends AbstractDao<UnionEntities, Long> {
 
-	private static final Logger logger = LoggerFactory.getLogger(ICSManagerDao.class);
+	private static final Logger logger = LoggerFactory.getLogger(UnionEntityDao.class);
 
 	@Inject
-	protected ICSManagerDao(SessionFactory sessionFactory) {
+	protected UnionEntityDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
 	}
 
 	@Override
-	public ICSManager findById(Long id) {
+	public UnionEntities findById(Long id) {
 		Session session = sessionFactory.openSession();
-		ICSManager entity = null;
+		UnionEntities entity = null;
 		try {
-			entity = session.get(ICSManager.class, id);
+			entity = session.get(UnionEntities.class, id);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {

@@ -4,10 +4,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import javax.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cropcert.entities.model.Admin;
 
 public class AdminDao extends AbstractDao<Admin, Long> {
+	private static final Logger logger = LoggerFactory.getLogger(AdminDao.class);
 
 	@Inject
 	protected AdminDao(SessionFactory sessionFactory) {
@@ -21,7 +24,8 @@ public class AdminDao extends AbstractDao<Admin, Long> {
 		try {
 			entity = session.get(Admin.class, id);
 		} catch (Exception e) {
-			throw e;
+			logger.error(e.getMessage());
+
 		} finally {
 			session.close();
 		}

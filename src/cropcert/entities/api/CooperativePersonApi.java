@@ -18,13 +18,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.json.JSONException;
-
 import javax.inject.Inject;
 
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.CooperativePerson;
+import cropcert.entities.model.UnionEntities;
 import cropcert.entities.service.CooperativePersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -48,10 +47,27 @@ public class CooperativePersonApi {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get co-operative person by id", response = CooperativePerson.class)
 	public Response find(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		CooperativePerson ccPerson = coPersonService.findById(id);
+		CooperativePerson ccPerson = coPersonService.findByUserId(id);
 		if (ccPerson == null)
 			return Response.status(Status.NO_CONTENT).build();
 		return Response.status(Status.CREATED).entity(ccPerson).build();
+	}
+
+	@Path("cocode/{cocode}")
+	@GET
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Get union by its code", response = UnionEntities.class)
+	public Response findByCode(@Context HttpServletRequest request, @PathParam("cocode") Long coCode,
+			@DefaultValue("-1") @QueryParam("limit") Integer limit,
+			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
+		List<CooperativePerson> unionPerson;
+		if (limit == -1 || offset == -1)
+			unionPerson = coPersonService.findByCooperativeId(coCode, 0, 0, "coCode desc");
+		else
+			unionPerson = coPersonService.findByCooperativeId(coCode, limit, offset, "coCode desc");
+
+		return Response.status(Status.CREATED).entity(unionPerson).build();
 	}
 
 	@Path("all")
@@ -80,7 +96,7 @@ public class CooperativePersonApi {
 		try {
 			coPerson = coPersonService.save(jsonString);
 			return Response.status(Status.CREATED).entity(coPerson).build();
-		} catch (IOException | JSONException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return Response.status(Status.NO_CONTENT).entity("Creation failed").build();
@@ -95,7 +111,7 @@ public class CooperativePersonApi {
 			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response delete(@Context HttpServletRequest request, @PathParam("id") Long id) {
-		CooperativePerson ccPerson = coPersonService.delete(id);
+		CooperativePerson ccPerson = coPersonService.deleteByUserId(id);
 		return Response.status(Status.ACCEPTED).entity(ccPerson).build();
 	}
 
