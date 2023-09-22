@@ -71,6 +71,19 @@ public class CollectionCenterEntitiesApi {
 		return Response.ok().entity(collectionCenter).build();
 	}
 
+	@Path("{name}")
+	@GET
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Get cc by its name", response = CollectionCenterEntity.class)
+	public Response findByName(@Context HttpServletRequest request, @PathParam("name") String name) {
+		CollectionCenterEntity collectionCenter = collectionCenterEntityService.findByPropertyWithCondition("name",
+				name, "=");
+		if (collectionCenter == null)
+			return Response.status(Status.NO_CONTENT).build();
+		return Response.ok().entity(collectionCenter).build();
+	}
+
 	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
