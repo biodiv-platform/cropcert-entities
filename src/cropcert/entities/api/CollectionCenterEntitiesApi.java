@@ -71,7 +71,7 @@ public class CollectionCenterEntitiesApi {
 		return Response.ok().entity(collectionCenter).build();
 	}
 
-	@Path("{name}")
+	@Path("name/{name}")
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
