@@ -132,8 +132,8 @@ public class UserService {
 			if (roles.contains("ROLE_ADMIN")) {
 				unionPersonList = unionPersonServiceApi.findAll();
 			} else if (roles.contains("UNION_PERSON")) {
-				unionPersonList = unionPersonServiceApi.getByPropertyWithCondtion("userId", profile.getId(), "=", 0, 0,
-						"unionCode desc");
+				unionPersonList = unionPersonServiceApi.getByPropertyWithCondtion("userId",
+						Long.parseLong(profile.getId()), "=", 0, 0, "unionCode desc");
 			} else {
 				return Collections.emptyList();
 			}
@@ -167,8 +167,8 @@ public class UserService {
 			if (roles.contains("ROLE_ADMIN")) {
 				cooperativePersonList = cooperativePersonServiceApi.findAll();
 			} else if (roles.contains("COOPERATIVE_PERSON")) {
-				cooperativePersonList = cooperativePersonServiceApi.getByPropertyWithCondtion("userId", profile.getId(),
-						"=", 0, 0, "coCode desc");
+				cooperativePersonList = cooperativePersonServiceApi.getByPropertyWithCondtion("userId",
+						Long.parseLong(profile.getId()), "=", 0, 0, "coCode desc");
 			} else {
 				return Collections.emptyList();
 			}
@@ -203,7 +203,7 @@ public class UserService {
 				collectionCenterPersonList = collectionCenterPersonApi.findAll();
 			} else if (roles.contains("COLLECTION_CENTER_PERSON")) {
 				collectionCenterPersonList = collectionCenterPersonApi.getByPropertyWithCondtion("userId",
-						profile.getId(), "=", 0, 0, "ccCode desc");
+						Long.parseLong(profile.getId()), "=", 0, 0, "ccCode desc");
 			} else {
 				return Collections.emptyList();
 			}
@@ -238,8 +238,8 @@ public class UserService {
 			if (roles.contains("ROLE_ADMIN")) {
 				unionPersonList = unionPersonServiceApi.findAll();
 			} else if (roles.contains("UNION_PERSON")) {
-				unionPersonList = unionPersonServiceApi.getByPropertyWithCondtion("userId", profile.getId(), "=", 0, 0,
-						"unionCode desc");
+				unionPersonList = unionPersonServiceApi.getByPropertyWithCondtion("userId",
+						Long.parseLong(profile.getId()), "=", 0, 0, "unionCode desc");
 			} else {
 				return Collections.emptyList();
 			}
@@ -281,8 +281,8 @@ public class UserService {
 			if (roles.contains("ROLE_ADMIN")) {
 				cooperativePersonList = cooperativePersonServiceApi.findAll();
 			} else if (roles.contains("COOPERATIVE_PERSON")) {
-				cooperativePersonList = cooperativePersonServiceApi.getByPropertyWithCondtion("userId", profile.getId(),
-						"=", 0, 0, "unionCode desc");
+				cooperativePersonList = cooperativePersonServiceApi.getByPropertyWithCondtion("userId",
+						Long.parseLong(profile.getId()), "=", 0, 0, "unionCode desc");
 			} else {
 				return Collections.emptyList();
 			}
