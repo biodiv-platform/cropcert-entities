@@ -141,7 +141,10 @@ public abstract class AbstractDao<T, K extends Serializable> {
 
 		T entity = null;
 		try {
-			entity = (T) query.getSingleResult();
+			List<T> results = query.getResultList();
+			if (!results.isEmpty()) {
+				entity = results.get(0);
+			}
 		} catch (NoResultException e) {
 			logger.error(e.getMessage());
 		}
