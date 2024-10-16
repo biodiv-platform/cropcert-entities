@@ -1,5 +1,6 @@
 package cropcert.entities.api;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,11 +26,14 @@ import com.strandls.user.pojo.UserDTO;
 import com.strandls.user.pojo.UserRoles;
 
 import cropcert.entities.Headers;
+import cropcert.entities.model.CollectionCenterEntity;
 import cropcert.entities.model.CollectionCenterPerson;
+import cropcert.entities.model.CooperativeEntity;
 import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.model.Farmer;
 import cropcert.entities.model.ICSManager;
 import cropcert.entities.model.Inspector;
+import cropcert.entities.model.UnionEntities;
 import cropcert.entities.model.UnionPerson;
 import cropcert.entities.model.UserEntityDTO;
 import cropcert.entities.service.CollectionCenterPersonService;
@@ -103,6 +107,48 @@ public class UserApi {
 	public Response getUser(@Context HttpServletRequest request) {
 		Map<String, Object> myData = userService.getMyData(request);
 		return Response.ok().entity(myData).build();
+	}
+
+	@GET
+	@Path("union/all")
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@ApiOperation(value = "Get the current user unions", response = Map.class)
+	public Response getMyUnion(@Context HttpServletRequest request) {
+		List<UnionEntities> result = userService.getMyUnionData(request);
+		return Response.ok().entity(result).build();
+	}
+
+	@GET
+	@Path("co/all")
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@ApiOperation(value = "Get the current user cooperatives", response = Map.class)
+	public Response getMyCoopertive(@Context HttpServletRequest request) {
+		List<CooperativeEntity> result = userService.getMyCoopertiveData(request);
+		return Response.ok().entity(result).build();
+	}
+
+	@GET
+	@Path("cc/all")
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@ApiOperation(value = "Get the current user collectionCenters", response = Map.class)
+	public Response getMyCollectionCenter(@Context HttpServletRequest request) {
+		List<CollectionCenterEntity> result = userService.getMyCollectionCenterData(request);
+		return Response.ok().entity(result).build();
 	}
 
 	@POST

@@ -5,11 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -28,25 +30,34 @@ import com.strandls.user.pojo.User;
 import cropcert.entities.api.CollectionCenterEntitiesApi;
 import cropcert.entities.api.CooperativeEntitiesApi;
 import cropcert.entities.model.CollectionCenter;
+import cropcert.entities.model.CollectionCenterEntity;
 import cropcert.entities.model.CollectionCenterPerson;
 import cropcert.entities.model.Cooperative;
+import cropcert.entities.model.CooperativeEntity;
 import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.model.ICSManager;
 import cropcert.entities.model.Inspector;
+import cropcert.entities.model.UnionEntities;
 import cropcert.entities.model.UnionPerson;
+import net.minidev.json.JSONArray;
 
 public class UserService {
 	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	public static final String ROOTPATH = System.getProperty("user.home") + File.separatorChar + "cropcert-image";
-	
 	public static final String UNION_CODE = "unionCode";
 
 	@Inject
 	private CooperativeEntitiesApi cooperativeEntitiesApi;
 
 	@Inject
+	private CooperativeEntityService cooperativeEntityService;
+
+	@Inject
 	private CollectionCenterEntitiesApi collectionCenterEntitiesApi;
+
+	@Inject
+	private CollectionCenterEntityService collectionCenterEntityService;
 
 	@Inject
 	private CollectionCenterPersonService collectionCenterPersonApi;
@@ -56,6 +67,9 @@ public class UserService {
 
 	@Inject
 	private UnionPersonService unionPersonServiceApi;
+
+	@Inject
+	private UnionEntityService unionEntitiesServiceApi;
 
 	@Inject
 	private ICSManagerService icsManagerServiceApi;
@@ -100,6 +114,106 @@ public class UserService {
 		}
 
 		return userData;
+	}
+
+	public List<UnionEntities> getMyUnionData(HttpServletRequest request) {
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+
+		try {
+			User user = userServiceApi.getUser(profile.getId());
+			if (user == null) {
+				logger.error("User not found for profile ID: " + profile.getId());
+				return Collections.emptyList();
+			}
+
+			List<UnionPerson> unionPersonList;
+			if (roles.contains("ROLE_ADMIN")) {
+				unionPersonList = unionPersonServiceApi.findAll();
+			} else if (roles.contains("UNION_PERSON")) {
+				unionPersonList = unionPersonServiceApi.getByPropertyWithCondtion("userId", profile.getId(), "=", 0, 0,
+						"unionCode desc");
+			} else {
+				return Collections.emptyList();
+			}
+			List<Long> unionCodeList = unionPersonList.stream().map(UnionPerson::getUnionCode)
+					.collect(Collectors.toList());
+
+			if (unionCodeList.isEmpty()) {
+				return Collections.emptyList();
+			}
+			return unionEntitiesServiceApi.getByMultipleValuesWithCondition("code", unionCodeList, 0, 0);
+
+		} catch (Exception e) {
+			logger.error("Error retrieving union data: " + e.getMessage(), e);
+			return Collections.emptyList();
+		}
+	}
+
+	public List<CooperativeEntity> getMyCoopertiveData(HttpServletRequest request) {
+
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+
+		try {
+			User user = userServiceApi.getUser(profile.getId());
+			if (user == null) {
+				logger.error("User not found for profile ID: " + profile.getId());
+				return Collections.emptyList();
+			}
+
+			List<CooperativePerson> cooperativePersonList;
+			if (roles.contains("COOPERATIVE_PERSON")) {
+				cooperativePersonList = cooperativePersonServiceApi.getByPropertyWithCondtion("userId", profile.getId(),
+						"=", 0, 0, "coCode desc");
+			} else {
+				return Collections.emptyList();
+			}
+			List<Long> cooperativeCodeList = cooperativePersonList.stream().map(CooperativePerson::getCoCode)
+					.collect(Collectors.toList());
+
+			if (cooperativeCodeList.isEmpty()) {
+				return Collections.emptyList();
+			}
+			return cooperativeEntityService.getByMultipleValuesWithCondition("code", cooperativeCodeList, 0, 0);
+
+		} catch (Exception e) {
+			logger.error("Error retrieving cooperative data: " + e.getMessage(), e);
+			return Collections.emptyList();
+		}
+	}
+
+	public List<CollectionCenterEntity> getMyCollectionCenterData(HttpServletRequest request) {
+
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+
+		try {
+			User user = userServiceApi.getUser(profile.getId());
+			if (user == null) {
+				logger.error("User not found for profile ID: " + profile.getId());
+				return Collections.emptyList();
+			}
+
+			List<CollectionCenterPerson> collectionCenterPersonList;
+			if (roles.contains("COLLECTION_CENTER_PERSON")) {
+				collectionCenterPersonList = collectionCenterPersonApi.getByPropertyWithCondtion("userId",
+						profile.getId(), "=", 0, 0, "ccCode desc");
+			} else {
+				return Collections.emptyList();
+			}
+			List<Long> collectionCenterList = collectionCenterPersonList.stream().map(CollectionCenterPerson::getCcCode)
+					.collect(Collectors.toList());
+
+			if (collectionCenterList.isEmpty()) {
+				return Collections.emptyList();
+			}
+			return collectionCenterEntityService.getByMultipleValuesWithCondition("code", collectionCenterList, 0, 0);
+
+		} catch (Exception e) {
+			logger.error("Error retrieving collectionCenter data: " + e.getMessage(), e);
+			return Collections.emptyList();
+		}
 	}
 
 	public static boolean containsRole(List<Role> list, String roleName) {

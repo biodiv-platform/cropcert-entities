@@ -107,4 +107,9 @@ public abstract class AbstractService<T> {
 	public T deleteByPropertyWithCondition(String property, Object value, String condition) {
 		return dao.deleteByProperty(property, value, condition);
 	}
+
+	public List<T> getByMultipleValuesWithCondition(String property, List<Long> values, Integer limit, Integer offset) {
+		return dao.getByMultipleValuesWithCondition(property, values, limit, offset);
+	}
+
 }
