@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -163,7 +164,9 @@ public class UserService {
 			}
 
 			List<CooperativePerson> cooperativePersonList;
-			if (roles.contains("COOPERATIVE_PERSON")) {
+			if (roles.contains("ROLE_ADMIN")) {
+				cooperativePersonList = cooperativePersonServiceApi.findAll();
+			} else if (roles.contains("COOPERATIVE_PERSON")) {
 				cooperativePersonList = cooperativePersonServiceApi.getByPropertyWithCondtion("userId", profile.getId(),
 						"=", 0, 0, "coCode desc");
 			} else {
@@ -196,7 +199,9 @@ public class UserService {
 			}
 
 			List<CollectionCenterPerson> collectionCenterPersonList;
-			if (roles.contains("COLLECTION_CENTER_PERSON")) {
+			if (roles.contains("ROLE_ADMIN")) {
+				collectionCenterPersonList = collectionCenterPersonApi.findAll();
+			} else if (roles.contains("COLLECTION_CENTER_PERSON")) {
 				collectionCenterPersonList = collectionCenterPersonApi.getByPropertyWithCondtion("userId",
 						profile.getId(), "=", 0, 0, "ccCode desc");
 			} else {
@@ -212,6 +217,96 @@ public class UserService {
 
 		} catch (Exception e) {
 			logger.error("Error retrieving collectionCenter data: " + e.getMessage(), e);
+			return Collections.emptyList();
+		}
+	}
+
+	public List<CooperativeEntity> getCooperativesByUnion(HttpServletRequest request, String unionCodes) {
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+		List<Long> unionCodeList = Arrays.stream(unionCodes.split(",")).map(Long::valueOf).collect(Collectors.toList());
+
+		try {
+			User user = userServiceApi.getUser(profile.getId());
+			if (user == null) {
+				logger.error("User not found for profile ID: {}", profile.getId());
+				return Collections.emptyList();
+			}
+
+			List<UnionPerson> unionPersonList;
+
+			if (roles.contains("ROLE_ADMIN")) {
+				unionPersonList = unionPersonServiceApi.findAll();
+			} else if (roles.contains("UNION_PERSON")) {
+				unionPersonList = unionPersonServiceApi.getByPropertyWithCondtion("userId", profile.getId(), "=", 0, 0,
+						"unionCode desc");
+			} else {
+				return Collections.emptyList();
+			}
+
+			List<Long> userUnionCodeList = unionPersonList.stream().map(UnionPerson::getUnionCode)
+					.collect(Collectors.toList());
+
+			List<Long> commonUnionCodes = userUnionCodeList.stream().filter(unionCodeList::contains)
+					.collect(Collectors.toList());
+
+			if (commonUnionCodes.isEmpty()) {
+				return Collections.emptyList();
+			}
+
+			return cooperativeEntityService.getByMultipleValuesWithCondition("unionCode", commonUnionCodes, 0, 0);
+
+		} catch (Exception e) {
+			logger.error("Error retrieving cooperative data for profile ID {}: {}", profile.getId(), e.getMessage(), e);
+			return Collections.emptyList();
+		}
+	}
+
+	public List<CollectionCenterEntity> getCollectionCenterByCooperative(HttpServletRequest request,
+			String cooperativeCodes) {
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+		List<Long> cooperativeCodeList = Arrays.stream(cooperativeCodes.split(",")).map(Long::valueOf)
+				.collect(Collectors.toList());
+
+		try {
+			User user = userServiceApi.getUser(profile.getId());
+			if (user == null) {
+				logger.error("User not found for profile ID: {}", profile.getId());
+				return Collections.emptyList();
+			}
+
+			List<CooperativePerson> cooperativePersonList;
+
+			if (roles.contains("ROLE_ADMIN")) {
+				cooperativePersonList = cooperativePersonServiceApi.findAll();
+			} else if (roles.contains("COOPERATIVE_PERSON")) {
+				cooperativePersonList = cooperativePersonServiceApi.getByPropertyWithCondtion("userId", profile.getId(),
+						"=", 0, 0, "unionCode desc");
+			} else {
+				return Collections.emptyList();
+			}
+
+			if (cooperativePersonList.isEmpty()) {
+				return Collections.emptyList();
+			}
+
+			List<Long> userCooperativeCodeList = cooperativePersonList.stream().map(CooperativePerson::getCoCode)
+					.collect(Collectors.toList());
+
+			List<Long> commonCooperativeCodes = userCooperativeCodeList.stream().filter(cooperativeCodeList::contains)
+					.collect(Collectors.toList());
+
+			if (commonCooperativeCodes.isEmpty()) {
+				return Collections.emptyList();
+			}
+
+			return collectionCenterEntityService.getByMultipleValuesWithCondition("cooperativeCode",
+					commonCooperativeCodes, 0, 0);
+
+		} catch (Exception e) {
+			logger.error("Error retrieving collection center data for profile ID {}: {}", profile.getId(),
+					e.getMessage(), e);
 			return Collections.emptyList();
 		}
 	}

@@ -5,11 +5,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -149,6 +150,34 @@ public class UserApi {
 	public Response getMyCollectionCenter(@Context HttpServletRequest request) {
 		List<CollectionCenterEntity> result = userService.getMyCollectionCenterData(request);
 		return Response.ok().entity(result).build();
+	}
+
+	@Path("union")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Get list of co-operative from given union", response = CooperativeEntity.class, responseContainer = "List")
+	public Response getCooperativesByUnion(@Context HttpServletRequest request,
+			@DefaultValue("-1") @QueryParam("unionCodes") String unionCodes) {
+		List<CooperativeEntity> cooperatives = userService.getCooperativesByUnion(request, unionCodes);
+		return Response.ok().entity(cooperatives).build();
+	}
+
+	@Path("cooperative")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Get list of co-operative from given union", response = CooperativeEntity.class, responseContainer = "List")
+	public Response getCollectionCenterByCooperative(@Context HttpServletRequest request,
+			@DefaultValue("-1") @QueryParam("cooperativeCodes") String cooperativeCodes) {
+		List<CollectionCenterEntity> cooperatives = userService
+				.getCollectionCenterByCooperative(request,
+				cooperativeCodes);
+		return Response.ok().entity(cooperatives).build();
 	}
 
 	@POST
