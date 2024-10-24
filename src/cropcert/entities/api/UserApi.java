@@ -1,14 +1,16 @@
 package cropcert.entities.api;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -25,11 +27,14 @@ import com.strandls.user.pojo.UserDTO;
 import com.strandls.user.pojo.UserRoles;
 
 import cropcert.entities.Headers;
+import cropcert.entities.model.CollectionCenterEntity;
 import cropcert.entities.model.CollectionCenterPerson;
+import cropcert.entities.model.CooperativeEntity;
 import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.model.Farmer;
 import cropcert.entities.model.ICSManager;
 import cropcert.entities.model.Inspector;
+import cropcert.entities.model.UnionEntities;
 import cropcert.entities.model.UnionPerson;
 import cropcert.entities.model.UserEntityDTO;
 import cropcert.entities.service.CollectionCenterPersonService;
@@ -103,6 +108,76 @@ public class UserApi {
 	public Response getUser(@Context HttpServletRequest request) {
 		Map<String, Object> myData = userService.getMyData(request);
 		return Response.ok().entity(myData).build();
+	}
+
+	@GET
+	@Path("union/all")
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@ApiOperation(value = "Get the current user unions", response = Map.class)
+	public Response getMyUnion(@Context HttpServletRequest request) {
+		List<UnionEntities> result = userService.getMyUnionData(request);
+		return Response.ok().entity(result).build();
+	}
+
+	@GET
+	@Path("co/all")
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@ApiOperation(value = "Get the current user cooperatives", response = Map.class)
+	public Response getMyCoopertive(@Context HttpServletRequest request) {
+		List<CooperativeEntity> result = userService.getMyCoopertiveData(request);
+		return Response.ok().entity(result).build();
+	}
+
+	@GET
+	@Path("cc/all")
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@ApiOperation(value = "Get the current user collectionCenters", response = Map.class)
+	public Response getMyCollectionCenter(@Context HttpServletRequest request) {
+		List<CollectionCenterEntity> result = userService.getMyCollectionCenterData(request);
+		return Response.ok().entity(result).build();
+	}
+
+	@Path("union")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Get list of co-operative from given union", response = CooperativeEntity.class, responseContainer = "List")
+	public Response getCooperativesByUnion(@Context HttpServletRequest request,
+			@DefaultValue("-1") @QueryParam("unionCodes") String unionCodes) {
+		List<CooperativeEntity> cooperatives = userService.getCooperativesByUnion(request, unionCodes);
+		return Response.ok().entity(cooperatives).build();
+	}
+
+	@Path("cooperative")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Get list of co-operative from given union", response = CooperativeEntity.class, responseContainer = "List")
+	public Response getCollectionCenterByCooperative(@Context HttpServletRequest request,
+			@DefaultValue("-1") @QueryParam("cooperativeCodes") String cooperativeCodes) {
+		List<CollectionCenterEntity> cooperatives = userService
+				.getCollectionCenterByCooperative(request,
+				cooperativeCodes);
+		return Response.ok().entity(cooperatives).build();
 	}
 
 	@POST

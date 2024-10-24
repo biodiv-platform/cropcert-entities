@@ -141,7 +141,10 @@ public abstract class AbstractDao<T, K extends Serializable> {
 
 		T entity = null;
 		try {
-			entity = (T) query.getSingleResult();
+			List<T> results = query.getResultList();
+			if (!results.isEmpty()) {
+				entity = results.get(0);
+			}
 		} catch (NoResultException e) {
 			logger.error(e.getMessage());
 		}
@@ -252,4 +255,32 @@ public abstract class AbstractDao<T, K extends Serializable> {
 		session.close();
 		return resultList;
 	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<T> getByMultipleValuesWithCondition(String property, List<Long> values, Integer limit, Integer offset) {
+
+		StringBuilder queryBuilder = new StringBuilder("from " + daoType.getSimpleName() + " t where ");
+		queryBuilder.append(" t.").append(property).append(" IN (:values) ");
+		queryBuilder.append(" order by id");
+
+		String queryStr = queryBuilder.toString();
+
+		Session session = sessionFactory.openSession();
+		org.hibernate.query.Query query = session.createQuery(queryStr);
+
+		query.setParameterList("values", values);
+
+		List<T> resultList = new ArrayList<>();
+		try {
+			if (limit > 0 && offset >= 0) {
+				query = query.setFirstResult(offset).setMaxResults(limit);
+			}
+			resultList = query.getResultList();
+		} catch (NoResultException e) {
+			logger.error(e.getMessage());
+		}
+		session.close();
+		return resultList;
+	}
+
 }
