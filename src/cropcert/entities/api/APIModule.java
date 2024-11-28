@@ -12,7 +12,6 @@ public class APIModule extends AbstractModule {
 		bind(CollectionCenterPersonApi.class).in(Scopes.SINGLETON);
 		bind(CooperativePersonApi.class).in(Scopes.SINGLETON);
 		bind(FactoryPersonApi.class).in(Scopes.SINGLETON);
-		bind(FarmerApi.class).in(Scopes.SINGLETON);
 		bind(UnionPersonApi.class).in(Scopes.SINGLETON);
 		bind(UserApi.class).in(Scopes.SINGLETON);
 		bind(UnionEntitiesApi.class).in(Scopes.SINGLETON);

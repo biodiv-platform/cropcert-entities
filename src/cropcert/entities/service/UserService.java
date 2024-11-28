@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,10 +29,8 @@ import com.strandls.user.pojo.User;
 
 import cropcert.entities.api.CollectionCenterEntitiesApi;
 import cropcert.entities.api.CooperativeEntitiesApi;
-import cropcert.entities.model.CollectionCenter;
 import cropcert.entities.model.CollectionCenterEntity;
 import cropcert.entities.model.CollectionCenterPerson;
-import cropcert.entities.model.Cooperative;
 import cropcert.entities.model.CooperativeEntity;
 import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.model.ICSManager;
@@ -341,7 +338,7 @@ public class UserService {
 		userData.put("coCode", coCode);
 
 		Response coResponse = cooperativeEntitiesApi.findByCode(request, coCode);
-		Cooperative cooperative = (Cooperative) coResponse.getEntity();
+		CooperativeEntity cooperative = (CooperativeEntity) coResponse.getEntity();
 		userData.put(UNION_CODE, cooperative.getUnionCode());
 	}
 
@@ -351,12 +348,12 @@ public class UserService {
 		userData.put("ccCode", ccCode);
 
 		Response ccResponse = collectionCenterEntitiesApi.findByCode(request, ccCode);
-		CollectionCenter collectionCenter = (CollectionCenter) ccResponse.getEntity();
-		Long coCode = collectionCenter.getCoCode();
+		CollectionCenterEntity collectionCenter = (CollectionCenterEntity) ccResponse.getEntity();
+		Long coCode = collectionCenter.getCooperativeCode();
 		userData.put("coCode", coCode);
 
 		Response coResponse = cooperativeEntitiesApi.findByCode(request, coCode);
-		Cooperative cooperative = (Cooperative) coResponse.getEntity();
+		CooperativeEntity cooperative = (CooperativeEntity) coResponse.getEntity();
 		userData.put(UNION_CODE, cooperative.getUnionCode());
 	}
 

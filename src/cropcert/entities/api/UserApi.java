@@ -39,7 +39,6 @@ import cropcert.entities.model.UnionPerson;
 import cropcert.entities.model.UserEntityDTO;
 import cropcert.entities.service.CollectionCenterPersonService;
 import cropcert.entities.service.CooperativePersonService;
-import cropcert.entities.service.FarmerService;
 import cropcert.entities.service.ICSManagerService;
 import cropcert.entities.service.InspectorService;
 import cropcert.entities.service.UnionPersonService;
@@ -69,9 +68,6 @@ public class UserApi {
 
 	@Inject
 	private Headers headers;
-
-	@Inject
-	private FarmerService farmerService;
 
 	@Inject
 	private CooperativePersonService cooperativePersonService;
@@ -174,8 +170,7 @@ public class UserApi {
 	@ApiOperation(value = "Get list of co-operative from given union", response = CooperativeEntity.class, responseContainer = "List")
 	public Response getCollectionCenterByCooperative(@Context HttpServletRequest request,
 			@DefaultValue("-1") @QueryParam("cooperativeCodes") String cooperativeCodes) {
-		List<CollectionCenterEntity> cooperatives = userService
-				.getCollectionCenterByCooperative(request,
+		List<CollectionCenterEntity> cooperatives = userService.getCollectionCenterByCooperative(request,
 				cooperativeCodes);
 		return Response.ok().entity(cooperatives).build();
 	}
@@ -203,7 +198,6 @@ public class UserApi {
 			UnionPerson unionPerson = userEntityDTO.getUnionPerson();
 			Inspector inspector = userEntityDTO.getInspector();
 			ICSManager icsManager = userEntityDTO.getIscManager();
-			Farmer farmer = userEntityDTO.getFarmer();
 			CooperativePerson coPerson = userEntityDTO.getCoPerson();
 			CollectionCenterPerson ccPerson = userEntityDTO.getCcPerson();
 			UserRoles userRole = userEntityDTO.getUserRole();
@@ -245,9 +239,6 @@ public class UserApi {
 			} else if (ccPerson != null) {
 				ccPerson.setUserId(user.getId());
 				collectionCenterPersonService.save(ccPerson);
-			} else if (farmer != null) {
-				farmer.setUserId(user.getId());
-				farmerService.save(farmer);
 			}
 
 			return Response.status(Status.CREATED).entity(user).build();

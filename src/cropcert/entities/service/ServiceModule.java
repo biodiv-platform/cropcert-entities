@@ -11,9 +11,7 @@ public class ServiceModule extends AbstractModule {
 		bind(CollectionCenterPersonService.class).in(Scopes.SINGLETON);
 		bind(CooperativePersonService.class).in(Scopes.SINGLETON);
 		bind(FactoryPersonService.class).in(Scopes.SINGLETON);
-		bind(FarmerService.class).in(Scopes.SINGLETON);
 		bind(UnionPersonService.class).in(Scopes.SINGLETON);
 		bind(UserService.class).in(Scopes.SINGLETON);
-		bind(CropcertEntityService.class).in(Scopes.SINGLETON);
 	}
 }
