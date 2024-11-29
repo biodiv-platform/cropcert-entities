@@ -230,18 +230,13 @@ public class UserService {
 				return Collections.emptyList();
 			}
 
-			List<UnionPerson> unionPersonList;
-
-			if (roles.contains("ROLE_ADMIN")) {
-				unionPersonList = unionPersonServiceApi.findAll();
-			} else if (roles.contains("UNION_PERSON")) {
-				unionPersonList = unionPersonServiceApi.getByPropertyWithCondtion("userId",
-						Long.parseLong(profile.getId()), "=", 0, 0, "unionCode desc");
-			} else {
-				return Collections.emptyList();
+			if (roles.contains("COOPERATIVE_PERSON")) {
+				return getMyCoopertiveData(request);
 			}
 
-			List<Long> userUnionCodeList = unionPersonList.stream().map(UnionPerson::getUnionCode)
+			List<UnionEntities> unionPersonList = getMyUnionData(request);
+
+			List<Long> userUnionCodeList = unionPersonList.stream().map(UnionEntities::getCode)
 					.collect(Collectors.toList());
 
 			List<Long> commonUnionCodes = userUnionCodeList.stream().filter(unionCodeList::contains)
