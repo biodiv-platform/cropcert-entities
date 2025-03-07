@@ -330,7 +330,10 @@ public class UserService {
 	private void setCooperativePersonData(Map<String, Object> userData, Long userId, HttpServletRequest request) {
 		CooperativePerson coPerson = cooperativePersonServiceApi.findByUserId(userId);
 		Long coCode = coPerson.getCoCode();
+		CooperativeEntity coEntity = cooperativeEntityService.findByCode(coCode);
+		Long unionCode = coEntity.getUnionCode();
 		userData.put("coCode", coCode);
+		userData.put("unionCode", unionCode);
 
 		Response coResponse = cooperativeEntitiesApi.findByCode(request, coCode);
 		CooperativeEntity cooperative = (CooperativeEntity) coResponse.getEntity();
@@ -346,6 +349,10 @@ public class UserService {
 		CollectionCenterEntity collectionCenter = (CollectionCenterEntity) ccResponse.getEntity();
 		Long coCode = collectionCenter.getCooperativeCode();
 		userData.put("coCode", coCode);
+
+		CooperativeEntity coEntity = cooperativeEntityService.findByCode(coCode);
+		Long unionCode = coEntity.getUnionCode();
+		userData.put("unionCode", unionCode);
 
 		Response coResponse = cooperativeEntitiesApi.findByCode(request, coCode);
 		CooperativeEntity cooperative = (CooperativeEntity) coResponse.getEntity();
