@@ -34,11 +34,23 @@ public class UnionEntities implements Serializable {
 	@Column(name = "code", nullable = false)
 	private Long code;
 
-	public UnionEntities(Long id, String name, Long code) {
+	@Column(name = "has_batch", nullable = false, columnDefinition = "boolean default true")
+	private Boolean hasBatch;
+
+	@Column(name = "has_lot", nullable = false, columnDefinition = "boolean default true")
+	private Boolean hasLot;
+
+	@Column(name = "has_container", nullable = false, columnDefinition = "boolean default false")
+	private Boolean hasContainer;
+
+	public UnionEntities(Long id, String name, Long code, Boolean hasBatch, Boolean hasLot, Boolean hasContainer) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.code = code;
+		this.hasBatch = hasBatch;
+		this.hasLot = hasLot;
+		this.hasContainer = hasContainer;
 	}
 
 	public UnionEntities() {
@@ -67,6 +79,30 @@ public class UnionEntities implements Serializable {
 
 	public void setCode(Long code) {
 		this.code = code;
+	}
+
+	public Boolean getHasBatch() {
+		return hasBatch;
+	}
+
+	public void setHasBatch(Boolean hasBatch) {
+		this.hasBatch = hasBatch;
+	}
+
+	public Boolean getHasLot() {
+		return hasLot;
+	}
+
+	public void setHasLot(Boolean hasLot) {
+		this.hasLot = hasLot;
+	}
+
+	public Boolean getHasContainer() {
+		return hasContainer;
+	}
+
+	public void setHasContainer(Boolean hasContainer) {
+		this.hasContainer = hasContainer;
 	}
 
 }
