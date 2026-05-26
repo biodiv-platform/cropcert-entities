@@ -94,7 +94,9 @@ public class UserService {
 
 			userData.put("user", user);
 
-			if (containsRole(user.getRoles(), "UNION_PERSON")) {
+			if (containsRole(user.getRoles(), "ROLE_ADMIN")) {
+				setAdminPersonData(userData, user.getId());
+			} else if (containsRole(user.getRoles(), "UNION_PERSON")) {
 				setUnionPersonData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "INSPECTOR")) {
 				setInspectorData(userData, user.getId());
@@ -310,6 +312,13 @@ public class UserService {
 			}
 		}
 		return false;
+	}
+
+	private void setAdminPersonData(Map<String, Object> userData, Long userId) {
+		List<UnionPerson> unionPersonList = unionPersonServiceApi.findAll();
+		if (unionPersonList != null && !unionPersonList.isEmpty()) {
+			userData.put(UNION_CODE, unionPersonList.get(0).getUnionCode());
+		}
 	}
 
 	private void setUnionPersonData(Map<String, Object> userData, Long userId) {
