@@ -1,8 +1,8 @@
 package cropcert.entities.model;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("UserFarmerDetail")
+@Schema(description = "UserFarmerDetail")
 
 public class UserFarmerDetail {
 

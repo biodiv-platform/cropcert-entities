@@ -21,6 +21,7 @@ import cropcert.entities.api.APIModule;
 import cropcert.entities.dao.DaoModule;
 import cropcert.entities.util.AuthUtility;
 import cropcert.entities.util.Utility;
+import jakarta.servlet.ServletContextEvent;
 
 public class UserServletContextListener extends GuiceServletContextListener {
 
@@ -51,12 +52,24 @@ public class UserServletContextListener extends GuiceServletContextListener {
 				bind(ServletContainer.class).in(Scopes.SINGLETON);
 
 				Map<String, String> props = new HashMap<>();
-				props.put("javax.ws.rs.Application", MyApplication.class.getName());
+				props.put("jakarta.ws.rs.Application", MyApplication.class.getName());
 				props.put("jersey.config.server.provider.packages", "cropcert");
 				props.put("jersey.config.server.wadl.disableWadl", "true");
 
 				serve("/api/*").with(ServletContainer.class, props);
 			}
 		}, new DaoModule(), new APIModule());
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent servletContextEvent) {
+		Injector injector = (Injector) servletContextEvent.getServletContext().getAttribute(Injector.class.getName());
+		if (injector != null) {
+			SessionFactory sessionFactory = injector.getInstance(SessionFactory.class);
+			if (sessionFactory != null) {
+				sessionFactory.close();
+			}
+		}
+		super.contextDestroyed(servletContextEvent);
 	}
 }

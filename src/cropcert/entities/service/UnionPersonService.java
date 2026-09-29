@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import cropcert.entities.dao.UnionPersonDao;
 import cropcert.entities.filter.Permissions;

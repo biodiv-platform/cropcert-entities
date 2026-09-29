@@ -1,6 +1,6 @@
 package cropcert.entities.dao;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

@@ -3,35 +3,38 @@ package cropcert.entities.api;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import cropcert.entities.filter.Permissions;
 import cropcert.entities.filter.TokenAndUserAuthenticated;
 import cropcert.entities.model.CooperativePerson;
 import cropcert.entities.model.UnionEntities;
 import cropcert.entities.service.CooperativePersonService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("coUser")
-@Api("Cooperative person")
+@Tag(name = "Cooperative person")
 public class CooperativePersonApi {
 
 	private CooperativePersonService coPersonService;
@@ -45,7 +48,10 @@ public class CooperativePersonApi {
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get co-operative person by id", response = CooperativePerson.class)
+	@Operation(summary = "Get co-operative person by id")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Cooperative person found", content = @Content(schema = @Schema(implementation = CooperativePerson.class))),
+			@ApiResponse(responseCode = "204", description = "No content") })
 	public Response find(@Context HttpServletRequest request, @PathParam("id") Long id) {
 		CooperativePerson ccPerson = coPersonService.findByUserId(id);
 		if (ccPerson == null)
@@ -57,7 +63,9 @@ public class CooperativePersonApi {
 	@GET
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get union by its code", response = UnionEntities.class)
+	@Operation(summary = "Get union by its code")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Cooperative persons", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UnionEntities.class)))) })
 	public Response findByCode(@Context HttpServletRequest request, @PathParam("cocode") Long coCode,
 			@DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
@@ -73,9 +81,12 @@ public class CooperativePersonApi {
 	@Path("all")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get all the co-operatvie persons", response = CooperativePerson.class, responseContainer = "List")
+	@Operation(summary = "Get all the co-operatvie persons")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "All cooperative persons", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CooperativePerson.class)))) })
 	public Response findAll(@Context HttpServletRequest request, @DefaultValue("-1") @QueryParam("limit") Integer limit,
 			@DefaultValue("-1") @QueryParam("offset") Integer offset) {
+
 		List<CooperativePerson> coPersons;
 		if (limit == -1 || offset == -1)
 			coPersons = coPersonService.findAll();
@@ -87,11 +98,13 @@ public class CooperativePersonApi {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Save the co operative person", response = CooperativePerson.class)
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@Operation(summary = "Save the co operative person")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Cooperative person saved", content = @Content(schema = @Schema(implementation = CooperativePerson.class))),
+			@ApiResponse(responseCode = "204", description = "Creation failed") })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
-	public Response save(@Context HttpServletRequest request, String jsonString) {
+	public Response save(@Context HttpServletRequest request,
+			@RequestBody(description = "Cooperative person json string", required = true) String jsonString) {
 		CooperativePerson coPerson;
 		try {
 			coPerson = coPersonService.save(jsonString);
@@ -106,9 +119,9 @@ public class CooperativePersonApi {
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.TEXT_PLAIN)
-	@ApiOperation(value = "Delete the cooperative person by id", response = CooperativePerson.class)
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
+	@Operation(summary = "Delete the cooperative person by id")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "202", description = "Cooperative person deleted", content = @Content(schema = @Schema(implementation = CooperativePerson.class))) })
 	@TokenAndUserAuthenticated(permissions = { Permissions.ADMIN })
 	public Response delete(@Context HttpServletRequest request, @PathParam("id") Long id) {
 		CooperativePerson ccPerson = coPersonService.deleteByUserId(id);

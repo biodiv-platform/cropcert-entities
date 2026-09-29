@@ -1,17 +1,17 @@
 package cropcert.entities.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "ics_manager")
 @IdClass(EntitiesCompositeKey.class)
-@ApiModel("ICSManager")
+@Schema(description = "ICSManager")
 public class ICSManager {
 
 	/**

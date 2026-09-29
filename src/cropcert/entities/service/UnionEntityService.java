@@ -3,7 +3,7 @@ package cropcert.entities.service;
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import cropcert.entities.dao.UnionEntityDao;
 import cropcert.entities.model.UnionEntities;

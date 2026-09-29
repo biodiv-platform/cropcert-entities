@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Response;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.pac4j.core.profile.CommonProfile;
@@ -305,9 +305,12 @@ public class UserService {
 		}
 	}
 
-	public static boolean containsRole(List<Role> list, String roleName) {
+	public static boolean containsRole(java.util.Collection<Role> list, String roleName) {
+		if (list == null) {
+			return false;
+		}
 		for (Role role : list) {
-			if (role.getAuthority().equals(roleName)) {
+			if (role.getAuthority() != null && role.getAuthority().equals(roleName)) {
 				return true;
 			}
 		}

@@ -3,26 +3,29 @@ package cropcert.entities.api;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.pac4j.core.profile.CommonProfile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.inject.Inject;
-
+import com.strandls.authentication_utility.filter.ValidateUser;
+import com.strandls.authentication_utility.util.AuthUtil;
+import com.strandls.user.controller.AuthenticationServiceApi;
 import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.StringObjectMap;
 import com.strandls.user.pojo.UserDTO;
 import com.strandls.user.pojo.UserRoles;
 
@@ -31,7 +34,6 @@ import cropcert.entities.model.CollectionCenterEntity;
 import cropcert.entities.model.CollectionCenterPerson;
 import cropcert.entities.model.CooperativeEntity;
 import cropcert.entities.model.CooperativePerson;
-import cropcert.entities.model.Farmer;
 import cropcert.entities.model.ICSManager;
 import cropcert.entities.model.Inspector;
 import cropcert.entities.model.UnionEntities;
@@ -43,19 +45,18 @@ import cropcert.entities.service.ICSManagerService;
 import cropcert.entities.service.InspectorService;
 import cropcert.entities.service.UnionPersonService;
 import cropcert.entities.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import net.minidev.json.JSONArray;
 
-import com.strandls.authentication_utility.filter.ValidateUser;
-import com.strandls.authentication_utility.util.AuthUtil;
-import com.strandls.user.controller.AuthenticationServiceApi;
-
 @Path("user")
-@Api("User")
+@Tag(name = "User")
 public class UserApi {
 
 	private UserService userService;
@@ -95,12 +96,10 @@ public class UserApi {
 	@GET
 	@Path("me")
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
-	@ApiOperation(value = "Get the current user", response = Map.class)
+	@Operation(summary = "Get the current user")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Current user data", content = @Content(schema = @Schema(implementation = Map.class))) })
 	public Response getUser(@Context HttpServletRequest request) {
 		Map<String, Object> myData = userService.getMyData(request);
 		return Response.ok().entity(myData).build();
@@ -109,12 +108,10 @@ public class UserApi {
 	@GET
 	@Path("union/all")
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
-	@ApiOperation(value = "Get the current user unions", response = Map.class)
+	@Operation(summary = "Get the current user unions")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Current user unions", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UnionEntities.class)))) })
 	public Response getMyUnion(@Context HttpServletRequest request) {
 		List<UnionEntities> result = userService.getMyUnionData(request);
 		return Response.ok().entity(result).build();
@@ -123,12 +120,10 @@ public class UserApi {
 	@GET
 	@Path("co/all")
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
-	@ApiOperation(value = "Get the current user cooperatives", response = Map.class)
+	@Operation(summary = "Get the current user cooperatives")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Current user cooperatives", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CooperativeEntity.class)))) })
 	public Response getMyCoopertive(@Context HttpServletRequest request) {
 		List<CooperativeEntity> result = userService.getMyCoopertiveData(request);
 		return Response.ok().entity(result).build();
@@ -137,12 +132,10 @@ public class UserApi {
 	@GET
 	@Path("cc/all")
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "Authorization", value = "Authorization token", required = true, dataType = "string", paramType = "header") })
-	@ApiOperation(value = "Get the current user collectionCenters", response = Map.class)
+	@Operation(summary = "Get the current user collectionCenters")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Current user collection centers", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CollectionCenterEntity.class)))) })
 	public Response getMyCollectionCenter(@Context HttpServletRequest request) {
 		List<CollectionCenterEntity> result = userService.getMyCollectionCenterData(request);
 		return Response.ok().entity(result).build();
@@ -151,10 +144,10 @@ public class UserApi {
 	@Path("union")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Get list of co-operative from given union", response = CooperativeEntity.class, responseContainer = "List")
+	@Operation(summary = "Get list of co-operative from given union")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Cooperatives by union", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CooperativeEntity.class)))) })
 	public Response getCooperativesByUnion(@Context HttpServletRequest request,
 			@DefaultValue("-1") @QueryParam("unionCodes") String unionCodes) {
 		List<CooperativeEntity> cooperatives = userService.getCooperativesByUnion(request, unionCodes);
@@ -164,10 +157,10 @@ public class UserApi {
 	@Path("cooperative")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Get list of co-operative from given union", response = CooperativeEntity.class, responseContainer = "List")
+	@Operation(summary = "Get list of co-operative from given union")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Collection centers by cooperative", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CollectionCenterEntity.class)))) })
 	public Response getCollectionCenterByCooperative(@Context HttpServletRequest request,
 			@DefaultValue("-1") @QueryParam("cooperativeCodes") String cooperativeCodes) {
 		List<CollectionCenterEntity> cooperatives = userService.getCollectionCenterByCooperative(request,
@@ -179,12 +172,14 @@ public class UserApi {
 	@Path("signup")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Create new user", notes = "Returns the created user", response = Map.class)
+	@Operation(summary = "Create new user", description = "Returns the created user")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "User created", content = @Content(schema = @Schema(implementation = UserDTO.class))),
+			@ApiResponse(responseCode = "400", description = "Bad request"),
+			@ApiResponse(responseCode = "204", description = "Creation failed") })
 	public Response signUp(@Context HttpServletRequest request,
-			@ApiParam(name = "userDTO") UserEntityDTO userEntityDTO) {
+			@RequestBody(description = "User entity DTO", required = true, content = @Content(schema = @Schema(implementation = UserEntityDTO.class))) UserEntityDTO userEntityDTO) {
 
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
@@ -212,9 +207,12 @@ public class UserApi {
 					request.getHeader(HttpHeaders.AUTHORIZATION));
 			userServiceApi = headers.addUserHeaders(userServiceApi, request.getHeader(HttpHeaders.AUTHORIZATION));
 
-			Map<String, Object> response = authenticationServiceApi.signUp(userDTO);
+			StringObjectMap response = authenticationServiceApi.signUp(userDTO);
 
-			UserDTO user = om.convertValue(response.get("user"), UserDTO.class);
+			UserDTO user = null;
+			if (response != null && response.getData() != null) {
+				user = om.convertValue(response.getData().get("user"), UserDTO.class);
+			}
 
 			if (user == null) {
 				return Response.status(Status.BAD_REQUEST).entity("User details cannot be empty").build();

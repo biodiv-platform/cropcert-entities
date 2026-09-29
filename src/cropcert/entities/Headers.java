@@ -1,6 +1,6 @@
 package cropcert.entities;
 
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import com.strandls.user.controller.AuthenticationServiceApi;
 import com.strandls.user.controller.UserServiceApi;

@@ -3,7 +3,7 @@ package cropcert.entities.dao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

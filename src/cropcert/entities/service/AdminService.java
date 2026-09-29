@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import cropcert.entities.dao.AdminDao;
 import cropcert.entities.filter.Permissions;

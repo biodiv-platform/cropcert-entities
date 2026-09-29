@@ -2,8 +2,8 @@ package cropcert.entities.dao;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;

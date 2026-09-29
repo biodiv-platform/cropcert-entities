@@ -1,20 +1,20 @@
 package cropcert.entities.model;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "admin_person")
 @XmlRootElement
 @PrimaryKeyJoinColumn(name = "id")
 @DiscriminatorValue(value = "admin")
-@ApiModel("Admin")
+@Schema(description = "Admin")
 public class Admin extends User {
 
 	/**

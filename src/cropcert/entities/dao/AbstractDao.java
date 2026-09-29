@@ -5,13 +5,14 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,34 +96,37 @@ public abstract class AbstractDao<T, K extends Serializable> {
 
 	public abstract T findById(K id);
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings("unchecked")
 	public List<T> findAll() {
 		List<T> entities = null;
-		Session session = sessionFactory.openSession();
-		try {
-			Criteria criteria = session.createCriteria(daoType);
-			entities = criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
+		try (Session session = sessionFactory.openSession()) {
+			CriteriaBuilder cb = session.getCriteriaBuilder();
+			CriteriaQuery<T> cq = cb.createQuery((Class<T>) daoType);
+			Root<T> root = cq.from((Class<T>) daoType);
+			cq.select(root).distinct(true);
+			entities = session.createQuery(cq).getResultList();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-		} finally {
-			session.close();
 		}
 
 		return entities;
 	}
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
+	@SuppressWarnings("unchecked")
 	public List<T> findAll(int limit, int offset) {
 		List<T> entities = null;
-		Session session = sessionFactory.openSession();
-		try {
-			Criteria criteria = session.createCriteria(daoType)
-					.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-			entities = criteria.setFirstResult(offset).setMaxResults(limit).list();
+		try (Session session = sessionFactory.openSession()) {
+			CriteriaBuilder cb = session.getCriteriaBuilder();
+			CriteriaQuery<T> cq = cb.createQuery((Class<T>) daoType);
+			Root<T> root = cq.from((Class<T>) daoType);
+			cq.select(root).distinct(true);
+			Query<T> query = session.createQuery(cq);
+			if (limit > 0 && offset >= 0) {
+				query.setFirstResult(offset).setMaxResults(limit);
+			}
+			entities = query.getResultList();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-		} finally {
-			session.close();
 		}
 
 		return entities;

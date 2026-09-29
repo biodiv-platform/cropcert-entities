@@ -2,13 +2,13 @@ package cropcert.entities.api;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
@@ -16,11 +16,15 @@ import org.slf4j.LoggerFactory;
 
 import cropcert.entities.filter.SecurityInterceptor;
 import cropcert.entities.service.AuthenticateService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("auth")
-@Api(value = "Authenticate")
+@Tag(name = "Authenticate")
 public class AuthenticateApi {
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticateApi.class);
@@ -31,7 +35,11 @@ public class AuthenticateApi {
 	@POST
 	@Path("renew")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get new set of refresh token and access token", response = Map.class)
+	@Operation(summary = "Get new set of refresh token and access token")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "New set of tokens", content = @Content(schema = @Schema(implementation = Map.class))),
+			@ApiResponse(responseCode = "406", description = "Invalid refresh token"),
+			@ApiResponse(responseCode = "403", description = "Forbidden") })
 	public Response getNewSetOfTokens(@QueryParam("refreshToken") String refreshToken) {
 
 		// check for the valid refresh token

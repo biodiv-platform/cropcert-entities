@@ -7,14 +7,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.Entity;
 
 public class Utility {
 
@@ -31,7 +32,7 @@ public class Utility {
 			Annotation[] annotations = cls.getAnnotations();
 
 			for (Annotation annotation : annotations) {
-				if (annotation instanceof Api || annotation instanceof ApiModel) {
+				if (annotation instanceof Tag || annotation instanceof Schema) {
 					classes.add(cls);
 				}
 			}
@@ -49,7 +50,7 @@ public class Utility {
 			Annotation[] annotations = cls.getAnnotations();
 
 			for (Annotation annotation : annotations) {
-				if (annotation instanceof javax.persistence.Entity) {
+				if (annotation instanceof Entity) {
 					classes.add(cls);
 				}
 			}

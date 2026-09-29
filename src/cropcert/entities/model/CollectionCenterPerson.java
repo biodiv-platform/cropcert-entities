@@ -1,17 +1,17 @@
 package cropcert.entities.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "collection_center_person")
 @IdClass(EntitiesCompositeKey.class)
-@ApiModel("CollectionCenterPerson")
+@Schema(description = "CollectionCenterPerson")
 public class CollectionCenterPerson {
 
 	/**
