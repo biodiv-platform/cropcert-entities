@@ -117,16 +117,17 @@ public class UserService {
 			} else if (containsRole(user.getRoles(), "COOPERATIVE_PERSON")) {
 				System.out.println("[DEBUG] getMyData: branch COOPERATIVE_PERSON");
 				setCooperativePersonData(userData, user.getId());
+			} else if (containsRole(user.getRoles(), "COOPERATIVE_PERSON")) {
+				setCooperativePersonData(userData, user.getId(), request);
 			} else if (containsRole(user.getRoles(), "COLLECTION_CENTER_PERSON")) {
-				System.out.println("[DEBUG] getMyData: branch COLLECTION_CENTER_PERSON");
-				setCollectionCenterPersonData(userData, user.getId());
-			} else {
-				System.out.println("[DEBUG] getMyData: NO matching role branch");
+				setCollectionCenterPersonData(userData, user.getId(), request);
 			}
 
 			System.out.println("[DEBUG] getMyData: done, userData keys = " + userData.keySet());
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			System.out.println("[DEBUG] getMyData: EXCEPTION " + e.getClass().getName() + ": " + e.getMessage());
 			e.printStackTrace(System.out);
 			logger.error("Error retrieving user data: " + e.getMessage(), e);
