@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "ics_manager")
-@IdClass(EntitiesCompositeKey.class)
+@IdClass(UnionUserCompositeKey.class)
 @Schema(description = "ICSManager")
 public class ICSManager {
 

@@ -3,14 +3,15 @@ package cropcert.entities.model;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class EntitiesCompositeKey implements Serializable {
+public class CollectionCenterUserCompositeKey implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private String membershipId;
+	private Long ccCode;
 	private Long userId;
 
-	public EntitiesCompositeKey() {
+	public CollectionCenterUserCompositeKey() {
 		super();
 	}
 
@@ -20,6 +21,14 @@ public class EntitiesCompositeKey implements Serializable {
 
 	public void setMembershipId(String membershipId) {
 		this.membershipId = membershipId;
+	}
+
+	public Long getCcCode() {
+		return ccCode;
+	}
+
+	public void setCcCode(Long ccCode) {
+		this.ccCode = ccCode;
 	}
 
 	public Long getUserId() {
@@ -34,14 +43,14 @@ public class EntitiesCompositeKey implements Serializable {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (!(o instanceof EntitiesCompositeKey))
+		if (!(o instanceof CollectionCenterUserCompositeKey))
 			return false;
-		EntitiesCompositeKey that = (EntitiesCompositeKey) o;
-		return Objects.equals(membershipId, that.membershipId) && Objects.equals(userId, that.userId);
+		CollectionCenterUserCompositeKey that = (CollectionCenterUserCompositeKey) o;
+		return Objects.equals(membershipId, that.membershipId) && Objects.equals(ccCode, that.ccCode) && Objects.equals(userId, that.userId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(membershipId, userId);
+		return Objects.hash(membershipId, ccCode, userId);
 	}
 }

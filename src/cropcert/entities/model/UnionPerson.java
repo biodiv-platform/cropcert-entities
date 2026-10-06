@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "union_person")
-@IdClass(EntitiesCompositeKey.class)
+@IdClass(UnionUserCompositeKey.class)
 @Schema(description = "UnionPerson")
 public class UnionPerson {
 

@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "factory_person")
-@IdClass(EntitiesCompositeKey.class)
+@IdClass(FactoryUserCompositeKey.class)
 @Schema(description = "FactoryPerson")
 public class FactoryPerson {
 
