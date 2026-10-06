@@ -79,36 +79,56 @@ public class UserService {
 	private UserServiceApi userServiceApi;
 
 	public Map<String, Object> getMyData(HttpServletRequest request) {
+		System.out.println("[DEBUG] getMyData: start");
+
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		System.out.println("[DEBUG] getMyData: profile = " + profile);
+		System.out
+				.println("[DEBUG] getMyData: profile id = " + (profile != null ? profile.getId() : "PROFILE IS NULL"));
 
 		Map<String, Object> userData = new HashMap<>();
 
 		try {
+			System.out.println("[DEBUG] getMyData: calling userServiceApi.getUser(" + profile.getId() + ")");
 			User user = userServiceApi.getUser(profile.getId());
+			System.out.println("[DEBUG] getMyData: userServiceApi returned user = " + user);
 
 			if (user == null) {
-				logger.error("Error retrieving user data: ");
+				System.out.println("[DEBUG] getMyData: user is NULL for profile id " + profile.getId());
+				logger.error("Error retrieving user data: user is null for profile id {}", profile.getId());
 				return Collections.emptyMap();
-
 			}
 
+			System.out.println("[DEBUG] getMyData: user id = " + user.getId() + ", roles = " + user.getRoles());
 			userData.put("user", user);
 
 			if (containsRole(user.getRoles(), "ROLE_ADMIN")) {
+				System.out.println("[DEBUG] getMyData: branch ROLE_ADMIN");
 				setAdminPersonData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "UNION_PERSON")) {
+				System.out.println("[DEBUG] getMyData: branch UNION_PERSON");
 				setUnionPersonData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "INSPECTOR")) {
+				System.out.println("[DEBUG] getMyData: branch INSPECTOR");
 				setInspectorData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "ICS_MANAGER")) {
+				System.out.println("[DEBUG] getMyData: branch ICS_MANAGER");
 				setICSManagerData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "COOPERATIVE_PERSON")) {
-				setCooperativePersonData(userData, user.getId(), request);
+				System.out.println("[DEBUG] getMyData: branch COOPERATIVE_PERSON");
+				setCooperativePersonData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "COLLECTION_CENTER_PERSON")) {
-				setCollectionCenterPersonData(userData, user.getId(), request);
+				System.out.println("[DEBUG] getMyData: branch COLLECTION_CENTER_PERSON");
+				setCollectionCenterPersonData(userData, user.getId());
+			} else {
+				System.out.println("[DEBUG] getMyData: NO matching role branch");
 			}
 
+			System.out.println("[DEBUG] getMyData: done, userData keys = " + userData.keySet());
+
 		} catch (Exception e) {
+			System.out.println("[DEBUG] getMyData: EXCEPTION " + e.getClass().getName() + ": " + e.getMessage());
+			e.printStackTrace(System.out);
 			logger.error("Error retrieving user data: " + e.getMessage(), e);
 			return Collections.emptyMap();
 		}

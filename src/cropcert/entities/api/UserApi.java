@@ -101,7 +101,9 @@ public class UserApi {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Current user data", content = @Content(schema = @Schema(implementation = Map.class))) })
 	public Response getUser(@Context HttpServletRequest request) {
+		System.out.println("[DEBUG] getUser(/me) called");
 		Map<String, Object> myData = userService.getMyData(request);
+		System.out.println("[DEBUG] getUser(/me) result keys: " + myData.keySet());
 		return Response.ok().entity(myData).build();
 	}
 
@@ -201,7 +203,7 @@ public class UserApi {
 				return Response.status(Status.BAD_REQUEST).entity("User details cannot be empty").build();
 			}
 
-//			user create
+			// user create
 
 			authenticationServiceApi = headers.addAuthHeaders(authenticationServiceApi,
 					request.getHeader(HttpHeaders.AUTHORIZATION));
@@ -221,7 +223,7 @@ public class UserApi {
 			userRole.setId(user.getId());
 			userServiceApi.updateUserRoles(userRole);
 
-//			user role update
+			// user role update
 			if (unionPerson != null) {
 				unionPerson.setUserId(user.getId());
 				unionPersonService.save(unionPerson);
