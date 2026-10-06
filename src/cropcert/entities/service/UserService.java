@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.core.Response;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.pac4j.core.profile.CommonProfile;
@@ -27,8 +26,6 @@ import com.strandls.user.controller.UserServiceApi;
 import com.strandls.user.pojo.Role;
 import com.strandls.user.pojo.User;
 
-import cropcert.entities.api.CollectionCenterEntitiesApi;
-import cropcert.entities.api.CooperativeEntitiesApi;
 import cropcert.entities.model.CollectionCenterEntity;
 import cropcert.entities.model.CollectionCenterPerson;
 import cropcert.entities.model.CooperativeEntity;
@@ -46,13 +43,7 @@ public class UserService {
 	public static final String UNION_CODE = "unionCode";
 
 	@Inject
-	private CooperativeEntitiesApi cooperativeEntitiesApi;
-
-	@Inject
 	private CooperativeEntityService cooperativeEntityService;
-
-	@Inject
-	private CollectionCenterEntitiesApi collectionCenterEntitiesApi;
 
 	@Inject
 	private CollectionCenterEntityService collectionCenterEntityService;
@@ -79,57 +70,36 @@ public class UserService {
 	private UserServiceApi userServiceApi;
 
 	public Map<String, Object> getMyData(HttpServletRequest request) {
-		System.out.println("[DEBUG] getMyData: start");
-
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
-		System.out.println("[DEBUG] getMyData: profile = " + profile);
-		System.out
-				.println("[DEBUG] getMyData: profile id = " + (profile != null ? profile.getId() : "PROFILE IS NULL"));
 
 		Map<String, Object> userData = new HashMap<>();
 
 		try {
-			System.out.println("[DEBUG] getMyData: calling userServiceApi.getUser(" + profile.getId() + ")");
 			User user = userServiceApi.getUser(profile.getId());
-			System.out.println("[DEBUG] getMyData: userServiceApi returned user = " + user);
 
 			if (user == null) {
-				System.out.println("[DEBUG] getMyData: user is NULL for profile id " + profile.getId());
-				logger.error("Error retrieving user data: user is null for profile id {}", profile.getId());
+				logger.error("Error retrieving user data: ");
 				return Collections.emptyMap();
+
 			}
 
-			System.out.println("[DEBUG] getMyData: user id = " + user.getId() + ", roles = " + user.getRoles());
 			userData.put("user", user);
 
 			if (containsRole(user.getRoles(), "ROLE_ADMIN")) {
-				System.out.println("[DEBUG] getMyData: branch ROLE_ADMIN");
 				setAdminPersonData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "UNION_PERSON")) {
-				System.out.println("[DEBUG] getMyData: branch UNION_PERSON");
 				setUnionPersonData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "INSPECTOR")) {
-				System.out.println("[DEBUG] getMyData: branch INSPECTOR");
 				setInspectorData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "ICS_MANAGER")) {
-				System.out.println("[DEBUG] getMyData: branch ICS_MANAGER");
 				setICSManagerData(userData, user.getId());
 			} else if (containsRole(user.getRoles(), "COOPERATIVE_PERSON")) {
-				System.out.println("[DEBUG] getMyData: branch COOPERATIVE_PERSON");
 				setCooperativePersonData(userData, user.getId());
-			} else if (containsRole(user.getRoles(), "COOPERATIVE_PERSON")) {
-				setCooperativePersonData(userData, user.getId(), request);
 			} else if (containsRole(user.getRoles(), "COLLECTION_CENTER_PERSON")) {
-				setCollectionCenterPersonData(userData, user.getId(), request);
+				setCollectionCenterPersonData(userData, user.getId());
 			}
 
-			System.out.println("[DEBUG] getMyData: done, userData keys = " + userData.keySet());
-
-		} catch (
-
-		Exception e) {
-			System.out.println("[DEBUG] getMyData: EXCEPTION " + e.getClass().getName() + ": " + e.getMessage());
-			e.printStackTrace(System.out);
+		} catch (Exception e) {
 			logger.error("Error retrieving user data: " + e.getMessage(), e);
 			return Collections.emptyMap();
 		}
@@ -347,57 +317,67 @@ public class UserService {
 
 	private void setUnionPersonData(Map<String, Object> userData, Long userId) {
 		UnionPerson unionPerson = unionPersonServiceApi.findByUserId(userId);
-		userData.put(UNION_CODE, unionPerson.getUnionCode());
+		if (unionPerson != null) {
+			userData.put(UNION_CODE, unionPerson.getUnionCode());
+		}
 	}
 
 	private void setInspectorData(Map<String, Object> userData, Long userId) {
 		Inspector inspector = inspectorSerciveApi.findByUserId(userId);
-		userData.put(UNION_CODE, inspector.getUnionCode());
+		if (inspector != null) {
+			userData.put(UNION_CODE, inspector.getUnionCode());
+		}
 	}
 
 	private void setICSManagerData(Map<String, Object> userData, Long userId) {
 		ICSManager icsManager = icsManagerServiceApi.findByUserId(userId);
-		userData.put(UNION_CODE, icsManager.getUnionCode());
+		if (icsManager != null) {
+			userData.put(UNION_CODE, icsManager.getUnionCode());
+		}
 	}
 
-	private void setCooperativePersonData(Map<String, Object> userData, Long userId, HttpServletRequest request) {
+	private void setCooperativePersonData(Map<String, Object> userData, Long userId) {
 		CooperativePerson coPerson = cooperativePersonServiceApi.findByUserId(userId);
-		Long coCode = coPerson.getCoCode();
-		userData.put("coCode", coCode);
-
-		Response coResponse = cooperativeEntitiesApi.findByCode(request, coCode);
-		CooperativeEntity cooperative = (CooperativeEntity) coResponse.getEntity();
-		userData.put(UNION_CODE, cooperative.getUnionCode());
+		if (coPerson != null) {
+			Long coCode = coPerson.getCoCode();
+			userData.put("coCode", coCode);
+			CooperativeEntity cooperative = cooperativeEntityService.findByCode(coCode);
+			if (cooperative != null) {
+				userData.put(UNION_CODE, cooperative.getUnionCode());
+			}
+		}
 	}
 
-	private void setCollectionCenterPersonData(Map<String, Object> userData, Long userId, HttpServletRequest request) {
+	private void setCollectionCenterPersonData(Map<String, Object> userData, Long userId) {
 		CollectionCenterPerson ccPerson = collectionCenterPersonApi.findByUserId(userId);
-		Long ccCode = ccPerson.getCcCode();
-		userData.put("ccCode", ccCode);
-
-		Response ccResponse = collectionCenterEntitiesApi.findByCode(request, ccCode);
-		CollectionCenterEntity collectionCenter = (CollectionCenterEntity) ccResponse.getEntity();
-		Long coCode = collectionCenter.getCooperativeCode();
-		userData.put("coCode", coCode);
-
-		Response coResponse = cooperativeEntitiesApi.findByCode(request, coCode);
-		CooperativeEntity cooperative = (CooperativeEntity) coResponse.getEntity();
-		userData.put(UNION_CODE, cooperative.getUnionCode());
+		if (ccPerson != null) {
+			Long ccCode = ccPerson.getCcCode();
+			userData.put("ccCode", ccCode);
+			CollectionCenterEntity collectionCenter = collectionCenterEntityService.findByCode(ccCode);
+			if (collectionCenter != null) {
+				Long coCode = collectionCenter.getCooperativeCode();
+				userData.put("coCode", coCode);
+				CooperativeEntity cooperative = cooperativeEntityService.findByCode(coCode);
+				if (cooperative != null) {
+					userData.put(UNION_CODE, cooperative.getUnionCode());
+				}
+			}
+		}
 	}
 
 	public String addImage(InputStream inputStream, FormDataContentDisposition fileDetails,
 			HttpServletRequest request) {
-		String fileName = fileDetails.getFileName();
+		String rawFileName = fileDetails.getFileName();
+		String fileName = new File(rawFileName).getName();
 
 		UUID uuid = UUID.randomUUID();
 		String dirPath = ROOTPATH + File.separator + uuid.toString();
 		File dir = new File(dirPath);
 		if (!dir.exists()) {
-			dir.mkdir();
+			dir.mkdirs();
 		}
 
 		String fileLocation = dirPath + File.separatorChar + fileName;
-
 		boolean uploaded = writeToFile(inputStream, fileLocation);
 
 		if (uploaded) {
@@ -409,14 +389,10 @@ public class UserService {
 
 	private boolean writeToFile(InputStream inputStream, String fileLocation) {
 		try (OutputStream out = new FileOutputStream(new File(fileLocation))) {
-			byte[] buffer = new byte[1024];
-			int bytesRead;
-			while ((bytesRead = inputStream.read(buffer)) != -1) {
-				out.write(buffer, 0, bytesRead);
-			}
+			inputStream.transferTo(out);
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error writing uploaded file: {}", e.getMessage(), e);
 		}
 		return false;
 	}
